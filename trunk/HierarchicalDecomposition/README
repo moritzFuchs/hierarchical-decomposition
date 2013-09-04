@@ -1,0 +1,8 @@
+README:
+
+The current version of the decomposition relies on exact s-t-flow algorithms (Edmonds-Karp to be precise). However, the algorithm was designed to use approximate max flow algotithms, such as 
+Sherman (http://arxiv.org/abs/1304.2077) or Kelner (http://arxiv.org/abs/1304.2338). Once approximate max flow algorithms become available some classes will have to be looked at again:
+ * LemmaA2 in Partition A: Currently the 'iteration' will be done after 1 loop since the exact max flow will give us a cut the separates s from t with full capacity over the cut
+ * Partition B: Currently we do not have a approximate max flow algorithm, therefore PartitionB performs only a single (exact) s-t-flow to get a cut between s and t. This cut then bisects the graph
+   which is exactly what we need. Once we have an approximate max flow, we will need to rewrite this class. 
+  
