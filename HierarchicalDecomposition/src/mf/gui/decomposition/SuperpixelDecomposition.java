@@ -8,11 +8,14 @@ import mf.superpixel.Superpixel;
 
 public class SuperpixelDecomposition extends Drawable{
 
-	Map<Integer , Superpixel> pixel;
+	/**
+	 * The superpixel map from superpixel numbers ({@link Integer}) to {@link Superpixel}
+	 */
+	private Map<Integer , Superpixel> superpixel;
 	
 	public SuperpixelDecomposition(Map<Integer , Superpixel> pixel, String name, Markable m) {
 		super(name , m);
-		this.pixel = pixel;
+		this.superpixel = pixel;
 	}
 	
 	/**
@@ -23,7 +26,7 @@ public class SuperpixelDecomposition extends Drawable{
 	public void draw() {
 		m.startLoading();
 		m.clear();
-		for (Superpixel sp : pixel.values()) {
+		for (Superpixel sp : superpixel.values()) {
 			for (Pixel p : sp.getBoundaryPixels()) {
 				m.markPixel(p.getX(), p.getY());
 			}

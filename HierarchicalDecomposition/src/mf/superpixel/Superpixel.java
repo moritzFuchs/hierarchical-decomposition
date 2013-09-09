@@ -11,13 +11,40 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.paint.Color;
 
+/**
+ * Represents a superpixel of an image
+ * 
+ * @author moritzfuchs
+ * @date 09.09.2013
+ *
+ */
 public class Superpixel {
 
+	/**
+	 * ID of the {@link Superpixel} as given by the MATLAB script
+	 */
 	private Integer id;
+	
+	/**
+	 * The underlying image
+	 */
 	private Image img;
+	
+	/**
+	 * The set of {@link Pixel} of the superpixel
+	 */
 	private Set<Pixel> pixel;
+	
+	/**
+	 * The set of {@link Pixel} that is on the boundary of the superpixel
+	 */
 	private Set<Pixel> boundary;
+	
+	/**
+	 * Map from neighboring {@link Superpixel} to the set of boundary {@link Pixel}
+	 */
 	private Map<Superpixel , Set<Pixel>> boundary_to;
+	
 	private Set<Superpixel> neighbors;
 	
 	public Superpixel(Integer id , Image img) {
@@ -72,7 +99,7 @@ public class Superpixel {
 	}
 
 	/**
-	 * The set of {@link Pixel} of this superpixel that is adjacent to other superpixels
+	 * The set of {@link Pixel} of this superpixel that is adjacent to other superpixels.
 	 * 
 	 * @return Set<Pixel> : The set of {@link Pixel} that are adjacent to another {@link Superpixel}
 	 */

@@ -18,15 +18,39 @@ import org.jgrapht.graph.SimpleWeightedGraph;
 import org.xml.sax.SAXException;
 
 import mf.gui.Pixel;
-import mf.gui.decomposition.Drawable;
-import mf.gui.decomposition.SuperpixelDecomposition;
 
-
+/**
+ * A graph on a given superpixel decomposition.
+ *  * Each {@link Superpixel} is represented by a vertex in the graph
+ *  * 2 vertices are connected if the boundaries of the corresponding {@link Superpixel} are touching.
+ *  * An edge has the following edge weight: Let I_u be the mean RGB-color in Superpixel u and L_uv the length of the boundary between the Superpixels.
+ *    Then the edge weight of the edge u--v equals L_uv/||I_u-I_v||_2 + LAMBDA * L_uv.
+ *    The edge weight is chosen, s.t. touching superpixels with similar color have huge weight. 
+ * 
+ * @author moritzfuchs
+ * @date 09.09.2013
+ *
+ */
 public class SuperpixelGraph{
 
+	/**
+	 * The generated graph
+	 */
 	private WeightedGraph<Integer , DefaultWeightedEdge> graph;
+	
+	/**
+	 * Constant for the edge weight computation: ||I_u - I_v|| might be 0, therefore we add EPSILON to it.
+	 */
 	private final static Double EPSILON = 0.000001;
+	
+	/**
+	 * Factor by which the boundary length is factored in.
+	 */
 	private final static Double LAMBDA = 0.3;
+	
+	/**
+	 * Map from {@link Integer} to {@link Superpixel} with the corresponding ID
+	 */
 	private Map<Integer , Superpixel> superpixel_map;
 	
 	public SuperpixelGraph(Map<Integer , Superpixel> superpixel_map) {
