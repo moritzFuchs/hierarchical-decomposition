@@ -1,4 +1,4 @@
-package mf.gui;
+package mf.superpixel;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -17,19 +17,19 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 import org.xml.sax.SAXException;
 
+import mf.gui.Pixel;
 import mf.gui.decomposition.Drawable;
 import mf.gui.decomposition.SuperpixelDecomposition;
 
-public class SuperpixelGraph extends Drawable{
+
+public class SuperpixelGraph{
 
 	private WeightedGraph<Integer , DefaultWeightedEdge> graph;
 	private final static Double EPSILON = 0.000001;
 	private final static Double LAMBDA = 0.3;
 	private Map<Integer , Superpixel> superpixel_map;
 	
-	public SuperpixelGraph(Map<Integer , Superpixel> superpixel_map , String name , Markable m) {
-		super(name , m);
-		
+	public SuperpixelGraph(Map<Integer , Superpixel> superpixel_map) {
 		this.superpixel_map = superpixel_map;
 		
 		graph = new SimpleWeightedGraph<Integer , DefaultWeightedEdge>(DefaultWeightedEdge.class);
@@ -45,10 +45,6 @@ public class SuperpixelGraph extends Drawable{
 				if (graph.getEdge(source, target) == null) {
 					DefaultWeightedEdge e = graph.addEdge(source, target);
 					graph.setEdgeWeight(e, getEdgeWeight(p , neighbor));
-					if (Double.isNaN(getEdgeWeight(p,neighbor))) {
-						Integer a = 1;
-					}
-					System.out.println(source + " --" + target + " " + getEdgeWeight(p,neighbor));
 				}
 			}
 		}
@@ -153,15 +149,5 @@ public class SuperpixelGraph extends Drawable{
 			new GraphMLExporter<Integer , DefaultWeightedEdge>(vertexIDProvider,vertexNameProvider,edgeIDProvider,edgeLabelProvider);
 		Writer writer = new FileWriter(file);
 		exporter.export(writer, graph);
-	}
-
-	@Override
-	public void draw() {
-		
-		SuperpixelDecomposition dec = new SuperpixelDecomposition(superpixel_map , "",m);
-		dec.draw();
-		
-		//TODO: Draw graph over Superpixel Decomposition!
-		
 	}
 }

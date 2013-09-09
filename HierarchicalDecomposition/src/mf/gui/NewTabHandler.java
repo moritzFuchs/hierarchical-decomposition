@@ -5,6 +5,7 @@ import java.io.File;
 import mf.gui.decomposition.Drawable;
 import mf.gui.decomposition.NoDecomposition;
 import mf.gui.decomposition.SuperpixelDecomposition;
+import mf.superpixel.SuperpixelImport;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;

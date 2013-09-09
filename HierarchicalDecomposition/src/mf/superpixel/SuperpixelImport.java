@@ -1,4 +1,4 @@
-package mf.gui;
+package mf.superpixel;
 
 
 import java.io.BufferedReader;
@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import mf.gui.Pixel;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
