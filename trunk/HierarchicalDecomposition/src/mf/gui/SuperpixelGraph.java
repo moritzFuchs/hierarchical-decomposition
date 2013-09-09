@@ -10,7 +10,9 @@ import java.util.Set;
 import javax.xml.transform.TransformerConfigurationException;
 
 import org.jgrapht.WeightedGraph;
+import org.jgrapht.ext.EdgeNameProvider;
 import org.jgrapht.ext.GraphMLExporter;
+import org.jgrapht.ext.VertexNameProvider;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 import org.xml.sax.SAXException;
@@ -43,6 +45,10 @@ public class SuperpixelGraph extends Drawable{
 				if (graph.getEdge(source, target) == null) {
 					DefaultWeightedEdge e = graph.addEdge(source, target);
 					graph.setEdgeWeight(e, getEdgeWeight(p , neighbor));
+					if (Double.isNaN(getEdgeWeight(p,neighbor))) {
+						Integer a = 1;
+					}
+					System.out.println(source + " --" + target + " " + getEdgeWeight(p,neighbor));
 				}
 			}
 		}
@@ -108,7 +114,43 @@ public class SuperpixelGraph extends Drawable{
 	 * @throws TransformerConfigurationException 
 	 */
 	public void exportGraph(File file) throws IOException, TransformerConfigurationException, SAXException {
-		GraphMLExporter<Integer , DefaultWeightedEdge> exporter = new GraphMLExporter<Integer , DefaultWeightedEdge>();
+		
+		VertexNameProvider<Integer> vertexIDProvider = 
+			new VertexNameProvider<Integer>() { 
+	            @Override 
+	            public String getVertexName(Integer vertex) { 
+	                return vertex.toString(); 
+	            } 
+			}; 
+
+		VertexNameProvider<Integer> vertexNameProvider = 
+			new VertexNameProvider<Integer>() { 
+	            @Override 
+	            public String getVertexName(Integer vertex) { 
+	                return vertex.toString(); 
+	            } 
+			};
+			
+		EdgeNameProvider<DefaultWeightedEdge> edgeIDProvider = 
+			new EdgeNameProvider<DefaultWeightedEdge>() { 
+				@Override 
+		    	public String getEdgeName(DefaultWeightedEdge edge) { 
+					return graph.getEdgeSource(edge) + " > " + graph.getEdgeTarget(edge); 
+				} 
+		    }; 
+
+		EdgeNameProvider<DefaultWeightedEdge> edgeLabelProvider = 
+			new EdgeNameProvider<DefaultWeightedEdge>() { 
+				@Override 
+		    	public String getEdgeName(DefaultWeightedEdge edge) { 
+					Double weight = graph.getEdgeWeight(edge);
+					System.out.println(edge + " " + weight);
+					return weight.toString(); 
+		    	} 
+		    }; 
+		
+		GraphMLExporter<Integer , DefaultWeightedEdge> exporter = 
+			new GraphMLExporter<Integer , DefaultWeightedEdge>(vertexIDProvider,vertexNameProvider,edgeIDProvider,edgeLabelProvider);
 		Writer writer = new FileWriter(file);
 		exporter.export(writer, graph);
 	}

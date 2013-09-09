@@ -52,6 +52,7 @@ public class Superpixel {
 		}
 		
 		boundary.add(pixel);
+		this.pixel.add(pixel);
 	}
 
 	/**

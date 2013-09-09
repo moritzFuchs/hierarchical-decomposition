@@ -68,7 +68,7 @@ public class NewTabHandler implements EventHandler<Event> {
 		    	
 		    	System.out.println(name);
 		    	
-		    	if (name.toLowerCase().startsWith("superpixel")) {
+		    	if (name.toLowerCase().startsWith("superpixel") && name.toLowerCase().endsWith(".mat")) {
 		    		SuperpixelImport imp = new SuperpixelImport(file.getPath() , drawable.getImage());
 		    		SuperpixelDecomposition super_dec = new SuperpixelDecomposition(imp.getSuperpixels(), file.getName(), drawable);
 		    		
