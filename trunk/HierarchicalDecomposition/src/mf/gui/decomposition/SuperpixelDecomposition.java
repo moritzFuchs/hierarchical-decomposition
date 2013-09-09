@@ -4,7 +4,7 @@ import java.util.Map;
 
 import mf.gui.Markable;
 import mf.gui.Pixel;
-import mf.gui.Superpixel;
+import mf.superpixel.Superpixel;
 
 public class SuperpixelDecomposition extends Drawable{
 
