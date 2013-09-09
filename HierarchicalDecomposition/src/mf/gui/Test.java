@@ -15,8 +15,7 @@ public class Test {
 		
 		SuperpixelImport imp = new SuperpixelImport("Input/Fry/superpixel.mat" , new Image("file:Input/Fry/image.jpg"));
 		SuperpixelGraph g = new SuperpixelGraph(imp.getSuperpixels() , "Test" , new DrawableImageView("Input/Fry/image.jpg"));
-		g.exportGraph(new File("Input/Fry/superpixelGraph.dot"));
-
+		g.exportGraph(new File("Input/Fry/superpixelGraph.gml"));
 	}
 
 }

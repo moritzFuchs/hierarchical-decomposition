@@ -45,6 +45,8 @@ public class SuperpixelImport {
 	    br.close();
 		
 		} catch (IOException e) {
+			e.printStackTrace();
+			return;
 		}
 		
 		
@@ -61,12 +63,6 @@ public class SuperpixelImport {
 	public Map<Integer , Superpixel> getSuperpixels() {
 		return superpixels;
 	}
-	
-	public void getSuperpixelGraph() {
-		for (Superpixel p : superpixels.values()) {
-			
-		}
-	}
 
 	/**
 	 * Adds a {@link Pixel} to a given {@link Superpixel}. Decides whether it is a boundary Pixel or not.
@@ -79,7 +75,6 @@ public class SuperpixelImport {
 		Pixel p = new Pixel(col,row);
 		Set<Superpixel> neighbors = new HashSet<Superpixel>();
 		Boolean on_boundary = false;
-		try {
 		if (col+1 < superpixel_data[row].length && !superpixel_data[row][col+1].equals(superpixel_data[row][col])) {
 			on_boundary = true;
 			Superpixel neighbor = getSuperpixel(superpixel_data[row][col+1] , img);
@@ -100,9 +95,7 @@ public class SuperpixelImport {
 			Superpixel neighbor = getSuperpixel(superpixel_data[row-1][col] , img);
 			neighbors.add(neighbor);
 		}
-		}catch(Exception e){
-			Integer a = 1;
-		}
+		
 		if (on_boundary) {
 			sp.addBoundaryPixel(p, neighbors);
 		} else {
