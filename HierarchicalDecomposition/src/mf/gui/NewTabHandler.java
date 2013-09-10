@@ -4,7 +4,8 @@ import java.io.File;
 
 import mf.gui.decomposition.Drawable;
 import mf.gui.decomposition.NoDecomposition;
-import mf.gui.decomposition.SuperpixelDecomposition;
+import mf.gui.decomposition.SuperpixelDrawable;
+import mf.superpixel.SuperpixelDecomposition;
 import mf.superpixel.SuperpixelImport;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -62,9 +63,10 @@ public class NewTabHandler implements EventHandler<Event> {
 		    	
 		    	if (name.toLowerCase().startsWith("superpixel") && name.toLowerCase().endsWith(".mat")) {
 		    		SuperpixelImport imp = new SuperpixelImport(file.getPath() , drawable.getImage());
-		    		SuperpixelDecomposition super_dec = new SuperpixelDecomposition(imp.getSuperpixels(), file.getName(),drawable);
+		    		SuperpixelDecomposition dec = new SuperpixelDecomposition(imp.getSuperpixels(),imp.getPixelMap());
+		    		SuperpixelDrawable super_drawable = new SuperpixelDrawable(dec, file.getName(),drawable);
 		    		
-		    		items.add(super_dec);
+		    		items.add(super_drawable);
 		    	}
 		    	
 		    	//TODO: Add more decompositions (KRV , Region growing)

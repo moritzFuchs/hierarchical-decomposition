@@ -53,8 +53,8 @@ public class SuperpixelGraph{
 	 */
 	private Map<Integer , Superpixel> superpixel_map;
 	
-	public SuperpixelGraph(Map<Integer , Superpixel> superpixel_map) {
-		this.superpixel_map = superpixel_map;
+	public SuperpixelGraph(SuperpixelDecomposition dec) {
+		this.superpixel_map = dec.getSuperpixelMap();
 		
 		graph = new SimpleWeightedGraph<Integer , DefaultWeightedEdge>(DefaultWeightedEdge.class);
 		

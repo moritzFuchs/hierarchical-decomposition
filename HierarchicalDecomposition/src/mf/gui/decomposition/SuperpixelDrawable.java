@@ -12,17 +12,16 @@ import javafx.scene.paint.Color;
 import mf.gui.Markable;
 import mf.gui.Pixel;
 import mf.superpixel.Superpixel;
+import mf.superpixel.SuperpixelDecomposition;
 
-public class SuperpixelDecomposition extends Drawable implements EventHandler<Event>{
+public class SuperpixelDrawable extends Drawable implements EventHandler<Event>{
 
-	/**
-	 * The superpixel map from superpixel numbers ({@link Integer}) to {@link Superpixel}
-	 */
-	private Map<Integer , Superpixel> superpixel;
 	
-	public SuperpixelDecomposition(Map<Integer , Superpixel> pixel, String name, Markable m) {
-		super(name , m);
-		this.superpixel = pixel;
+	private SuperpixelDecomposition dec;
+	
+	public SuperpixelDrawable(SuperpixelDecomposition dec, String name, Markable m) {
+		super(name , m);		
+		this.dec = dec;
 	}
 	
 	/**
@@ -33,14 +32,23 @@ public class SuperpixelDecomposition extends Drawable implements EventHandler<Ev
 	public void draw() {
 		m.startLoading();
 		m.clear();
-		for (Superpixel sp : superpixel.values()) {
-			for (Pixel p : sp.getBoundaryPixels()) {
-				m.markPixel(p.getX(), p.getY());
-			}
+		for (Superpixel sp : dec.getSuperpixelMap().values()) {
+			drawSuperpixel(sp);
 		}
 		m.stopLoading();
 	}
 
+	/**
+	 * Draws a single {@link Superpixel} onto the drawable.
+	 * 
+	 * @param sp : The {@link Superpixel} we want to draw.
+	 */
+	private void drawSuperpixel(Superpixel sp) {
+		for (Pixel p : sp.getBoundaryPixels()) {
+			m.markPixel(p.getX(), p.getY());
+		}
+	}
+	
 	@Override
 	/**
 	 * Handle a Mouse event: 
@@ -65,6 +73,8 @@ public class SuperpixelDecomposition extends Drawable implements EventHandler<Ev
 				m.markPixel(x.intValue()-1, y.intValue(), new Color(1.0-c.getRed(), 1.0-c.getGreen(), 1.0-c.getBlue(), 1.0));
 				m.markPixel(x.intValue(), y.intValue()+1, new Color(1.0-c.getRed(), 1.0-c.getGreen(), 1.0-c.getBlue(), 1.0));
 				m.markPixel(x.intValue(), y.intValue()-1, new Color(1.0-c.getRed(), 1.0-c.getGreen(), 1.0-c.getBlue(), 1.0));
+				
+				drawSuperpixel(dec.getSuperpixelByPixel(new Pixel(x.intValue(),y.intValue())));
 
 			}
 			if (mouse_event.getButton().equals(MouseButton.SECONDARY)) {

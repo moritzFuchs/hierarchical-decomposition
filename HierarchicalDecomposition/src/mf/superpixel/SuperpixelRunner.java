@@ -58,9 +58,9 @@ public class SuperpixelRunner {
 				System.out.println("Generating graph for " + file.getName());
 				
 				SuperpixelImport importer = new SuperpixelImport(args[1] +"/"+ file.getName() , new Image("file:" + args[1] + "/image.jpg"));
-				Map<Integer , Superpixel> pixels = importer.getSuperpixels();
+				SuperpixelDecomposition dec = new SuperpixelDecomposition(importer.getSuperpixels(),importer.getPixelMap());
 				
-				SuperpixelGraph graph = new SuperpixelGraph(pixels);
+				SuperpixelGraph graph = new SuperpixelGraph(dec);
 				graph.exportGraph(new File(args[1] +"/"+ new_name));
 			}
 		}

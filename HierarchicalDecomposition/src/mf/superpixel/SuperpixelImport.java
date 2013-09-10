@@ -32,6 +32,8 @@ public class SuperpixelImport {
 	 * The resulting superpixel map from superpixel-numbers ({@link Superpixel}) to the {@link Superpixel}
 	 */
 	private Map<Integer , Superpixel> superpixels;
+
+	private HashMap<Pixel, Superpixel> pixelMap;
 	
 	/**
 	 * Computes the superpixel map
@@ -45,6 +47,7 @@ public class SuperpixelImport {
 		Integer height = (int)img.getHeight();
 		
 		superpixels = new HashMap<Integer , Superpixel>();
+		pixelMap = new HashMap<Pixel , Superpixel>();
 
 		try {
 			
@@ -76,6 +79,9 @@ public class SuperpixelImport {
 				Integer superpixel_num = superpixel_data[row][col];
 				Superpixel sp = getSuperpixel(superpixel_num , img);
 				
+				Pixel p = new Pixel(col,row);
+				pixelMap.put(p, sp);
+				
 				addPixel(sp , row, col , img);
 			}
 		}
@@ -88,6 +94,15 @@ public class SuperpixelImport {
 	 */
 	public Map<Integer , Superpixel> getSuperpixels() {
 		return superpixels;
+	}
+	
+	/**
+	 * Returns a Map from {@link Pixel} to {@link Superpixel}.
+	 * 
+	 * @return : Map from {@link Pixel}to {@link Superpixel}
+	 */
+	public Map<Pixel , Superpixel> getPixelMap() {
+		return pixelMap;
 	}
 
 	/**
