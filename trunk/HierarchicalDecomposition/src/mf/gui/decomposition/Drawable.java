@@ -2,18 +2,18 @@ package mf.gui.decomposition;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.paint.Color;
 import mf.gui.Markable;
 
 //TODO: better documentation
 /**
- * Interface for drawable 'stuff' that is put into the list on the left. 
+ * Interface for Objects that want to be able to draw on a {@link Markable} and appear in the list of decompositions.
+ * Implements Handlers for {@link MouseEvent} and {@link ScrollEvent}, s.t. only {@link Drawable.handleMouseEvent} and 
+ * {@link Drawable.handleScrollEvent} need to be overwritten. 
  * 
  * @author moritzfuchs
- * @date 09.09.2013
+ * @date 10.09.2013
  *
  */
 public abstract class Drawable implements EventHandler<Event>{
@@ -45,7 +45,10 @@ public abstract class Drawable implements EventHandler<Event>{
 		return name;
 	}
 
-	
+	/**
+	 * Receives an event. If the event is a {@link MouseEvent} it calls {@link Drawable.handleMouseEvent}, 
+	 * if the event is a {@link ScrollEvent} it calls {@link Drawable.handleMouseEvent}
+	 */
 	public void handle(Event event) {
 		
 		if (event instanceof MouseEvent) {
@@ -57,17 +60,35 @@ public abstract class Drawable implements EventHandler<Event>{
 		}
 	}
 	
+	/**
+	 * Registers handlers to the markable object. Currently the following handlers are registered:
+	 *  * MouseEventHandler
+	 *  * ScrollEventHandler
+	 * All EventHandlers point back to {@link Drawable.handle}, which then calls {@link Drawable.handleMouseEvent} or {@link Drawable.handleScrollEvent}.
+	 * To implement custom bahavior override {@link Drawable.handleMouseEvent} and {@link Drawable.handleScrollEvent}.
+	 */
 	public void activate() {
 		m.registerMouseHandler(this);
 		m.registerScrollHandler(this);
 	}
 	
+	/**
+	 * Handler for a {@link MouseEvent}. Does nothing but consume the event.
+	 * To implement custom behavior for mouse events override this method.
+	 * 
+	 * @param event MouseEvent: The {@link MouseEvent} 
+	 */
 	public void handleMouseEvent(MouseEvent event) {
 		event.consume();
 	}
 	
+	/**
+	 * Handler for a {@link ScrollEvent}. Does nothing but consume the event.
+	 * To implement custom behavior for scroll events override this method.
+	 * 
+	 * @param event : The {@link ScrollEvent} 
+	 */
 	public void handleScrollEvent(ScrollEvent event) {
 		event.consume();
 	}
-	
 }

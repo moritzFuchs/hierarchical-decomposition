@@ -107,15 +107,29 @@ public class DrawableImageView extends StackPane implements Markable {
 	}
 	
 	/**
-	 * Marks the given coordinate using the given color.
+	 * Marks the given coordinate using the given color. Does nothing if the given pixel coordinates are outside of the image range.
 	 * 
 	 * @param x : x-coordinate
 	 * @param y : y-coordinate
 	 * @param c : color 
 	 */
 	public void markPixel(Integer x , Integer y, Color c) {
-		PixelWriter writer = canvas.getGraphicsContext2D().getPixelWriter();
-		writer.setColor(x, y, c);
+		if (x >= 0 && y >= 0 && x < img.getWidth() && y < img.getHeight()) {
+			PixelWriter writer = canvas.getGraphicsContext2D().getPixelWriter();
+			writer.setColor(x, y, c);
+		}
+	}
+	
+	/**
+	 * Returns the color of the specified pixel
+	 * 
+	 * @param x : x-coordinate of the pixel
+	 * @param y : y-coordinate of the pixel
+	 * @return Color : Color of the given pixel 
+	 */
+	@Override
+	public Color getColor(Integer x , Integer y) {
+		return img_view.getImage().getPixelReader().getColor(x, y);
 	}
 	
 	public void markArea(Integer[] x , Integer[] y) {
@@ -163,5 +177,7 @@ public class DrawableImageView extends StackPane implements Markable {
 		current_scroll_handler = handler;
 		img_view.addEventFilter(ScrollEvent.ANY, current_scroll_handler);
 	}
+
+	
 
 }

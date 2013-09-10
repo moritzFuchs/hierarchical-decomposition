@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -43,17 +42,30 @@ public class SuperpixelDecomposition extends Drawable implements EventHandler<Ev
 	}
 
 	@Override
+	/**
+	 * Handle a Mouse event: 
+	 *  * Left  click => Clear canvas and mark clicked pixel
+	 *  * Right click => Show Superpixels
+	 *  
+	 *  @param event : The {@link MouseEvent}
+	 */
 	public void handleMouseEvent(MouseEvent event) {
-		System.out.println("MOUSE!");
 		if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
 			MouseEvent mouse_event = (MouseEvent) event; 
 			if (mouse_event.getButton().equals(MouseButton.PRIMARY)) {
 				m.clear();
-				System.out.println("Handling click event.");
-				Double x =  mouse_event.getSceneX();
-				Double y = mouse_event.getSceneY();
+				Double x =  mouse_event.getX();
+				Double y = mouse_event.getY();
+
+				Color c = m.getColor(x.intValue(),y.intValue());
 				
-				m.markPixel(x.intValue(), y.intValue(), new Color(0.0, 0.0, 0.0, 1.0));
+				//Mark with 'complementary' color
+				m.markPixel(x.intValue(), y.intValue(), new Color(1.0-c.getRed(), 1.0-c.getGreen(), 1.0-c.getBlue(), 1.0));
+				m.markPixel(x.intValue()+1, y.intValue(), new Color(1.0-c.getRed(), 1.0-c.getGreen(), 1.0-c.getBlue(), 1.0));
+				m.markPixel(x.intValue()-1, y.intValue(), new Color(1.0-c.getRed(), 1.0-c.getGreen(), 1.0-c.getBlue(), 1.0));
+				m.markPixel(x.intValue(), y.intValue()+1, new Color(1.0-c.getRed(), 1.0-c.getGreen(), 1.0-c.getBlue(), 1.0));
+				m.markPixel(x.intValue(), y.intValue()-1, new Color(1.0-c.getRed(), 1.0-c.getGreen(), 1.0-c.getBlue(), 1.0));
+
 			}
 			if (mouse_event.getButton().equals(MouseButton.SECONDARY)) {
 				draw();
@@ -65,7 +77,6 @@ public class SuperpixelDecomposition extends Drawable implements EventHandler<Ev
 	
 	@Override
 	public void handleScrollEvent(ScrollEvent event) {
-		System.out.println("SCROLLING!!");
 		event.consume();
 	}
 	

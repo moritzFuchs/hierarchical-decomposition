@@ -11,6 +11,7 @@ public interface Markable {
 
 	public void markPixel(Integer x , Integer y);
 	public void markPixel(Integer x , Integer y, Color c);
+	public Color getColor(Integer x , Integer y);
 	public void markArea(Integer[] x , Integer[] y);
 	public void startLoading();
 	public void stopLoading();
@@ -18,4 +19,5 @@ public interface Markable {
 	public void export(File file);
 	public void registerMouseHandler(EventHandler<? super MouseEvent> drawable);
 	public void registerScrollHandler(EventHandler<? super ScrollEvent> drawable);
+	
 }
