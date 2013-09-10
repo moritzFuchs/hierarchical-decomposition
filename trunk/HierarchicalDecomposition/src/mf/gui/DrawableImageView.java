@@ -9,9 +9,11 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 
+import mf.gui.decomposition.Drawable;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
@@ -20,17 +22,21 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
-public class DrawableImageView extends StackPane implements Markable, EventHandler<ActionEvent> {
+public class DrawableImageView extends StackPane implements Markable {
 	private Image img;
 	private ImageView img_view;
 	private Canvas canvas;
 	private Canvas loader;
 	private String url;
+	private EventHandler<? super MouseEvent> current_mouse_handler = null;
+	private EventHandler<? super ScrollEvent> current_scroll_handler;
 	
 	public DrawableImageView(String url) {
 		super();
@@ -61,7 +67,7 @@ public class DrawableImageView extends StackPane implements Markable, EventHandl
 		
 	}
 	
-	
+	@Override
 	public void export(File file) {
 		Integer width = (int)canvas.getWidth();
 		Integer height = (int)canvas.getHeight();
@@ -89,10 +95,27 @@ public class DrawableImageView extends StackPane implements Markable, EventHandl
 		}
 	}
 	
-	//TODO: Add custom color
+	/**
+	 * Marks a given coordinate using the default color.
+	 * 
+	 * @param x : x-coordinate
+	 * @param y : y-coordinate 
+	 */
 	public void markPixel(Integer x , Integer y) {
 		PixelWriter writer = canvas.getGraphicsContext2D().getPixelWriter();
 		writer.setColor(x, y, Color.rgb(255, 255, 255));
+	}
+	
+	/**
+	 * Marks the given coordinate using the given color.
+	 * 
+	 * @param x : x-coordinate
+	 * @param y : y-coordinate
+	 * @param c : color 
+	 */
+	public void markPixel(Integer x , Integer y, Color c) {
+		PixelWriter writer = canvas.getGraphicsContext2D().getPixelWriter();
+		writer.setColor(x, y, c);
 	}
 	
 	public void markArea(Integer[] x , Integer[] y) {
@@ -122,20 +145,23 @@ public class DrawableImageView extends StackPane implements Markable, EventHandl
 		canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 	}
 
-
-	@Override
-	public void handle(ActionEvent event) {
-		
-		Button source = (Button)event.getSource();
-		System.out.println(source.getText());
-		if (source.getText().compareTo("Save Image") == 0) {
-			
-			FileChooser chooser = new FileChooser();
-			FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
-			chooser.getExtensionFilters().add(extFilter);
-			File file = chooser.showSaveDialog(null);
-			
-			export(file);
+	
+	public void registerMouseHandler(EventHandler<? super MouseEvent> handler) {
+		if (current_mouse_handler != null) {
+			img_view.removeEventFilter(MouseEvent.ANY, current_mouse_handler);
 		}
+		
+		current_mouse_handler = handler;
+		img_view.addEventFilter(MouseEvent.ANY, current_mouse_handler);
 	}
+	
+	public void registerScrollHandler(EventHandler<? super ScrollEvent> handler) {
+		if (current_scroll_handler != null) {
+			img_view.removeEventFilter(ScrollEvent.ANY, current_scroll_handler);
+		}
+		
+		current_scroll_handler = handler;
+		img_view.addEventFilter(ScrollEvent.ANY, current_scroll_handler);
+	}
+
 }

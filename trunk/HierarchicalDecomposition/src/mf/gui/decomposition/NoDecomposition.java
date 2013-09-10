@@ -23,4 +23,9 @@ public class NoDecomposition extends Drawable {
 		m.clear();
 	}
 
+	@Override
+	public void activate() {
+		draw();
+	}
+
 }

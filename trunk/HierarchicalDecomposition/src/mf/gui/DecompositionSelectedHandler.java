@@ -7,11 +7,14 @@ import javafx.scene.input.MouseEvent;
 
 public class DecompositionSelectedHandler implements EventHandler<MouseEvent> {
 
+	
+	
 	@Override
 	public void handle(MouseEvent event) {
-		System.out.println(event);
-		 ListView<Drawable >view = (ListView<Drawable>) event.getSource();
-		 view.getSelectionModel().getSelectedItem().draw();
+		
+		ListView<Drawable >view = (ListView<Drawable>) event.getSource();
+		
+		view.getSelectionModel().getSelectedItem().activate();
 	}
 
 }
