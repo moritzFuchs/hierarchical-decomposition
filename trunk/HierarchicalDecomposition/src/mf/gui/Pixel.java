@@ -1,7 +1,21 @@
 package mf.gui;
 
+
+/**
+ * Representation of a pixel. Contains x- and y-coordinates.
+ * Basically equal to the Pair-class here: <a>http://stackoverflow.com/questions/156275/what-is-the-equivalent-of-the-c-pairl-r-in-java</a>
+ * 
+ * @author moritzfuchs
+ * @date 05.09.2013
+ */
 public class Pixel {
+	/**
+	 * x-coordinate
+	 */
 	private Integer x;
+	/**
+	 * y-coordinate
+	 */
     private Integer y;
 
     public Pixel(Integer x, Integer y) {
@@ -37,19 +51,22 @@ public class Pixel {
            return "(" + x + ", " + y + ")"; 
     }
 
+    /**
+     * Returns the x-coordinate.
+     * 
+     * @return Integer : x-coordinate.
+     */
     public Integer getX() {
     	return x;
     }
 
-    public void setX(Integer x) {
-    	this.x = x;
-    }
-
+    /**
+     * Returns the y-coordinate.
+     * 
+     * @return Integer : y-coordinate.
+     */
     public Integer getY() {
     	return y;
     }
 
-    public void setSecond(Integer y) {
-    	this.y = y;
-    }
 }
