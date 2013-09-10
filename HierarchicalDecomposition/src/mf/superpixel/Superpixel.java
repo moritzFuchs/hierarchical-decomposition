@@ -45,8 +45,6 @@ public class Superpixel {
 	 */
 	private Map<Superpixel , Set<Pixel>> boundary_to;
 	
-	private Set<Superpixel> neighbors;
-	
 	public Superpixel(Integer id , Image img) {
 		this.id = id;
 		this.img = img;
@@ -54,7 +52,6 @@ public class Superpixel {
 		pixel = new HashSet<Pixel>();
 		boundary = new HashSet<Pixel>();
 		boundary_to = new HashMap<Superpixel , Set<Pixel>>();
-		neighbors = new HashSet<Superpixel>();
 	}
 	
 	/**
