@@ -1,14 +1,13 @@
 package mf.gui.decomposition;
 
-
-import java.util.Map;
-
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
+
 import mf.gui.Markable;
 import mf.gui.Pixel;
 import mf.superpixel.Superpixel;
@@ -30,8 +29,8 @@ public class SuperpixelDrawable extends Drawable implements EventHandler<Event>{
 	 * @param m : The {@link Markable}
 	 */
 	public void draw() {
-		m.startLoading();
 		m.clear();
+		m.startLoading();
 		for (Superpixel sp : dec.getSuperpixelMap().values()) {
 			drawSuperpixel(sp);
 		}
@@ -83,6 +82,11 @@ public class SuperpixelDrawable extends Drawable implements EventHandler<Event>{
 		}
 		
 		event.consume();
+	}
+	
+	@Override
+	public void handleKeyEvent(KeyEvent event) {
+		System.out.println(event);
 	}
 	
 	@Override
