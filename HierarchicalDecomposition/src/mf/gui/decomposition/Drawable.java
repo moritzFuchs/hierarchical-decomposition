@@ -6,7 +6,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import mf.gui.Markable;
 
-//TODO: better documentation
 /**
  * Interface for Objects that want to be able to draw on a {@link Markable} and appear in the list of decompositions.
  * Implements Handlers for {@link MouseEvent} and {@link ScrollEvent}, s.t. only {@link Drawable.handleMouseEvent} and 
@@ -49,7 +48,7 @@ public abstract class Drawable implements EventHandler<Event>{
 	 * Receives an event. If the event is a {@link MouseEvent} it calls {@link Drawable.handleMouseEvent}, 
 	 * if the event is a {@link ScrollEvent} it calls {@link Drawable.handleMouseEvent}
 	 */
-	public void handle(Event event) {
+	public final void handle(Event event) {
 		
 		if (event instanceof MouseEvent) {
 			handleMouseEvent((MouseEvent)event);
@@ -67,9 +66,11 @@ public abstract class Drawable implements EventHandler<Event>{
 	 * All EventHandlers point back to {@link Drawable.handle}, which then calls {@link Drawable.handleMouseEvent} or {@link Drawable.handleScrollEvent}.
 	 * To implement custom bahavior override {@link Drawable.handleMouseEvent} and {@link Drawable.handleScrollEvent}.
 	 */
-	public void activate() {
+	public final void activate() {
 		m.registerMouseHandler(this);
 		m.registerScrollHandler(this);
+		
+		onActivate();
 	}
 	
 	/**
@@ -91,4 +92,9 @@ public abstract class Drawable implements EventHandler<Event>{
 	public void handleScrollEvent(ScrollEvent event) {
 		event.consume();
 	}
+	
+	/**
+	 * Called when the Object is activated. OVERRIDE ME!
+	 */
+	public void onActivate() {}
 }
