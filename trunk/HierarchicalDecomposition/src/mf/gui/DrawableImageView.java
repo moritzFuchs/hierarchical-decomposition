@@ -15,6 +15,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.StackPane;
@@ -66,6 +67,13 @@ public class DrawableImageView extends StackPane implements Markable {
 	 */
 	private EventHandler<? super ScrollEvent> current_scroll_handler;
 	
+	/**
+	 * The current {@link KeyEvent}-Handler
+	 */
+	private EventHandler<? super KeyEvent> current_key_handler;
+
+	private PixelWriter canvas_writer;
+	
 	public DrawableImageView(String url) {
 		super();
 
@@ -79,11 +87,18 @@ public class DrawableImageView extends StackPane implements Markable {
 		canvas.setOpacity(0.8);
 		
 		loader = new Canvas(img.getWidth() , img.getHeight());
+		loader.setOpacity(0.0);
 		loader.setMouseTransparent(true);
 
-		loader.getGraphicsContext2D().setFill(new Color(1.0,1.0,1.0,1.0));
-		loader.getGraphicsContext2D().fill();
-		loader.setOpacity(0.0);
+		loader.getGraphicsContext2D().setFill(new Color(0.0,0.0,0.0,1.0));
+		loader.getGraphicsContext2D().fillRect(0, 0, img.getWidth(), img.getHeight());
+		
+		
+		for (int i=0;i<100;i++) {
+			for (int j=0;j<100;j++) {
+				loader.getGraphicsContext2D().getPixelWriter().setColor(i, j, new Color(0.0,0.0,0.0,1.0));
+			}
+		}
 		
 		this.setHeight(img.getHeight());
 		this.setWidth(img.getWidth());
@@ -92,6 +107,8 @@ public class DrawableImageView extends StackPane implements Markable {
 		getChildren().add(this.canvas);
 		getChildren().add(this.loader);
 		//TODO: Add context menu for saving image
+
+		canvas_writer = canvas.getGraphicsContext2D().getPixelWriter();
 		
 	}
 	
@@ -99,31 +116,26 @@ public class DrawableImageView extends StackPane implements Markable {
 	 * Exports the Image and the drawing-canvas into an image.
 	 * 
 	 * @param file : Export file
+	 * @throws IOException 
 	 */
 	@Override
-	public void export(File file) {
+	public void export(File file) throws IOException {
 		Integer width = (int)canvas.getWidth();
 		Integer height = (int)canvas.getHeight();
 		
 		WritableImage wim = new WritableImage(width, height);
-		
-		try {
-			BufferedImage out = ImageIO.read(new File(url));
+
+		BufferedImage out = ImageIO.read(new File(url));
 			
-			SnapshotParameters param = new SnapshotParameters();
-			param.setFill(Color.TRANSPARENT);
-			canvas.snapshot(param, wim);
+		SnapshotParameters param = new SnapshotParameters();
+		param.setFill(Color.TRANSPARENT);
+		canvas.snapshot(param, wim);
 
-			BufferedImage combined = new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
-			Graphics g = combined.getGraphics();
-			g.drawImage(out, 0, 0, null);
-			g.drawImage(SwingFXUtils.fromFXImage(wim, null), 0, 0, null);
-			ImageIO.write(combined, "PNG", file);
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		BufferedImage combined = new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
+		Graphics g = combined.getGraphics();
+		g.drawImage(out, 0, 0, null);
+		g.drawImage(SwingFXUtils.fromFXImage(wim, null), 0, 0, null);
+		ImageIO.write(combined, "PNG", file);
 	}
 	
 	/**
@@ -133,8 +145,7 @@ public class DrawableImageView extends StackPane implements Markable {
 	 * @param y : y-coordinate 
 	 */
 	public void markPixel(Integer x , Integer y) {
-		PixelWriter writer = canvas.getGraphicsContext2D().getPixelWriter();
-		writer.setColor(x, y, Color.rgb(255, 255, 255));
+		canvas_writer.setColor(x, y, Color.rgb(255, 255, 255));
 	}
 	
 	/**
@@ -146,8 +157,7 @@ public class DrawableImageView extends StackPane implements Markable {
 	 */
 	public void markPixel(Integer x , Integer y, Color c) {
 		if (x >= 0 && y >= 0 && x < img.getWidth() && y < img.getHeight()) {
-			PixelWriter writer = canvas.getGraphicsContext2D().getPixelWriter();
-			writer.setColor(x, y, c);
+			canvas_writer.setColor(x, y, c);
 		}
 	}
 	
@@ -158,7 +168,6 @@ public class DrawableImageView extends StackPane implements Markable {
 	 * @param y : y-coordinate of the pixel
 	 * @return Color : Color of the given pixel 
 	 */
-	@Override
 	public Color getColor(Integer x , Integer y) {
 		return img_view.getImage().getPixelReader().getColor(x, y);
 	}
@@ -192,7 +201,9 @@ public class DrawableImageView extends StackPane implements Markable {
 	 * Show loading screen / animation
 	 */
 	public void startLoading() {
-		loader.setOpacity(0.8);
+		loader.setOpacity(0.5);
+		loader.getGraphicsContext2D().setFill(new Color(0.0,0.0,0.0,1.0));
+		loader.getGraphicsContext2D().fillRect(0, 0, img.getWidth(), img.getHeight());
 	}
 	
 	/**
@@ -235,5 +246,19 @@ public class DrawableImageView extends StackPane implements Markable {
 		
 		current_scroll_handler = handler;
 		img_view.addEventFilter(ScrollEvent.ANY, current_scroll_handler);
+	}
+	
+	/**
+	 * Register {@link EventHandler} for {@link KeyEvent}s. Deletes the old handler, s.t. max. 1 handler is active at each point in time.
+	 * 
+	 * @param handler : The {@link EventHandler} for {@link KeyEvent}s.
+	 */
+	public void registerKeyHandler(EventHandler<? super KeyEvent> handler) {
+		if (current_key_handler != null) {
+			img_view.removeEventFilter(KeyEvent.ANY, current_key_handler);
+		}
+		
+		current_key_handler = handler;
+		img_view.addEventFilter(KeyEvent.ANY, current_key_handler);
 	}
 }

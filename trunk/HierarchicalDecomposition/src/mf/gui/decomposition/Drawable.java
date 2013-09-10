@@ -2,6 +2,7 @@ package mf.gui.decomposition;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import mf.gui.Markable;
@@ -57,6 +58,11 @@ public abstract class Drawable implements EventHandler<Event>{
 		if (event instanceof ScrollEvent) {
 			handleScrollEvent((ScrollEvent)event);
 		}
+		
+		if (event instanceof KeyEvent) {
+			handleKeyEvent((KeyEvent)event);
+		}
+		
 	}
 	
 	/**
@@ -69,6 +75,7 @@ public abstract class Drawable implements EventHandler<Event>{
 	public final void activate() {
 		m.registerMouseHandler(this);
 		m.registerScrollHandler(this);
+		m.registerKeyHandler(this);
 		
 		onActivate();
 	}
@@ -90,6 +97,16 @@ public abstract class Drawable implements EventHandler<Event>{
 	 * @param event : The {@link ScrollEvent} 
 	 */
 	public void handleScrollEvent(ScrollEvent event) {
+		event.consume();
+	}
+	
+	/**
+	 * Handler for a {@link KeyEvent}. Does nothing but consume the event.
+	 * To implement custom behavior for scroll events override this method.
+	 * 
+	 * @param event : The {@link KeyEvent} 
+	 */
+	public void handleKeyEvent(KeyEvent event) {
 		event.consume();
 	}
 	
