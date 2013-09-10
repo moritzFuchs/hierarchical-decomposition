@@ -1,42 +1,38 @@
 package mf.gui;
 	
-import java.io.File;
-
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.application.Application;
-import javafx.stage.Stage;
-import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Side;
 
+/**
+ * GUI starting point. Creates the {@link TabView}, a Welcome-Tab and a '+' Button.
+ * 
+ * @author moritzfuchs
+ * @date 04.09.2013
+ *
+ */
 public class Main extends Application {
-//	@Override
-//	public void start(Stage primaryStage) {
-//		try {
-//			BorderPane root = new BorderPane();
-//			Scene scene = new Scene(root,400,400);
-//			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-//			primaryStage.setScene(scene);
-//			primaryStage.show();
-//		} catch(Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
 	
+	/**
+	 * Launches the application
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		launch(args);
 	}
 	
-	 
+	 /**
+	  * Initialize the application. Generates a {@link BorderPane} with a {@link TabPane} on the Top-position.
+	  * Adds a 'Welcome'-Tab and a '+'-Button
+	  * 
+	  * @param primaryStage : The primary stage for the application
+	  */
 	public void init(Stage primaryStage) {
 		primaryStage.setResizable(false);
 		
@@ -62,27 +58,11 @@ public class Main extends Application {
 	    borderPane.setCenter(tabPane);
 	    root.getChildren().add(borderPane);
 	}
-	
+
 	 @Override
 	 public void start(Stage primaryStage) {
 		init(primaryStage);
 
 	    primaryStage.show();
-		 /*
-	    primaryStage.setTitle("Load Image");
-	        
-	    StackPane sp = new StackPane();
-	    Image img = new Image("file:/Users/moritzfuchs/Desktop/image.jpg");
-	    ImageView imgView = new ImageView(img);
-	    sp.getChildren().add(imgView);
-	       
-	    imgView.setOnMouseClicked(new ClickHandler());
-	        
-	    System.out.println(imgView.onMouseClickedProperty());
-	        
-	    //Adding HBox to the scene
-	    Scene scene = new Scene(sp);
-	    primaryStage.setScene(scene);
-	    primaryStage.show();*/
 	}
 }

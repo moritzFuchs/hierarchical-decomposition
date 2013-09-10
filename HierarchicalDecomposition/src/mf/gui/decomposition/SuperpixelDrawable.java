@@ -83,15 +83,13 @@ public class SuperpixelDrawable extends Drawable implements EventHandler<Event>{
 		
 		event.consume();
 	}
+		
 	
+	/**
+	 * Clear the canvas when this Drawable is activated
+	 */
 	@Override
-	public void handleKeyEvent(KeyEvent event) {
-		System.out.println(event);
+	public void onActivate() {
+		m.clear();
 	}
-	
-	@Override
-	public void handleScrollEvent(ScrollEvent event) {
-		event.consume();
-	}
-	
 }

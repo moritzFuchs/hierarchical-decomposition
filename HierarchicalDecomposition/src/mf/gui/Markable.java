@@ -10,7 +10,6 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 
 public interface Markable {
-
 	public void markPixel(Integer x , Integer y);
 	public void markPixel(Integer x , Integer y, Color c);
 	public Color getColor(Integer x , Integer y);

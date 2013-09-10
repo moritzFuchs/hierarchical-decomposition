@@ -2,6 +2,7 @@ package mf.gui;
 
 import java.io.File;
 
+import name.antonsmirnov.javafx.dialog.Dialog;
 import mf.gui.decomposition.Drawable;
 import mf.gui.decomposition.NoDecomposition;
 import mf.gui.decomposition.SuperpixelDrawable;
@@ -18,8 +19,19 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.DirectoryChooser;
 
+/**
+ * Handles the creation of a new Tab.
+ * 
+ * @author moritzfuchs
+ * @date 05.09.2013
+ *
+ */
 public class NewTabHandler implements EventHandler<Event> {
 
+	/**
+	 * Create a new Tab:
+	 * A Tab consists of a {@link BorderPane} with a {@link ListView} on the left position and a {@link DrawableImageView} on the center position. 
+	 */
 	@Override
 	public void handle(Event event) {
 		
@@ -37,12 +49,17 @@ public class NewTabHandler implements EventHandler<Event> {
 			
 			File img = new File(img_path);
 			
-			if (!dir.isDirectory() || !img.exists()) {
+			if (!dir.isDirectory()) {
+				Dialog.showWarning("Not a folder.", "Sorry, this is not a folder.");
 				pane.getSelectionModel().select(0);
 				return;
 			}
 			
-			//TODO: Assert that image exists in folder
+			if (!img.exists()) {
+				Dialog.showWarning("No image found in folder", "Sorry, I could not find a image in this folder. Make sure that there exists an image named 'image.jpg'.");
+				pane.getSelectionModel().select(0);
+				return;
+			}
 			
 			Tab new_tab = new Tab();
 			new_tab.setText(dir.getName());
