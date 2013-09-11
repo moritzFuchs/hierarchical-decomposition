@@ -19,26 +19,64 @@ import com.google.common.collect.BiMap;
 
 public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 
+	/**
+	 * Logger object for this class
+	 */
 	private static final Logger LOGGER = LoggerFactory.getLogger(ModifiedEfficientKRVProcedure.class.getName());
 	
+	/**
+	 * If |A|+|B| gets below RESTART_BOUND * F_original, the KRV procedure needs to be restarted.
+ 	 */
+	private static final Double RESTART_BOUND = 7.0/8.0;
+	
+	/**
+	 * The graph G we want to decompose
+	 */
 	private Graph<V,E> g;
 	
-	private List<KRVStep<V,E>> partitionMatrices;
-
+	/**
+	 * The subdivision graph of G
+	 */
 	private SplitGraph<V, E> gPrime;
 	
+	/**
+	 * All KRVSteps that have been taken so far. Contains all information about flow vectors that we have.
+	 */
+	private List<KRVStep<V,E>> partitionMatrices;
+
+	/**
+	 * The set of active edges (=F on startup)
+	 */
 	private Set<E> A;
 	
+	/**
+	 * The set of inactive edges (= empty set on startup)
+	 */
 	private Set<E> B;
 
+	/**
+	 * Edge ID Map (unique ID for each edge)
+	 */
 	private BiMap<E, Integer> edgeNum;
 
+	/**
+	 * Potential bound we want to reach.
+	 */
 	private Double bound;
 	
+	/**
+	 * Current projection of the flow vectors onto a random unit vector r
+	 */
 	private DoubleMatrix1D projection;
 	
+	/**
+	 * The size of the initial F.
+	 */
 	private Integer originalClusterSize;
 	
+	/**
+	 * Potential computation object
+	 */
 	private KRVPotential<V,E> krvpot;
 	
 	
@@ -60,6 +98,11 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		this.krvpot = new KRVPotential<V,E>(partitionMatrices,A,edgeNum,g.edgeSet().size());
 	}
 	
+	/**
+	 * Performs the modified KRV iteration. 
+	 * 
+	 * @return Integer : The case number which the iteration ended up in. (you can mostly ignore this since the iteration ends in Case 2 since KRV restarts in Case 1)
+	 */
 	public Integer performKRV() {
 		
 		LOGGER.info("Starting modified KRV procedure.");
@@ -69,9 +112,6 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		Double current_potential = krvpot.getPotential();
 		
 		while (current_potential >= bound && A.size() > 1) {
-		
-			LOGGER.fine("A = " + A);
-			LOGGER.fine("B = " + B);	
 			
 			r = Util.getRandomDirection(g.edgeSet().size());
 			projection = FlowVectorProjector.getFlowVectorProjection(partitionMatrices , r);
@@ -81,21 +121,8 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			
 			/////////////////////////////// START DEBUG //////////////////////////////////////////////
 			
-			KRVPotential<V,E> k = new KRVPotential<V, E>(partitionMatrices, A, edgeNum, g.edgeSet().size());
-			
-			System.out.println("Potential-Difference: " + (krvpot.getPotential()-k.getPotential()));
-			
-			Double sum = 0.0;
-			for (SplitVertex<V, E> e : divider.getAs()) {
-				sum += projection.getQuick(edgeNum.get(gPrime.getOriginalEdge(e)));
-			}
-			System.out.println("Average projection length A_s: " + sum/divider.getAs().size());
-
-			sum = 0.0;
-			for (SplitVertex<V, E> e : divider.getAt()) {
-				sum += projection.getQuick(edgeNum.get(gPrime.getOriginalEdge(e)));
-			}
-			System.out.println("Average projection length A_t: " + sum/divider.getAs().size());
+			//Provide some debugging information
+			debugInformation(divider);
 			
 			/////////////////////////////// END DEBUG /////////////////////////////////////////////////
 			
@@ -106,8 +133,6 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			
 			gPrime.addSourceAndTarget(divider.getAs(), divider.getAt());
 
-			long time1 = System.currentTimeMillis();
-			
 			//Create the flow problem
 			FlowProblem<SplitVertex<V,E> , DefaultWeightedEdge> flow_problem = 
 				new UndirectedFlowProblem<SplitVertex<V,E>, DefaultWeightedEdge>(gPrime, gPrime.getFlowSource(), gPrime.getFlowTarget());
@@ -115,13 +140,9 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			//Compute maxFlow
 			Map <DefaultWeightedEdge , Double> maxFlow = flow_problem.getFlow();
 			
-			long time2 = System.currentTimeMillis();
-			System.out.println("Time Edmonds-Karp Flow : " + (time2-time1));
-			
 			//Rescale flow
 			FlowRescaler<V,E> rescaler = new FlowRescaler<V, E>();
 			Set<FlowPath<SplitVertex<V, E>, DefaultWeightedEdge>> paths = rescaler.rescaleFlow(gPrime, maxFlow, flow_problem);
-			
 			
 			// -------------------------------- CHECK IF DELETION OR MATCHING STEP PERFORMS BETTER ---------------------------------- //
 			
@@ -137,9 +158,36 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			
 			gPrime.removeSourceAndTarget();
 			gPrime.resetWeights();
+			
+			if (A.size() + B.size() < RESTART_BOUND * originalClusterSize) {
+				restart();
+			}
 		}
 
 		return getResultCase();
+	}
+
+	/**
+	 * Prints some random debug information (changes every now and then..)
+	 * 
+	 * @param divider
+	 */
+	private void debugInformation(PracticalVerticeDivider<V, E> divider) {
+		KRVPotential<V,E> k = new KRVPotential<V, E>(partitionMatrices, A, edgeNum, g.edgeSet().size());
+		
+		System.out.println("Potential-Difference: " + (krvpot.getPotential()-k.getPotential()));
+		
+		Double sum = 0.0;
+		for (SplitVertex<V, E> e : divider.getAs()) {
+			sum += projection.getQuick(edgeNum.get(gPrime.getOriginalEdge(e)));
+		}
+		System.out.println("Average projection length A_s: " + sum/divider.getAs().size());
+
+		sum = 0.0;
+		for (SplitVertex<V, E> e : divider.getAt()) {
+			sum += projection.getQuick(edgeNum.get(gPrime.getOriginalEdge(e)));
+		}
+		System.out.println("Average projection length A_t: " + sum/divider.getAs().size());
 	}
 	
 	/**
@@ -189,16 +237,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			//If the deletion step was 'big' we need to restart the KRV procedure with the new F = A_new + B_new
 			//This is similar to resetting the list of partition matrices and setting A = A + B
 			if (deletionStep.restartNeccessary()) {
-				partitionMatrices.clear();
-				
-				krvpot.restart();
-				
-				A.addAll(B);
-				B.clear();
-				
-				originalClusterSize = A.size();
-				
-				System.out.println("Restarted KRV");
+				restart();
 			} else {
 				partitionMatrices.add(deletionStep);
 				krvpot.permanentlyAddKRVStep(deletionStep);
@@ -207,6 +246,22 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		}
 		
 		return potential;
+	}
+
+	/**
+	 * Restarts the KRV procedure.
+	 */
+	private void restart() {
+		LOGGER.fine("Restarting KRV.");
+		
+		partitionMatrices.clear();
+		krvpot.restart();
+		
+		//F = A+B, therefore A = A+B after a restart.
+		A.addAll(B);
+		B.clear();
+		
+		originalClusterSize = A.size();
 	}
 
 	

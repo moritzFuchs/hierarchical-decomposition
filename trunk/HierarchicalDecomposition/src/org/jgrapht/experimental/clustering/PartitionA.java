@@ -11,7 +11,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
 /**
- * Implements PartitionA from 'Computing Cut-Based Hierarchical Decompositions in Almost linear time' by RŠcke, Shah, TŠubig (pages 4 - 10)
+ * Implements PartitionA from 'Computing Cut-Based Hierarchical Decompositions in Almost linear time' by Rï¿½cke, Shah, Tï¿½ubig (pages 4 - 10)
  * The Algorithm receives a Graph g and partitions it into sets Z_i s.t. for every Z_i: |Z_i| <= 3/4 |E|. Apart form that inter-cluster-edges
  * are a-flow-linked with a \in \Omega (1 / log^2 n)
  * 
