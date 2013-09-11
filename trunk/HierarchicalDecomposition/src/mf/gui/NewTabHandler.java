@@ -4,6 +4,7 @@ import java.io.File;
 
 import name.antonsmirnov.javafx.dialog.Dialog;
 import mf.gui.decomposition.Drawable;
+import mf.gui.decomposition.KRVDecomposition;
 import mf.gui.decomposition.NoDecomposition;
 import mf.gui.decomposition.SuperpixelDrawable;
 import mf.superpixel.SuperpixelDecomposition;
@@ -72,6 +73,9 @@ public class NewTabHandler implements EventHandler<Event> {
 		    BorderPane inner = new BorderPane();
 		    b.setCenter(inner);
 		    
+		    
+		    
+		    
 			DrawableImageView drawable = new DrawableImageView(img_path);
 		    
 //          canvas.setOnMouseClicked(new ClickHandler<MouseEvent>());
@@ -84,6 +88,20 @@ public class NewTabHandler implements EventHandler<Event> {
 		    		SuperpixelDrawable super_drawable = new SuperpixelDrawable(dec, file.getName(),drawable);
 		    		
 		    		items.add(super_drawable);
+		    	}
+		    	
+		    	if (name.toLowerCase().startsWith("tree") && name.toLowerCase().endsWith(".ser")) {
+		    		
+		    		String num_str = name.substring(4, name.length()-4);
+		    		
+		    		SuperpixelImport imp = new SuperpixelImport(file.getParent() + "/superpixel"+num_str+".mat" , drawable.getImage());
+		    		SuperpixelDecomposition dec = new SuperpixelDecomposition(imp.getSuperpixels(),imp.getPixelMap());
+		    		SuperpixelDrawable super_drawable = new SuperpixelDrawable(dec, file.getName(),drawable);
+		    		
+		    		KRVDecomposition krv_dec = new KRVDecomposition(file.getPath(), dec, drawable);
+		    		
+		    		items.add(krv_dec);
+		    		
 		    	}
 		    	
 		    	//TODO: Add more decompositions (KRV , Region growing)
