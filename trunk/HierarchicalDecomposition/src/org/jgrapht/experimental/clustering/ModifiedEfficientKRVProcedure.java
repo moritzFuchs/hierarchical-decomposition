@@ -83,17 +83,16 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 	public ModifiedEfficientKRVProcedure (Graph<V,E> g , SplitGraph<V,E> gPrime , Set<E> F , BiMap<E , Integer> edgeNum) {
 		this.g = g;
 		this.gPrime = gPrime;
+		this.edgeNum = edgeNum;
+		
+		this.partitionMatrices = new LinkedList<KRVStep<V,E>>();
+		
+		this.originalClusterSize = F.size();
 		
 		this.A = new HashSet<E>(F);
 		this.B = new HashSet<E>();
 
-		this.edgeNum = edgeNum;
-
-		this.bound = 1/(16 * Math.pow(g.vertexSet().size(),2)); 
-
-		this.partitionMatrices = new LinkedList<KRVStep<V,E>>(); 
-		
-		this.originalClusterSize = F.size();
+		this.bound = 1/(16 * Math.pow(g.vertexSet().size(),2));
 		
 		this.krvpot = new KRVPotential<V,E>(partitionMatrices,A,edgeNum,g.edgeSet().size());
 	}
@@ -146,7 +145,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			
 			// -------------------------------- CHECK IF DELETION OR MATCHING STEP PERFORMS BETTER ---------------------------------- //
 			
-			DeletionStepNew<V,E> deletionStep = new DeletionStepNew<V,E>(g,gPrime,edgeNum,originalClusterSize);
+			DeletionStepNew<V,E> deletionStep = new DeletionStepNew<V,E>(g,gPrime,edgeNum);
 			deletionStep.computeDeletionMatrix(A, B, divider.getAs(), divider.getAt(), flow_problem,paths);
 			deletionStep.getDeletionMatrix();
 			
@@ -234,15 +233,8 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			projection = deletionStep.applyStep(r , projection);
 			potential = deletionPotential;
 			
-			//If the deletion step was 'big' we need to restart the KRV procedure with the new F = A_new + B_new
-			//This is similar to resetting the list of partition matrices and setting A = A + B
-			if (deletionStep.restartNeccessary()) {
-				restart();
-			} else {
-				partitionMatrices.add(deletionStep);
-				krvpot.permanentlyAddKRVStep(deletionStep);
-				
-			}
+			partitionMatrices.add(deletionStep);
+			krvpot.permanentlyAddKRVStep(deletionStep);
 		}
 		
 		return potential;

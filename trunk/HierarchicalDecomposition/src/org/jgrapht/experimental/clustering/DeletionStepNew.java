@@ -11,7 +11,6 @@ import org.jgrapht.experimental.clustering.old.ModifiedKRVProcedure;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
-import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix2D;
 
 import com.google.common.collect.BiMap;
@@ -25,11 +24,6 @@ import com.google.common.collect.BiMap;
  * @param <E> : The type of edges
  */
 public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> {
-
-	/**
-	 * If F_new gets smaller than KRV_RESTART_BOUND * F_original we restart with A := A + B the KRV procudure
-	 */
-	private static final Double KRV_RESTART_BOUND = 7.0 / 8.0;
 
 	/**
 	 * The original graph G
@@ -57,16 +51,6 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 	private BiMap<E,Integer> edgeNum;
 
 	/**
-	 * Contains the size of the original clustering - the number of edges in F at the start of the KRV procedure
-	 */
-	private Integer originalClusteringSize;
-
-	/**
-	 * Indicator whether the KRV procedure will have to be restarted or not
-	 */
-	private Boolean restart_neccessary;
-
-	/**
 	 * The deletion matrix of the following form: x-axis: old flow vectors; y-axis: new flow vectors => new flow vector = sum of old flow vectors as described in the matrix (row sum = 1 for all active edges)
 	 */
 	private DeletionMatrix matrixContainer;
@@ -74,15 +58,11 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 	
 	public DeletionStepNew(Graph<V,E> g,
 			SplitGraph<V,E> gPrime,
-			BiMap<E , Integer> edgeNum,
-			Integer originalClusteringSize
+			BiMap<E , Integer> edgeNum
 			) {
 		this.g = g;
 		this.gPrime = gPrime;
 		this.edgeNum = edgeNum;
-		this.originalClusteringSize = originalClusteringSize;
-		this.restart_neccessary = false;
-		
 	}
 	
 	/**
@@ -120,12 +100,13 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 		newClustering.removeAll(gPrime.getOriginalEdges(A_t));
 		newClustering.addAll(C);	
 		
+		matrixContainer = new DeletionMatrix(deletionMatrix);
+		
 		if (Connectivity.isBalancedClustering(g, newClustering)) {
-			//Iteration done. Lemma returns with Case 1 and we need to restart the KRV procedure.
 			
 			/*
-			 * If ((A + B) - A_t) + C induces a balanced clustering we want to 'restart' the KRV procedure. 
-			 * Therefore we set A = F = ((A + B) - A_t) + C and reset the flow fectors to '1' for each e \in A = F
+			 * ((A + B) - A_t) + C induces a balanced clustering.
+			 * This means that F will probably be significantly smaller than before.
 			 */
 			A_new.addAll(B);
 			A_new.removeAll(gPrime.getOriginalEdges(A_t));
@@ -133,13 +114,9 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 			
 			B_new.clear();
 
-			/////////////////////////// RESTART //////////////////////////////////////
-			restart_neccessary = true;
+			deleteOldFlowVectors(A_t);
 			
 		} else { // In this case ((A + B) - A_s) + C induces a balanced clustering and we must move the flow vectors of A_s to the cut C
-		
-			matrixContainer = new DeletionMatrix(deletionMatrix);
-			
 			A_new.removeAll(gPrime.getOriginalEdges(A_s));
 	
 			//Compute the assignment of fractional flow vectors to cut edges
@@ -150,18 +127,6 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 			
 			//Delete all old flow vectors (those for edges in A_s \ A_new)
 			deleteOldFlowVectors(A_s);
-
-			/* 
-			 * If F = A + B gets too small we restart the KRV procedure. 
-			 * This is similar to putting A = F and resetting the flow vectors for A to have a unit of a unique commodity for each edge in A
-			 */ 
-			if (A_new.size() + B_new.size() < KRV_RESTART_BOUND * originalClusteringSize) {
-				A_new.addAll(B_new);
-				B_new.clear();
-				
-				/////////////////////////// RESTART //////////////////////////////////////
-				restart_neccessary = true;
-			}
 		}
 		
 		return matrixContainer;
@@ -177,15 +142,6 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 	}
 	
 	/**
-	 * Indicator whether the KRV procedure has to be restarted or not.
-	 * 
-	 * @return : True if the KRV procedure has to be restarted, false if not.
-	 */
-	public Boolean restartNeccessary() {
-		return restart_neccessary;
-	}
-
-	/**
 	 * Deleted old flow vectors that have been moved to cut edges. 
 	 * Deletes flow vectors for edges in the given set A if they have not been reassigned to A_new. (this can happen if the cut for an edge e=(u,v) is between s -- (u,v) and (u,v) -- u or v) 
 	 * 
@@ -195,10 +151,13 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 		for (SplitVertex<V,E> v : A) {
 			E originalEdge = gPrime.getOriginalEdge(v);
 			if (!A_new.contains(originalEdge)) {
-				
-				//The edge does not get a flow vector and is therefore set of 0
-				DoubleMatrix1D row = matrixContainer.getMatrix().viewRow(edgeNum.get(originalEdge));
-				row.assign(0.0);
+				try {
+					//The edge does not get a flow vector and is therefore set of 0
+					DoubleMatrix1D row = matrixContainer.getMatrix().viewRow(edgeNum.get(originalEdge));
+					row.assign(0.0);
+				}catch(Exception e) {
+					Integer a = 1;
+				}
 			}
 		}
 	}
@@ -319,16 +278,9 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 	@Override
 	public DoubleMatrix1D applyStep(DoubleMatrix1D r,
 			DoubleMatrix1D current_projection) {
-		DoubleMatrix1D new_projection;
-		if (!restart_neccessary) {
-			new_projection = current_projection.copy();
-			new_projection = matrixContainer.getMatrix().zMult(current_projection, new_projection);
-		} else {
-			new_projection = new DenseDoubleMatrix1D((int) current_projection.size());
-			for (E e : A_new) {
-				new_projection.setQuick(edgeNum.get(e), r.getQuick(edgeNum.get(e)));
-			}
-		}
+
+		DoubleMatrix1D new_projection = current_projection.copy();
+		new_projection = matrixContainer.getMatrix().zMult(current_projection, new_projection);
 		
 		return new_projection;
 	}
