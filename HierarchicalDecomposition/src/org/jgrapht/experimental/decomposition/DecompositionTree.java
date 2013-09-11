@@ -1,8 +1,11 @@
 package org.jgrapht.experimental.decomposition;
 
+import java.io.Serializable;
+
+import org.jgrapht.DirectedGraph;
 import org.jgrapht.experimental.clustering.TreeVertex;
 import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.graph.SimpleDirectedGraph;
 
 /**
  * Synchronized container for Decomposition tree
@@ -11,7 +14,9 @@ import org.jgrapht.graph.SimpleGraph;
  *
  * @param <V>
  */
-public class DecompositionTree<V> {
+public class DecompositionTree<V> implements Serializable{
+
+	private static final long serialVersionUID = 8279948299862555420L;
 
 	/**
 	 * The default weight of an edge in the decomposition tree (used if no weight is specified)
@@ -21,7 +26,7 @@ public class DecompositionTree<V> {
 	/**
 	 * The decomposition tree
 	 */
-	private SimpleGraph<TreeVertex<V>,DefaultWeightedEdge> tree;
+	private SimpleDirectedGraph<TreeVertex<V>,DefaultWeightedEdge> tree;
 	
 	/**
 	 * The root vertex of the decomposition tree
@@ -29,7 +34,7 @@ public class DecompositionTree<V> {
 	private TreeVertex<V> root;
 	
 	public DecompositionTree() {
-		tree = new SimpleGraph<TreeVertex<V> , DefaultWeightedEdge>(DefaultWeightedEdge.class);
+		tree = new SimpleDirectedGraph<TreeVertex<V> , DefaultWeightedEdge>(DefaultWeightedEdge.class);
 		root = new TreeVertex<V>();
 		tree.addVertex(root);
 	}
@@ -88,5 +93,9 @@ public class DecompositionTree<V> {
 	public synchronized void addEdge(TreeVertex<V> source , TreeVertex<V> target , Double weight) {
 		DefaultWeightedEdge e = tree.addEdge(source, target);
 		tree.setEdgeWeight(e, weight);
+	}
+	
+	public DirectedGraph<TreeVertex<V>,DefaultWeightedEdge> getGraph() {
+		return tree;
 	}
 }

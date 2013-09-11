@@ -1,6 +1,10 @@
 package org.jgrapht.experimental.clustering;
 
-public class TreeVertex<V> {
+import java.io.Serializable;
+
+public class TreeVertex<V> implements Serializable{
+	
+	private static final long serialVersionUID = 558289795544820071L;
 
 	/**
 	 * The vertex in the original graph G that is represented by this vertex in the decomposition tree. (null if this vertex is an inner vertex, not null otherwise)
