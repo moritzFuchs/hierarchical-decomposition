@@ -125,6 +125,10 @@ public class SuperpixelGraph{
 		return distance;
 	}
 	
+	public WeightedGraph<Integer , DefaultWeightedEdge> getGraph() {
+		return graph;
+	}
+	
 	/**
 	 * Exports the generated graph into the given file. Format : DOT
 	 * 
