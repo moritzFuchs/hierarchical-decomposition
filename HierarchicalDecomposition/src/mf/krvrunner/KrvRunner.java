@@ -50,7 +50,7 @@ public class KrvRunner {
 			FileOutputStream fileOut =
 			new FileOutputStream(base_path + "/tree200.ser");
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
-				out.writeObject(tree);
+			out.writeObject(tree);
 			
 			out.close();
 			fileOut.close();
