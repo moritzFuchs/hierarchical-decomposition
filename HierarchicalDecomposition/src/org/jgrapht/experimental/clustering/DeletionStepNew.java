@@ -11,7 +11,6 @@ import org.jgrapht.experimental.clustering.old.ModifiedKRVProcedure;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
-import cern.colt.matrix.tdouble.algo.DenseDoubleAlgebra;
 import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix2D;
 
@@ -102,7 +101,8 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 		
 		//Before doing anything every edge in A should keep its current projected flow vector (=> The submatrix with only A is the identity matrix)
 		for (E e : A) {
-			deletionMatrix.setQuick(edgeNum.get(e), edgeNum.get(e), 1.0);
+			Integer index = edgeNum.get(e);
+			deletionMatrix.setQuick(index, index, 1.0);
 		}
 		
 		A_new = new HashSet<E>();
@@ -121,7 +121,7 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 		newClustering.addAll(C);	
 		
 		if (Connectivity.isBalancedClustering(g, newClustering)) {
-			//Iteration done. Lemma returns with Case 1
+			//Iteration done. Lemma returns with Case 1 and we need to restart the KRV procedure.
 			
 			/*
 			 * If ((A + B) - A_t) + C induces a balanced clustering we want to 'restart' the KRV procedure. 
@@ -131,9 +131,8 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 			A_new.removeAll(gPrime.getOriginalEdges(A_t));
 			A_new.addAll(C);
 			
-			//B_new = C;
 			B_new.clear();
-			
+
 			/////////////////////////// RESTART //////////////////////////////////////
 			restart_neccessary = true;
 			
@@ -159,8 +158,6 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 			if (A_new.size() + B_new.size() < KRV_RESTART_BOUND * originalClusteringSize) {
 				A_new.addAll(B_new);
 				B_new.clear();
-				
-				
 				
 				/////////////////////////// RESTART //////////////////////////////////////
 				restart_neccessary = true;
@@ -218,16 +215,21 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 			
 			DoubleMatrix1D row = matrixContainer.getMatrix().viewRow(edgeNum.get(e));
 			
-			DenseDoubleAlgebra algebra = new DenseDoubleAlgebra();
-			Double len = algebra.norm2(row);
+//			DenseDoubleAlgebra algebra = new DenseDoubleAlgebra();
+//			Double len = algebra.norm2(row);
+			
+			Double len = row.zSum();
 			
 			if (len >= 1.0) {
+				//The flow vector assignment was big enough. Therefore the edge will get an flow vector.
 				A_new.add(e);
 				B_new.remove(e);
+
+				if (len > 1.0) {
+					//We need to make sure that the row sums up to 1, therefore we normalize the row.
+					row.normalize();
+				} 
 				
-				//The flow vector assignment was big enough. Therefore the edge will get an flow vector.
-				//We need to make sure that the flow vector has length 1, therefore we normalize the row.
-				row.normalize();
 			} else {
 				//The flow vector assignment was not big enough. Therefore the edge will not get any flow vector
 				B_new.add(e);
