@@ -24,12 +24,6 @@ public class TheoreticalVerticeDivider<V extends Comparable<V> , E> {
 		 * Divisions with potential less than DIVISION_POTENTIAL_BOUND times the potential of the whole set A are acceptable
 		 */
 		private static final double DIVISION_POTENTIAL_BOUND = 1.0/20.0;
-		
-		/**
-		 * Max. fraction of A that can become source edges. (if |A| < 1/MAX_SOURCE_EDGES then this bound is ignored!) 
-		 */
-		private static final double MAX_SOURCE_EDGES  = 1.0/8.0;
-		
 
 		/**
 		 * Unique Integer for each edge e in original Graph g
@@ -101,7 +95,7 @@ public class TheoreticalVerticeDivider<V extends Comparable<V> , E> {
 		 */
 		public void divideActiveVertices(SplitGraph<V, E> gPrime , Set<E> A , DoubleMatrix1D r) {
 
-			if (A.size() < 1.0 / MAX_SOURCE_EDGES) {
+			if (A.size() < 1.0 / DecompositionConstants.MAX_SOURCE_EDGES) {
 				smallSetSpecialCase(gPrime, A, r);
 			} else {
 				divideDefaultCase(gPrime, A, r);
@@ -211,7 +205,7 @@ public class TheoreticalVerticeDivider<V extends Comparable<V> , E> {
 			//Get A/8 edges with smallest projection and return them as A_s
 			Ordering<EdgeContainer> o = Ordering.natural();
 			
-			List<EdgeContainer> smallest = o.leastOf(edgeContainersL, (int)((double)A.size() * MAX_SOURCE_EDGES));
+			List<EdgeContainer> smallest = o.leastOf(edgeContainersL, (int)((double)A.size() * DecompositionConstants.MAX_SOURCE_EDGES));
 			
 			L.clear();
 			for (EdgeContainer container : smallest)
@@ -238,7 +232,7 @@ public class TheoreticalVerticeDivider<V extends Comparable<V> , E> {
 			//Get A/8 edges with smallest projetion and return them as A_s
 			Ordering<EdgeContainer> o = Ordering.natural();
 			
-			List<EdgeContainer> greatest = o.greatestOf(edgeContainersR, (int)((double)A.size() * MAX_SOURCE_EDGES));
+			List<EdgeContainer> greatest = o.greatestOf(edgeContainersR, (int)((double)A.size() * DecompositionConstants.MAX_SOURCE_EDGES));
 			
 			R.clear();
 			for (EdgeContainer container : greatest)
@@ -280,7 +274,7 @@ public class TheoreticalVerticeDivider<V extends Comparable<V> , E> {
 				
 			//A_s = A/8 e with largest u_e
 			Ordering<EdgeContainer> o = Ordering.natural();
-			List<EdgeContainer> greatest = o.greatestOf(edgeContainers, (int)((double)A.size() * MAX_SOURCE_EDGES));
+			List<EdgeContainer> greatest = o.greatestOf(edgeContainers, (int)((double)A.size() * DecompositionConstants.MAX_SOURCE_EDGES));
 			
 			R.clear();
 			for (EdgeContainer container : greatest) {
@@ -324,7 +318,7 @@ public class TheoreticalVerticeDivider<V extends Comparable<V> , E> {
 				
 			//A_s = A/8 e with largest u_e
 			Ordering<EdgeContainer> o = Ordering.natural();
-			List<EdgeContainer> smallest = o.leastOf(edgeContainers, (int)((double)A.size() * MAX_SOURCE_EDGES));
+			List<EdgeContainer> smallest = o.leastOf(edgeContainers, (int)((double)A.size() * DecompositionConstants.MAX_SOURCE_EDGES));
 			
 			R.clear();
 			for (EdgeContainer container : smallest) {

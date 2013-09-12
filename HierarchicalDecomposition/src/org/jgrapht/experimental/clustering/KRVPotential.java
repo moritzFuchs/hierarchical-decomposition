@@ -15,11 +15,7 @@ import cern.colt.matrix.tdouble.DoubleMatrix1D;
  * @param <E> : The type of edges
  */
 public class KRVPotential<V,E> {
-
-	/**
-	 * Number of iterations that are made for computing the potential
-	 */
-	private static final int ITERATIONS = 100;
+	
 	private Map<E, Integer> edgeNum;
 	private List<KRVStep<V,E>> krvsteps;
 	
@@ -40,8 +36,8 @@ public class KRVPotential<V,E> {
 		this.edgeNum = edgeNum;
 		this.m = m;
 		
-		projections = new DoubleMatrix1D[ITERATIONS];
-		randomDirections = new DoubleMatrix1D[ITERATIONS];
+		projections = new DoubleMatrix1D[DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS];
+		randomDirections = new DoubleMatrix1D[DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS];
 		
 		precomputeProjections();
 	}
@@ -50,7 +46,7 @@ public class KRVPotential<V,E> {
 	 * KRVProcedure has restarted. Reset the projections
 	 */
 	public void restart() {
-		for (int i=0;i<ITERATIONS;i++) {
+		for (int i=0;i<DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS;i++) {
 			projections[i] = randomDirections[i];
 		}
 	}
@@ -59,7 +55,7 @@ public class KRVPotential<V,E> {
 	 * Precomputes projections of the flow vectors onto random directions
 	 */
 	private void precomputeProjections() {
-		for (int i=0;i<ITERATIONS;i++) {
+		for (int i=0;i<DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS;i++) {
 			DoubleMatrix1D r = Util.getRandomDirection(m);
 			DoubleMatrix1D projection = FlowVectorProjector.getFlowVectorProjection(krvsteps, r);
 			
@@ -74,7 +70,7 @@ public class KRVPotential<V,E> {
 	 * @param step : The KRVStep which will be applied
 	 */
 	public void permanentlyAddKRVStep(KRVStep<V,E> step) {
-		for (int i=0;i<ITERATIONS;i++) {
+		for (int i=0;i<DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS;i++) {
 			projections[i] = step.applyStep(randomDirections[i], projections[i]);
 		}
 		A = step.getA();
@@ -89,7 +85,7 @@ public class KRVPotential<V,E> {
 
 		Double total = 0.0;
 		
-		for (int i=0;i<ITERATIONS;i++) {
+		for (int i=0;i<DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS;i++) {
 			
 			Double average = computeAverageProjection(projections[i], A);
 			Double sum = 0.0;
@@ -101,7 +97,7 @@ public class KRVPotential<V,E> {
 			total += A.size() * sum;
 		}
 		
-		return total / ITERATIONS;
+		return total / DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS;
 	}
 	
 	/**
@@ -114,7 +110,7 @@ public class KRVPotential<V,E> {
 		
 		Double total = 0.0;
 		
-		for (int i=0;i<ITERATIONS;i++) {
+		for (int i=0;i<DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS;i++) {
 			
 			DoubleMatrix1D after = step.applyStep(randomDirections[i], projections[i]);
 			
@@ -126,7 +122,7 @@ public class KRVPotential<V,E> {
 			total += A_new.size() * sum;
 		}
 		
-		return total / ITERATIONS;
+		return total / DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS;
 	}
 	
 	/**

@@ -24,7 +24,7 @@ public class BalancedClustering<V,E> {
 		for (V v: g.vertexSet()) {
 			if (visited.get(v) == null) {
 				Integer reachable = bfs(g , v , visited , edges);
-				if (reachable > g.vertexSet().size() * 3 / 4) {
+				if (reachable > g.vertexSet().size() * DecompositionConstants.BALANCED_CLUSTERING_BOUND) {
 					return false;
 				}
 			}

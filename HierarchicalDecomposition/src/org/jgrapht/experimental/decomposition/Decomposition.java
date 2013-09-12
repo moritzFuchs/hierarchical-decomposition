@@ -8,14 +8,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.jgrapht.Graph;
+import org.jgrapht.experimental.clustering.DecompositionConstants;
 
 //TODO: Document
 public class Decomposition<V extends Comparable<V>,E> extends Observable implements Observer{
-
-	/**
-	 * Multiple of number of CPUs we want to use
-	 */
-	private static final int N = 2;
 
 	/**
 	 * Graph we want to decompose
@@ -47,7 +43,7 @@ public class Decomposition<V extends Comparable<V>,E> extends Observable impleme
 	public Decomposition(Graph<V,E> g) {
 		this.originalGraph = g;
 	
-		this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * N);
+		this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * DecompositionConstants.MULTIPLE_OF_CORES);
 		
 		//Generate decomposition tree
 		this.decomposition = new DecompositionTree<V>();
