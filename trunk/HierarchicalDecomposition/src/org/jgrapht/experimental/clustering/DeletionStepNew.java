@@ -55,6 +55,9 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 	 */
 	private DeletionMatrix matrixContainer;
 	
+	private Set<E> A_old;
+	private Set<E> B_old;
+	
 	
 	public DeletionStepNew(Graph<V,E> g,
 			SplitGraph<V,E> gPrime,
@@ -76,6 +79,9 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 			Set<SplitVertex<V,E>> A_t , 
 			FlowProblem<SplitVertex<V,E>, DefaultWeightedEdge> flow_problem , 
 			Set<FlowPath<SplitVertex<V,E>,DefaultWeightedEdge>> paths) {
+		
+		A_old = A;
+		B_old = B;
 		
 		SparseDoubleMatrix2D deletionMatrix = new SparseDoubleMatrix2D(g.edgeSet().size(),g.edgeSet().size());
 		
@@ -283,6 +289,10 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 		new_projection = matrixContainer.getMatrix().zMult(current_projection, new_projection);
 		
 		return new_projection;
+	}
+	
+	public Boolean noProgress() {
+		return A_old.containsAll(A_new) && A_new.containsAll(A_old) && B_old.containsAll(B_new) && B_new.containsAll(B_old);
 	}
 
 }

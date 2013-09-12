@@ -1,9 +1,14 @@
 package org.jgrapht.experimental.decomposition;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.experimental.clustering.TreeVertex;
+import org.jgrapht.experimental.clustering.TreeVertexType;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
 
@@ -29,11 +34,17 @@ public class DecompositionTree<V> implements Serializable{
 	private SimpleDirectedGraph<TreeVertex<V>,DefaultWeightedEdge> tree;
 	
 	/**
+	 * Map from vertices of the original graph G to leafs in the decomposition tree (used to get the leaf to a given vertex)
+	 */
+	private Map<V , TreeVertex<V>> leaf_map;
+	
+	/**
 	 * The root vertex of the decomposition tree
 	 */
 	private TreeVertex<V> root;
 	
 	public DecompositionTree() {
+		leaf_map = new HashMap<V , TreeVertex<V>>();
 		tree = new SimpleDirectedGraph<TreeVertex<V> , DefaultWeightedEdge>(DefaultWeightedEdge.class);
 		root = new TreeVertex<V>();
 		tree.addVertex(root);
@@ -61,7 +72,41 @@ public class DecompositionTree<V> implements Serializable{
 		TreeVertex<V> vertex = new TreeVertex<V>(v);
 		tree.addVertex(vertex);
 		
+		leaf_map.put(v, vertex);
+		
 		return vertex;
+	}
+	
+	/**
+	 * Returns the leaf vertex corresponding to a given vertex v of the original (now decomposed) graph G
+	 * 
+	 * @param v : The vertex of the original graph G
+	 * @return : The leaf corresponding to the given vertex
+	 */
+	public TreeVertex<V> getLeaf(V v) {
+		return leaf_map.get(v);
+	}
+	
+	/**
+	 * Returns corresponding vertices of all leaf vertices under a given {@link TreeVertex}
+	 * 
+	 * @param vertex : The starting {@link TreeVertex}
+	 * @return : Set of vertices of the original graph under the given {@link TreeVertex}
+	 */
+	public Set<V> getAll(TreeVertex<V> vertex) {
+		
+		Set<V> set = new HashSet<V>();
+		
+		if (vertex.getType().equals(TreeVertexType.LEAF)) {
+			set.add(vertex.getVertex());
+		} else {
+			for (DefaultWeightedEdge e : tree.outgoingEdgesOf(vertex)) {
+				TreeVertex<V> next = tree.getEdgeTarget(e);
+				set.addAll(getAll(next));
+			}
+		}
+		
+		return set;
 	}
 	
 	/**

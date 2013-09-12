@@ -19,7 +19,7 @@ public class KRVPotential<V,E> {
 	/**
 	 * Number of iterations that are made for computing the potential
 	 */
-	private static final int ITERATIONS = 10;
+	private static final int ITERATIONS = 100;
 	private Map<E, Integer> edgeNum;
 	private List<KRVStep<V,E>> krvsteps;
 	
@@ -96,7 +96,9 @@ public class KRVPotential<V,E> {
 			for(E e : A) {
 				sum += Math.pow(projections[i].getQuick(edgeNum.get(e)) - average , 2);
 			}
-			total += m * sum;
+			
+			//Could also be m instead of A.size()
+			total += A.size() * sum;
 		}
 		
 		return total / ITERATIONS;
@@ -116,12 +118,12 @@ public class KRVPotential<V,E> {
 			
 			DoubleMatrix1D after = step.applyStep(randomDirections[i], projections[i]);
 			
-			Double average = computeAverageProjection(after, A);
+			Double average = computeAverageProjection(after, A_new);
 			Double sum = 0.0;
 			for(E e : A_new) {
 				sum += Math.pow(after.getQuick(edgeNum.get(e)) - average , 2);
 			}
-			total += m * sum;
+			total += A_new.size() * sum;
 		}
 		
 		return total / ITERATIONS;
