@@ -16,6 +16,7 @@ import cern.colt.matrix.tdouble.DoubleMatrix1D;
 import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix1D;
 
 import com.google.common.collect.BiMap;
+import com.google.common.collect.Iterables;
 
 public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 
@@ -92,7 +93,11 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		this.A = new HashSet<E>(F);
 		this.B = new HashSet<E>();
 
+		//This is the theoretical bound
 		this.bound = 1/(16 * Math.pow(g.vertexSet().size(),2));
+		
+		//Let's make it practical!
+		this.bound = this.bound * 10* g.vertexSet().size();
 		
 		this.krvpot = new KRVPotential<V,E>(partitionMatrices,A,edgeNum,g.edgeSet().size());
 	}
@@ -118,7 +123,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			PracticalVerticeDivider<V,E> divider = new PracticalVerticeDivider<V,E>(projection , edgeNum);
 			divider.divideActiveVertices(gPrime, A, projection);
 			
-			/////////////////////////////// START DEBUG //////////////////////////////////////////////
+			/////////////////////////////// START DEBUG ///////////////////////////////////////////////
 			
 			//Provide some debugging information
 			debugInformation(divider);
@@ -159,7 +164,8 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			gPrime.resetWeights();
 			
 			if (A.size() + B.size() < RESTART_BOUND * originalClusterSize) {
-				restart();
+				System.out.println("Restarting KRV");
+				current_potential = restart();
 			}
 		}
 
@@ -203,23 +209,17 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			DoubleMatrix1D r,
 			Double current_potential) {
 		
-		List<KRVStep<V,E>> partitionMatricesMatching = new LinkedList<KRVStep<V,E>>(partitionMatrices);
-		partitionMatricesMatching.add(matchingStep);
-		
-		List<KRVStep<V,E>> partitionMatricesDeletion = new LinkedList<KRVStep<V,E>>(partitionMatrices);
-		partitionMatricesDeletion.add(deletionStep);
-		
 		Double matchingPotential = krvpot.getPotentialAfterStep(A , matchingStep);
 		Double deletionPotential = krvpot.getPotentialAfterStep(deletionStep.getA() , deletionStep);
 		
 //		System.out.println("Current projection: " + projection);
 		System.out.println("Current potential: " + current_potential);
 		System.out.println("Potential for matching: " + matchingPotential);
-		System.out.println("Potential for deletion: " + deletionPotential);
+		System.out.println("Potential for deletion: " + deletionPotential + " Changed: " + deletionStep.noProgress());
 		System.out.println("Bound : " + bound);
 		
 		Double potential;
-		if (matchingPotential <= deletionPotential) {
+		if (deletionStep.noProgress() || matchingPotential <= deletionPotential) {
 			projection = matchingStep.applyStep(r , projection);
 			potential = matchingPotential;
 			
@@ -227,6 +227,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			
 			partitionMatrices.add(matchingStep);
 		} else {
+			System.out.println("Applying deletion step");
 			A = deletionStep.getA();
 			B = deletionStep.getB();
 			
@@ -241,9 +242,11 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 	}
 
 	/**
-	 * Restarts the KRV procedure.
+	 * Restarts the KRV procedure and returns new current potential
+	 * 
+	 * @return Double: The new current potential 
 	 */
-	private void restart() {
+	private Double restart() {
 		LOGGER.fine("Restarting KRV.");
 		
 		partitionMatrices.clear();
@@ -252,8 +255,10 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		//F = A+B, therefore A = A+B after a restart.
 		A.addAll(B);
 		B.clear();
-		
+			
 		originalClusterSize = A.size();
+		
+		return krvpot.getPotential();
 	}
 
 	
