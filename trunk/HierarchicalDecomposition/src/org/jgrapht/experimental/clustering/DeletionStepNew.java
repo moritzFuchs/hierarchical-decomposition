@@ -157,13 +157,9 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 		for (SplitVertex<V,E> v : A) {
 			E originalEdge = gPrime.getOriginalEdge(v);
 			if (!A_new.contains(originalEdge)) {
-				try {
-					//The edge does not get a flow vector and is therefore set of 0
-					DoubleMatrix1D row = matrixContainer.getMatrix().viewRow(edgeNum.get(originalEdge));
-					row.assign(0.0);
-				}catch(Exception e) {
-					Integer a = 1;
-				}
+				//The edge does not get a flow vector and is therefore set of 0
+				DoubleMatrix1D row = matrixContainer.getMatrix().viewRow(edgeNum.get(originalEdge));
+				row.assign(0.0);
 			}
 		}
 	}

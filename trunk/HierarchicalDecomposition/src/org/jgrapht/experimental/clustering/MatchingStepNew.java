@@ -20,11 +20,6 @@ import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix2D;
 public class MatchingStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> {
 
 	/**
-	 * Fraction of weight that is moved with each matching
-	 */
-	private static final Double FLOW_MOVEMENT_FRACTION = 0.5;
-	
-	/**
 	 * Container for the computed matching matrix
 	 */
 	private MatchingMatrix matrixContainer;
@@ -80,11 +75,11 @@ public class MatchingStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 			Integer toNum = edgeNum.get(toEdge);
 			Integer fromNum = edgeNum.get(fromEdge);
 			
-			matrix.setQuick(fromNum, toNum, weight * FLOW_MOVEMENT_FRACTION);
-			matrix.setQuick(toNum, fromNum, weight * FLOW_MOVEMENT_FRACTION);
+			matrix.setQuick(fromNum, toNum, weight * DecompositionConstants.FLOW_MOVEMENT_FRACTION);
+			matrix.setQuick(toNum, fromNum, weight * DecompositionConstants.FLOW_MOVEMENT_FRACTION);
 			
-			matrix.setQuick(toNum, toNum, matrix.getQuick(toNum,toNum) - weight * FLOW_MOVEMENT_FRACTION);
-			matrix.setQuick(fromNum, fromNum, matrix.getQuick(fromNum,fromNum) - weight * FLOW_MOVEMENT_FRACTION);
+			matrix.setQuick(toNum, toNum, matrix.getQuick(toNum,toNum) - weight * DecompositionConstants.FLOW_MOVEMENT_FRACTION);
+			matrix.setQuick(fromNum, fromNum, matrix.getQuick(fromNum,fromNum) - weight * DecompositionConstants.FLOW_MOVEMENT_FRACTION);
 		}
 		
 		matrixContainer = new MatchingMatrix(matrix);

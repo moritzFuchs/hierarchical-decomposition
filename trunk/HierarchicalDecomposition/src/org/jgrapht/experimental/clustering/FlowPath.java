@@ -2,6 +2,8 @@ package org.jgrapht.experimental.clustering;
 
 import java.util.List;
 
+//TODO: Document
+
 public class FlowPath<V,E> {
 
 	private Double weight;

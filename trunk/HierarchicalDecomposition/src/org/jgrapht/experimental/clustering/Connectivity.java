@@ -17,11 +17,6 @@ import org.jgrapht.Graph;
  */
 public class Connectivity {
 	
-	/**
-	 * Each cluster must be smaller than  BALANCED_CLUSTERING_UPPER_BOUND * |V| for the clustering to be 'balanced'
-	 */
-	private static final double BALANCED_CLUSTERING_UPPER_BOUND = 3.0/4.0;
-	
 	
 	/**
 	 * Checks if there is a s-t-flow > 0 in g 
@@ -86,7 +81,7 @@ public class Connectivity {
 				Set<V> reachable_nodes = Connectivity.bfs(g , v , visited , edges);
 
 				
-				if (reachable_nodes.size() > g.vertexSet().size() * BALANCED_CLUSTERING_UPPER_BOUND) {
+				if (reachable_nodes.size() > g.vertexSet().size() * DecompositionConstants.BALANCED_CLUSTERING_BOUND) {
 					return false;
 				}
 			}

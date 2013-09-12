@@ -25,10 +25,6 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 	 */
 	private static final Logger LOGGER = LoggerFactory.getLogger(ModifiedEfficientKRVProcedure.class.getName());
 	
-	/**
-	 * If |A|+|B| gets below RESTART_BOUND * F_original, the KRV procedure needs to be restarted.
- 	 */
-	private static final Double RESTART_BOUND = 7.0/8.0;
 	
 	/**
 	 * The graph G we want to decompose
@@ -163,7 +159,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			gPrime.removeSourceAndTarget();
 			gPrime.resetWeights();
 			
-			if (A.size() + B.size() < RESTART_BOUND * originalClusterSize) {
+			if (A.size() + B.size() < DecompositionConstants.KRV_RESTART_BOUND * originalClusterSize) {
 				System.out.println("Restarting KRV");
 				current_potential = restart();
 			}

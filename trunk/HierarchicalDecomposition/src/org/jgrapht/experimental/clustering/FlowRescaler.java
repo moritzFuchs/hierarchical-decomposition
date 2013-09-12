@@ -17,11 +17,6 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 public class FlowRescaler<V extends Comparable<V>,E> {
 
 	/**
-	 * All flow paths that are bigger than the bound will be rescaled to have a weight of exactly 1.0
-	 */
-	private static final Double RESCALE_BOUND = 0.5; 
-	
-	/**
 	 * Rescales a given flow in G'_st as follows: For all edges s -- x_e with flow >= RESCALE_BOUND rescale the corresponding flow paths such that s -- x_e holds 1 unit of flow
 	 * 
 	 * @param gPrime
@@ -38,7 +33,7 @@ public class FlowRescaler<V extends Comparable<V>,E> {
 		
 		//Find out which edges have to be scaled
 		for (DefaultWeightedEdge e : gPrime.edgesOf(gPrime.getFlowSource())) {
-			if (flow.get(e) >= RESCALE_BOUND)
+			if (flow.get(e) >= DecompositionConstants.RESCALE_BOUND)
 				pathFactors.put(e, 1 / flow.get(e));
 		}
 		

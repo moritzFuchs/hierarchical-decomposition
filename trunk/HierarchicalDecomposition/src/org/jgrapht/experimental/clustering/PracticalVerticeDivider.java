@@ -9,7 +9,6 @@ import cern.colt.matrix.tdouble.DoubleMatrix1D;
 
 import com.google.common.collect.Ordering;
 
-//TODO: Class is kind of long, think of way to split it into 2 or maybe 3 classes (that we might be able to test separately)
 /**
  * Takes a set A and divides it into 2 sets A_s and A_t such that the flow vector projections of edges in A_s are 'far away' from the median and |A_t| >= |A|/2 and |A_s| <= |A|/8 
  * 
@@ -20,11 +19,6 @@ import com.google.common.collect.Ordering;
  */
 public class PracticalVerticeDivider<V extends Comparable<V> , E> {
 
-		/**
-		 * Max. fraction of A that can become source edges. (if |A| < 1/MAX_SOURCE_EDGES then this bound is ignored!) 
-		 */
-		private static final double MAX_SOURCE_EDGES  = 1.0/4.0;
-		
 		/**
 		 * Unique Integer for each edge e in original Graph g
 		 */
@@ -95,7 +89,7 @@ public class PracticalVerticeDivider<V extends Comparable<V> , E> {
 		 */
 		public void divideActiveVertices(SplitGraph<V, E> gPrime , Set<E> A , DoubleMatrix1D r) {
 
-			if (A.size() < 1.0 / MAX_SOURCE_EDGES) {
+			if (A.size() < 1.0 / DecompositionConstants.MAX_SOURCE_EDGES) {
 				smallSetSpecialCase(gPrime, A, r);
 			} else {
 				divideDefaultCase(gPrime, A, r);
@@ -163,7 +157,7 @@ public class PracticalVerticeDivider<V extends Comparable<V> , E> {
 			//Get A/8 edges with smallest projection and return them as A_s
 			Ordering<EdgeContainer> o = Ordering.natural();
 			
-			List<EdgeContainer> smallest = o.leastOf(edgeContainersL, (int)((double)A.size() * MAX_SOURCE_EDGES));
+			List<EdgeContainer> smallest = o.leastOf(edgeContainersL, (int)((double)A.size() * DecompositionConstants.MAX_SOURCE_EDGES));
 			
 			L.clear();
 			for (EdgeContainer container : smallest)
@@ -190,7 +184,7 @@ public class PracticalVerticeDivider<V extends Comparable<V> , E> {
 			//Get A/8 edges with smallest projetion and return them as A_s
 			Ordering<EdgeContainer> o = Ordering.natural();
 			
-			List<EdgeContainer> greatest = o.greatestOf(edgeContainersR, (int)((double)A.size() * MAX_SOURCE_EDGES));
+			List<EdgeContainer> greatest = o.greatestOf(edgeContainersR, (int)((double)A.size() * DecompositionConstants.MAX_SOURCE_EDGES));
 			
 			R.clear();
 			for (EdgeContainer container : greatest)
