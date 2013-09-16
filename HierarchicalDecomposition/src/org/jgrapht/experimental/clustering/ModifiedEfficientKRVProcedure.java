@@ -95,7 +95,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		//Let's make it practical!
 		this.bound = this.bound * 10* g.vertexSet().size();
 		
-		this.krvpot = new KRVPotential<V,E>(partitionMatrices,A,edgeNum,g.edgeSet().size());
+		this.krvpot = new KRVPotential<V,E>(g,partitionMatrices,A,edgeNum,g.edgeSet().size());
 	}
 	
 	/**
@@ -108,13 +108,13 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		LOGGER.info("Starting modified KRV procedure.");
 		
 		DenseDoubleMatrix1D r = Util.getRandomDirection(g.edgeSet().size());
-		projection = FlowVectorProjector.getFlowVectorProjection(partitionMatrices , r);
+		projection = FlowVectorProjector.getFlowVectorProjection(g,A,edgeNum,partitionMatrices , r);
 		Double current_potential = krvpot.getPotential();
 		
 		while (current_potential >= bound && A.size() > 1) {
 			
 			r = Util.getRandomDirection(g.edgeSet().size());
-			projection = FlowVectorProjector.getFlowVectorProjection(partitionMatrices , r);
+			projection = FlowVectorProjector.getFlowVectorProjection(g,A,edgeNum,partitionMatrices , r);
 						
 			PracticalVerticeDivider<V,E> divider = new PracticalVerticeDivider<V,E>(projection , edgeNum);
 			divider.divideActiveVertices(gPrime, A, projection);
@@ -143,6 +143,8 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			//Rescale flow
 			FlowRescaler<V,E> rescaler = new FlowRescaler<V, E>();
 			Set<FlowPath<SplitVertex<V, E>, DefaultWeightedEdge>> paths = rescaler.rescaleFlow(gPrime, maxFlow, flow_problem);
+			
+			
 			
 			// -------------------------------- CHECK IF DELETION OR MATCHING STEP PERFORMS BETTER ---------------------------------- //
 			
@@ -174,7 +176,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 	 * @param divider
 	 */
 	private void debugInformation(PracticalVerticeDivider<V, E> divider) {
-		KRVPotential<V,E> k = new KRVPotential<V, E>(partitionMatrices, A, edgeNum, g.edgeSet().size());
+		KRVPotential<V,E> k = new KRVPotential<V, E>(g,partitionMatrices, A, edgeNum, g.edgeSet().size());
 		
 		System.out.println("Potential-Difference: " + (krvpot.getPotential()-k.getPotential()));
 		

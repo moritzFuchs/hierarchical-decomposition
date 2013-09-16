@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.jgrapht.Graph;
+
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
 
 /**
@@ -28,9 +30,12 @@ public class KRVPotential<V,E> {
 	private DoubleMatrix1D[] projections;
 	private DoubleMatrix1D[] randomDirections;
 	
+	private Graph<V,E> g;
 	
-	public KRVPotential(List<KRVStep<V,E>> matrices , Set<E> A,Map<E , Integer> edgeNum, Integer m) {
+	
+	public KRVPotential(Graph<V,E> g, List<KRVStep<V,E>> matrices , Set<E> A,Map<E , Integer> edgeNum, Integer m) {
 		
+		this.g = g;
 		this.krvsteps = matrices;
 		this.A = A;
 		this.edgeNum = edgeNum;
@@ -57,7 +62,7 @@ public class KRVPotential<V,E> {
 	private void precomputeProjections() {
 		for (int i=0;i<DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS;i++) {
 			DoubleMatrix1D r = Util.getRandomDirection(m);
-			DoubleMatrix1D projection = FlowVectorProjector.getFlowVectorProjection(krvsteps, r);
+			DoubleMatrix1D projection = FlowVectorProjector.getFlowVectorProjection(g,A,edgeNum,krvsteps, r);
 			
 			projections[i] = projection;
 			randomDirections[i] = r;

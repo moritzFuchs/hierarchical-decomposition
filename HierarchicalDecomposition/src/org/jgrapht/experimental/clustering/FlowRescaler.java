@@ -33,8 +33,8 @@ public class FlowRescaler<V extends Comparable<V>,E> {
 		
 		//Find out which edges have to be scaled
 		for (DefaultWeightedEdge e : gPrime.edgesOf(gPrime.getFlowSource())) {
-			if (flow.get(e) >= DecompositionConstants.RESCALE_BOUND)
-				pathFactors.put(e, 1 / flow.get(e));
+			if (flow.get(e) >= DecompositionConstants.RESCALE_BOUND * gPrime.getEdgeWeight(e))
+				pathFactors.put(e, gPrime.getEdgeWeight(e) / flow.get(e));
 		}
 		
 		//Next we need to scale each path accordingly 

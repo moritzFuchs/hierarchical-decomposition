@@ -125,19 +125,21 @@ public class SplitGraph<V extends Comparable<V>,E> extends SimpleGraph<SplitVert
 		this.addVertex(this.source);
 		this.addVertex(this.target);
 		
-		//Set all edge capacities to 2 
+		//Set all edge capacities to 
 		for (DefaultWeightedEdge e : this.edgeSet()) {
-			this.setEdgeWeight(e, 2 * getEdgeWeight(e));
+			this.setEdgeWeight(e, original_weights.get(e));
 		}
 		
 		//Connect all vertices in A_s to the source with capacity 1
 		for (SplitVertex<V,E> v : A_s) {
-			this.setEdgeWeight(this.addEdge(this.source, v) , 1);
+			E e = getOriginalEdge(v);
+			this.setEdgeWeight(this.addEdge(this.source, v) , g.getEdgeWeight(e));
 		}
 		
 		//Connect all vertices in A_t to the target with capacity 0.5
 		for (SplitVertex<V,E> v : A_t) {
-			this.setEdgeWeight(this.addEdge(v, this.target) , 0.5);
+			E e = getOriginalEdge(v);
+			this.setEdgeWeight(this.addEdge(v, this.target) , g.getEdgeWeight(e) * 0.5);
 		}
 	}
 	
