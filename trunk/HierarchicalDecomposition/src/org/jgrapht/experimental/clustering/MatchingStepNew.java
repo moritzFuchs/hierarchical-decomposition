@@ -72,14 +72,23 @@ public class MatchingStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 			E fromEdge = gPrime.getOriginalEdge(from);
 			E toEdge = gPrime.getOriginalEdge(to);
 			
-			Integer toNum = edgeNum.get(toEdge);
 			Integer fromNum = edgeNum.get(fromEdge);
+			Integer toNum = edgeNum.get(toEdge);
 			
-			matrix.setQuick(fromNum, toNum, weight * DecompositionConstants.FLOW_MOVEMENT_FRACTION);
-			matrix.setQuick(toNum, fromNum, weight * DecompositionConstants.FLOW_MOVEMENT_FRACTION);
+			/*
+			 * We need to make sure, that the outgoing flow-vector length is equal to the incoming flow vector length.
+			 * Since the weight is the absolute amount of flow we want to move, the matrix entries have to be percentages of the existing flow-vector,
+			 * s.t. percentage * edge capacity = weight.
+			 */
 			
-			matrix.setQuick(toNum, toNum, matrix.getQuick(toNum,toNum) - weight * DecompositionConstants.FLOW_MOVEMENT_FRACTION);
-			matrix.setQuick(fromNum, fromNum, matrix.getQuick(fromNum,fromNum) - weight * DecompositionConstants.FLOW_MOVEMENT_FRACTION);
+			Double percentage_from = weight / gPrime.getOriginalGraph().getEdgeWeight(fromEdge);
+			Double percentage_to = weight / gPrime.getOriginalGraph().getEdgeWeight(toEdge);
+
+			matrix.setQuick(fromNum, toNum, percentage_from * DecompositionConstants.FLOW_MOVEMENT_FRACTION);
+			matrix.setQuick(toNum, fromNum, percentage_to * DecompositionConstants.FLOW_MOVEMENT_FRACTION);
+			
+			matrix.setQuick(fromNum, fromNum, matrix.getQuick(fromNum,fromNum) - percentage_from * DecompositionConstants.FLOW_MOVEMENT_FRACTION);
+			matrix.setQuick(toNum, toNum, matrix.getQuick(toNum,toNum) - percentage_to * DecompositionConstants.FLOW_MOVEMENT_FRACTION);
 		}
 		
 		matrixContainer = new MatchingMatrix(matrix);

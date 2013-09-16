@@ -179,7 +179,7 @@ public class UndirectedFlowProblem<V extends Comparable<V> , E> implements FlowP
 		while(!q.isEmpty()) {
 			V v = q.poll();
 			for (DefaultWeightedEdge out_edge : directedG.outgoingEdgesOf(v)) {
-				if (directed_flow.get(out_edge) < directedG.getEdgeWeight(out_edge)) {
+				if (directed_flow.get(out_edge) + EdmondsKarpMaximumFlow.DEFAULT_EPSILON < directedG.getEdgeWeight(out_edge)) {
 					V source_vertex = directedG.getEdgeTarget(out_edge);
 					if (!seen.contains(source_vertex)) {
 						q.add(source_vertex);

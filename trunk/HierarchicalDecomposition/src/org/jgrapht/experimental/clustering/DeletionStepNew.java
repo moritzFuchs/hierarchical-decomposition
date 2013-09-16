@@ -179,16 +179,32 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 //			DenseDoubleAlgebra algebra = new DenseDoubleAlgebra();
 //			Double len = algebra.norm2(row);
 			
-			Double len = row.zSum();
+			Double len = 0.0;
+			for (int i=0;i<row.size();i++) {
+				len += row.getQuick(i) * g.getEdgeWeight(edgeNum.inverse().get(i));
+			}
 			
-			if (len >= 1.0) {
+			if (len >= g.getEdgeWeight(e)) {
 				//The flow vector assignment was big enough. Therefore the edge will get an flow vector.
 				A_new.add(e);
 				B_new.remove(e);
 
-				if (len > 1.0) {
+				if (len > g.getEdgeWeight(e)) {
 					//We need to make sure that the row sums up to 1, therefore we normalize the row.
-					row.normalize();
+
+					Double factor = g.getEdgeWeight(e) / len;
+					
+					for (int i=0;i<row.size();i++) {
+						row.setQuick(i, row.getQuick(i) * factor);
+					}
+					
+//					System.out.println("### " + g.getEdgeWeight(e));
+//					for (int i=0;i<row.size();i++) {
+//						if (row.getQuick(i) != 0.0) {
+//							System.out.println("" + row.getQuick(i) + " * " + g.getEdgeWeight(edgeNum.inverse().get(i)));
+//						}
+//					}
+					
 				} 
 				
 			} else {
@@ -217,7 +233,10 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 		
 		for (FlowPath<SplitVertex<V, E>, DefaultWeightedEdge> path : paths) {
 			Double weight = path.getFlowPathWeight(); 
-			if (weight <= 1) {
+			
+			Double cap = g.getEdgeWeight(gPrime.getOriginalEdge(path.getPath().get(1)));
+			
+			if (weight <= cap) {
 				
 				//Move flow vector to first cut edge on path
 
@@ -231,7 +250,7 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 				if (!A_new.contains(originalCutEdge)) {
 					//put movement of dec.getFlowPathWeight(path) from edge "from" to edge "to"
 					Double current_weight = matrixContainer.getMatrix().getQuick(edgeNum.get(from) , edgeNum.get(to));
-					matrixContainer.getMatrix().setQuick(edgeNum.get(from), edgeNum.get(to), current_weight + weight);
+					matrixContainer.getMatrix().setQuick(edgeNum.get(from), edgeNum.get(to), current_weight + weight / cap);
 					new_edges.add(originalCutEdge);
 				}
 			}
