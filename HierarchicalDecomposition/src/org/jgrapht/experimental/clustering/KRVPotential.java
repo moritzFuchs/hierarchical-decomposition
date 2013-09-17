@@ -42,15 +42,15 @@ public class KRVPotential<V,E> {
 	private DoubleMatrix1D[] randomDirections;
 	
 	/**
-	 * The original graph G
+	 * Projector for the current KRV procedure (projects flow vectors onto a given vector)
 	 */
-	private Graph<V,E> g;
+	private FlowVectorProjector<V,E> projector;
 	
 	
-	public KRVPotential(Graph<V,E> g, List<KRVStep<V,E>> matrices , Set<E> A,Map<E , Integer> edgeNum, Integer m) {
+	public KRVPotential(Graph<V,E> g, List<KRVStep<V,E>> matrices ,FlowVectorProjector<V,E> projector , Set<E> A,Map<E , Integer> edgeNum, Integer m) {
 		
-		this.g = g;
 		this.krvsteps = matrices;
+		this.projector = projector;
 		this.A = A;
 		this.edgeNum = edgeNum;
 		this.m = m;
@@ -76,7 +76,7 @@ public class KRVPotential<V,E> {
 	private void precomputeProjections() {
 		for (int i=0;i<DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS;i++) {
 			DoubleMatrix1D r = Util.getRandomDirection(m);
-			DoubleMatrix1D projection = FlowVectorProjector.getFlowVectorProjection(g,A,edgeNum,krvsteps, r);
+			DoubleMatrix1D projection = projector.getFlowVectorProjection(krvsteps, r);
 			
 			projections[i] = projection;
 			randomDirections[i] = r;
