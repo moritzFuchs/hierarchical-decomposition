@@ -149,6 +149,18 @@ public class DrawableImageView extends StackPane implements Markable {
 	}
 	
 	/**
+	 * Marks a given coordinate using a 'complementary' (approximately!) color.
+	 * 
+	 * @param x : x-coordinate
+	 * @param y : y-coordinate
+	 */
+	public void markPixelComplementary(Integer x , Integer y) {
+		Color pixel_color = getColor(x,y);
+		Color c = new Color(1.0-pixel_color.getRed(), 1.0-pixel_color.getGreen(), 1.0-pixel_color.getBlue(), 1.0);
+		canvas_writer.setColor(x, y, c);
+	}
+	
+	/**
 	 * Marks the given coordinate using the given color. Does nothing if the given pixel coordinates are outside of the image range.
 	 * 
 	 * @param x : x-coordinate
