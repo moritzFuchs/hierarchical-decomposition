@@ -1,5 +1,6 @@
 package org.jgrapht.experimental.clustering;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -7,6 +8,7 @@ import java.util.Set;
 import org.jgrapht.Graph;
 
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
+import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix1D;
 
 /**
  * Keeps an approximate potential for the KRV procedure.  
@@ -51,6 +53,16 @@ public class KRVPotential<V,E> {
 	 */
 	private Graph<V,E> g;
 	
+	/**
+	 * The goal vector which the flow vectors want to reach
+	 */
+	private DoubleMatrix1D goal;
+	
+	/**
+	 * Projections of the goal vector onto the random directions
+	 */
+	private DoubleMatrix1D goal_projections;
+	
 	
 	public KRVPotential(Graph<V,E> g, List<KRVStep<V,E>> matrices ,FlowVectorProjector<V,E> projector , Set<E> A,Map<E , Integer> edgeNum, Integer m) {
 		
@@ -61,10 +73,33 @@ public class KRVPotential<V,E> {
 		this.edgeNum = edgeNum;
 		this.m = m;
 		
+		//Compute the 'goal'
+		goal = new DenseDoubleMatrix1D(m);
+		Double cap_sum = 0.0;
+		
+		for (E e : g.edgeSet()) {
+			cap_sum += g.getEdgeWeight(e);
+		}
+		
+		for (E e : g.edgeSet()) {
+			goal.setQuick(edgeNum.get(e), g.getEdgeWeight(e) / cap_sum);
+		}
+		
 		projections = new DoubleMatrix1D[DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS];
 		randomDirections = new DoubleMatrix1D[DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS];
 		
 		precomputeProjections();
+		
+		goal_projections = new DenseDoubleMatrix1D(m); 
+		
+		goal_projections.assign(0.0);
+		for (int i=0;i<DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS;i++) {
+			Double new_weight = 0.0;
+			for (E e : A) {
+				new_weight += goal.getQuick(i) * randomDirections[i].get(edgeNum.get(e));
+			}
+			goal_projections.setQuick(i, new_weight);
+		}
 	}
 
 	/**
@@ -72,7 +107,8 @@ public class KRVPotential<V,E> {
 	 */
 	public void restart() {
 		for (int i=0;i<DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS;i++) {
-			projections[i] = randomDirections[i];
+			//Project onto capacity matrix (1-Matrix in unweighted case)
+			projections[i] = projector.getFlowVectorProjection(new LinkedList<KRVStep<V,E>>(), randomDirections[i]);
 		}
 	}
 	
@@ -87,6 +123,8 @@ public class KRVPotential<V,E> {
 			projections[i] = projection;
 			randomDirections[i] = r;
 		}
+		
+		
 	}
 	
 	/**
@@ -101,7 +139,6 @@ public class KRVPotential<V,E> {
 		A = step.getA();
 	}
 	
-	//FIXME: Implement new potential function!
 	/**
 	 * Approximate the potential p = SUM ( 2-Norm(f_e - average_flow_vector)) by using the 'Gaussian Behavior of Projections'-Lemma. ==> Paper page 8
 	 * 
@@ -113,10 +150,13 @@ public class KRVPotential<V,E> {
 		
 		for (int i=0;i<DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS;i++) {
 			
-			Double average = computeAverageProjection(projections[i], A);
+//			Double average = computeAverageProjection(projections[i], A);
+
 			Double sum = 0.0;
 			for(E e : A) {
-				sum += Math.pow(projections[i].getQuick(edgeNum.get(e)) - average , 2);
+				Double weight = g.getEdgeWeight(e);
+				Double u_e = projections[i].getQuick(edgeNum.get(e));
+				sum += weight * Math.pow(u_e / weight - goal_projections.getQuick(i) , 2);
 			}
 			
 			//Could also be m instead of A.size()

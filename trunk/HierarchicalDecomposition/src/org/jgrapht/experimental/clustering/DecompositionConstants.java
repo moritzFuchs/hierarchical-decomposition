@@ -11,6 +11,11 @@ public class DecompositionConstants {
 
 	//Prevent initialization
 	private DecompositionConstants() {}
+
+	/**
+	 * Turn debugging mode on/off. On will be very slow since a lot of stuff is double-checked.
+	 */
+	public static final Boolean DEBUG = true;
 	
 	/**
 	 * In order to be a balanced clustering, the subset of the vertices defining the clustering must be smaller 

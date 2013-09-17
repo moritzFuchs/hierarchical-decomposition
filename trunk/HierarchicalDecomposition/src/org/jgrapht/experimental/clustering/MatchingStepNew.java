@@ -5,6 +5,8 @@ import java.util.Set;
 
 import org.jgrapht.experimental.clustering.util.MatchedPair;
 
+import com.google.common.collect.BiMap;
+
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
 import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix2D;
 
@@ -27,7 +29,7 @@ public class MatchingStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 	/**
 	 * Mapping of edges to a unique integer \in [0 ... m-1] 
 	 */
-	private Map<E , Integer> edgeNum;
+	private BiMap<E , Integer> edgeNum;
 	
 	/**
 	 * Number of edges in G 
@@ -36,7 +38,7 @@ public class MatchingStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 	
 	private Set<E> A;
 	
-	public MatchingStepNew(Map<E , Integer> edgeNum , Integer m) {
+	public MatchingStepNew(BiMap<E , Integer> edgeNum , Integer m) {
 		
 		this.edgeNum = edgeNum;
 		this.m = m;
@@ -75,6 +77,10 @@ public class MatchingStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 			Integer fromNum = edgeNum.get(fromEdge);
 			Integer toNum = edgeNum.get(toEdge);
 			
+			if (DecompositionConstants.DEBUG) {
+				debugTests(gPrime, matrix, fromEdge, toEdge, fromNum, toNum);
+			}
+			
 			/*
 			 * We need to make sure, that the outgoing flow-vector length is equal to the incoming flow vector length.
 			 * Since the weight is the absolute amount of flow we want to move, the matrix entries have to be percentages of the existing flow-vector,
@@ -84,16 +90,65 @@ public class MatchingStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 			Double percentage_from = weight / gPrime.getOriginalGraph().getEdgeWeight(fromEdge);
 			Double percentage_to = weight / gPrime.getOriginalGraph().getEdgeWeight(toEdge);
 
-			matrix.setQuick(fromNum, toNum, percentage_from * DecompositionConstants.FLOW_MOVEMENT_FRACTION);
-			matrix.setQuick(toNum, fromNum, percentage_to * DecompositionConstants.FLOW_MOVEMENT_FRACTION);
+			matrix.setQuick(fromNum, toNum, matrix.getQuick(fromNum, toNum) + percentage_to * DecompositionConstants.FLOW_MOVEMENT_FRACTION);
+			matrix.setQuick(toNum, fromNum, matrix.getQuick(toNum, fromNum) + percentage_from * DecompositionConstants.FLOW_MOVEMENT_FRACTION);
 			
 			matrix.setQuick(fromNum, fromNum, matrix.getQuick(fromNum,fromNum) - percentage_from * DecompositionConstants.FLOW_MOVEMENT_FRACTION);
 			matrix.setQuick(toNum, toNum, matrix.getQuick(toNum,toNum) - percentage_to * DecompositionConstants.FLOW_MOVEMENT_FRACTION);
+			
+			if (DecompositionConstants.DEBUG) {
+				debugTests(gPrime, matrix, fromEdge, toEdge, fromNum, toNum);
+			}
+			
 		}
 		
 		matrixContainer = new MatchingMatrix(matrix);
 				
 		return matrixContainer;
+	}
+
+
+	/**
+	 * Some tests for debugging..
+	 * 
+	 * @param gPrime
+	 * @param matrix
+	 * @param fromEdge
+	 * @param toEdge
+	 * @param fromNum
+	 * @param toNum
+	 */
+	private void debugTests(SplitGraph<V, E> gPrime,
+			SparseDoubleMatrix2D matrix, E fromEdge, E toEdge, Integer fromNum,
+			Integer toNum) {
+		
+		DoubleMatrix1D row = matrix.viewRow(edgeNum.get(fromEdge));
+		Double sum = 0.0;
+		for (int j=0;j<row.size();j++) {
+			sum += row.get(j) * gPrime.getOriginalGraph().getEdgeWeight(edgeNum.inverse().get(j));
+		}
+		if (sum <= gPrime.getOriginalGraph().getEdgeWeight(fromEdge) - 0.000001 || sum >= gPrime.getOriginalGraph().getEdgeWeight(fromEdge) + 0.000001 ) {
+			System.out.println("From edge fail (after) " + fromNum);
+		}
+		
+		row = matrix.viewRow(edgeNum.get(toEdge));
+		sum = 0.0;
+		for (int j=0;j<row.size();j++) {
+			sum += row.get(j) * gPrime.getOriginalGraph().getEdgeWeight(edgeNum.inverse().get(j));
+		}
+		if (sum <= gPrime.getOriginalGraph().getEdgeWeight(toEdge) - 0.000001 || sum >= gPrime.getOriginalGraph().getEdgeWeight(toEdge) + 0.000001 ) {
+			System.out.println("To edge fail (after) " + toNum);
+		}
+		
+		DoubleMatrix1D col = matrix.viewColumn(edgeNum.get(fromEdge));
+		sum = 0.0;
+		for (int j=0;j<col.size();j++) {
+			sum += col.get(j);
+		}
+		
+		if ((sum >= 1.0 + 0.0000001 || sum <= 1.0 - 0.0000001) && sum != 0.0) {
+			System.out.println("Col " + fromNum);
+		}
 	}
 	
 	/**
