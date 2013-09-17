@@ -12,6 +12,7 @@ import javafx.scene.paint.Color;
 public interface Markable {
 	public void markPixel(Integer x , Integer y);
 	public void markPixel(Integer x , Integer y, Color c);
+	public void markPixelComplementary(Integer x , Integer y);
 	public Color getColor(Integer x , Integer y);
 	public void markArea(Integer[] x , Integer[] y);
 	public void startLoading();

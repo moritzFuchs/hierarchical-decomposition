@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javafx.scene.input.MouseButton;
@@ -14,9 +16,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.Graph;
 import org.jgrapht.experimental.clustering.TreeVertex;
+import org.jgrapht.experimental.clustering.TreeVertexType;
 import org.jgrapht.experimental.decomposition.DecompositionTree;
 import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.SimpleDirectedGraph;
 
 import com.google.common.collect.Iterables;
 
@@ -29,7 +35,8 @@ public class KRVDecomposition extends Drawable{
 
 	private SuperpixelDecomposition superpixel_decomposition;
 	private DecompositionTree<Integer> krv_decomposition;
-	private TreeVertex<Integer> current_tree_vertex;
+//	private TreeVertex<Integer> current_tree_vertex;
+	private Map<Superpixel , TreeVertex<Integer>> current_tree_vertex;
 	
 	public KRVDecomposition(String path_to_krv_dec , SuperpixelDecomposition superpixel_decomposition , Markable m) {
 		super("KRV Decomposition" , m);
@@ -40,6 +47,7 @@ public class KRVDecomposition extends Drawable{
 			fileIn = new FileInputStream(path_to_krv_dec);
 			ObjectInputStream in = new ObjectInputStream(fileIn);
 			this.krv_decomposition = (DecompositionTree<Integer>)in.readObject();
+			in.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -48,25 +56,77 @@ public class KRVDecomposition extends Drawable{
 			e.printStackTrace();
 		}
 		
-		Integer a = 1;
-				
+		current_tree_vertex = new HashMap<Superpixel , TreeVertex<Integer>>();
 		
+		for (Superpixel sp : superpixel_decomposition.getSuperpixelMap().values()) {
+			current_tree_vertex.put(sp, krv_decomposition.getRoot());
+		}
 		
 	}
 
 	@Override
 	public void draw() {
-		System.out.println("DRAWING!");
+		
 	}
 	
 	/**
-	 * Draws a single {@link Superpixel} onto the drawable.
+	 * Takes a {@link Superpixel}, gets the segmentation area it is part of and makes one more segmentation step on it.
 	 * 
-	 * @param sp : The {@link Superpixel} we want to draw.
+	 * @param sp
 	 */
-	private void drawSuperpixel(Superpixel sp) {
-		for (Pixel p : sp.getBoundaryPixels()) {
-			m.markPixel(p.getX(), p.getY());
+	private void decompose(Superpixel sp) {
+		TreeVertex<Integer> tree_vertex = current_tree_vertex.get(sp);
+		
+		for (DefaultWeightedEdge e : krv_decomposition.getGraph().outgoingEdgesOf(tree_vertex)) {
+			TreeVertex<Integer> next = krv_decomposition.getGraph().getEdgeTarget(e);
+			mark_superpixel_below(next, next);
+		}
+	}
+	
+	/**
+	 * Takes a {@link Superpixel}, gets the segmentation area it is part of and reverses the last decomposition step on this area.
+	 * 
+	 * @param sp : The {@link Superpixel}.
+	 */
+	private void compose(Superpixel sp) {
+		TreeVertex<Integer> tree_vertex = current_tree_vertex.get(sp);
+		
+		for (DefaultWeightedEdge e : krv_decomposition.getGraph().incomingEdgesOf(tree_vertex)) {
+			TreeVertex<Integer> parent = krv_decomposition.getGraph().getEdgeSource(e);
+			mark_superpixel_below(parent, parent);
+		}
+	}
+	
+	/**
+	 * Saves given {@link TreeVertex} (marker) as segmentation point in the tree fow all {@link Superpixel} below the given {@link TreeVertex} (marked).
+	 * 
+	 * @param marker : Point in the tree
+	 * @param marked : Superpixels below this {@link TreeVertex} will be marked with the given marker
+	 */
+	private void mark_superpixel_below(TreeVertex<Integer> marker, TreeVertex<Integer> marked) {
+		if (marked.getType() == TreeVertexType.LEAF) {
+			current_tree_vertex.put(superpixel_decomposition.getSuperpixelById(marked.getVertex()), marker);
+		} else {
+			DirectedGraph<TreeVertex<Integer>, DefaultWeightedEdge> tree = krv_decomposition.getGraph();
+			for (DefaultWeightedEdge e : tree.outgoingEdgesOf(marked)) {
+				mark_superpixel_below(marker , tree.getEdgeTarget(e));
+			}
+		}
+	}
+	
+	/**
+	 * Draws the current state of the segmentation given by {@link KRVDecomposition.current_vertex_tree}.
+	 */
+	private void  drawCurrentSegmentation() {
+		m.clear();
+		for (Superpixel sp : current_tree_vertex.keySet()) {
+			for (Superpixel neighbor : sp.getNeighbors()) {
+				if (current_tree_vertex.get(sp) != current_tree_vertex.get(neighbor)) {
+					for (Pixel p : sp.getBoundaryPixels(neighbor)) {
+						m.markPixelComplementary(p.getX(), p.getY());
+					}
+				}
+			}
 		}
 	}
 	
@@ -74,51 +134,21 @@ public class KRVDecomposition extends Drawable{
 	public void handleMouseEvent(MouseEvent event) {
 		if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
 			MouseEvent mouse_event = (MouseEvent) event; 
+			Double x =  mouse_event.getX();
+			Double y = mouse_event.getY();
 			if (mouse_event.getButton().equals(MouseButton.PRIMARY)) {
-				m.clear();
-				Double x =  mouse_event.getX();
-				Double y = mouse_event.getY();
-
-				Color c = m.getColor(x.intValue(),y.intValue());
-				
-				//Mark with 'complementary' color
-				m.markPixel(x.intValue(), y.intValue(), new Color(1.0-c.getRed(), 1.0-c.getGreen(), 1.0-c.getBlue(), 1.0));
-				m.markPixel(x.intValue()+1, y.intValue(), new Color(1.0-c.getRed(), 1.0-c.getGreen(), 1.0-c.getBlue(), 1.0));
-				m.markPixel(x.intValue()-1, y.intValue(), new Color(1.0-c.getRed(), 1.0-c.getGreen(), 1.0-c.getBlue(), 1.0));
-				m.markPixel(x.intValue(), y.intValue()+1, new Color(1.0-c.getRed(), 1.0-c.getGreen(), 1.0-c.getBlue(), 1.0));
-				m.markPixel(x.intValue(), y.intValue()-1, new Color(1.0-c.getRed(), 1.0-c.getGreen(), 1.0-c.getBlue(), 1.0));
-				Superpixel sp = superpixel_decomposition.getSuperpixelByPixel(new Pixel(x.intValue(),y.intValue()));
-				drawSuperpixel(sp);
-				
-				current_tree_vertex = krv_decomposition.getLeaf(sp.getId());
-
+				Superpixel sp = superpixel_decomposition.getSuperpixelByPixel(new Pixel(x.intValue(),y.intValue()));				
+				decompose(sp);
 			}
 			if (mouse_event.getButton().equals(MouseButton.SECONDARY)) {
-				draw();
+				Superpixel sp = superpixel_decomposition.getSuperpixelByPixel(new Pixel(x.intValue(),y.intValue()));
+				compose(sp);
 			}
+			
+			drawCurrentSegmentation();
 		}
 		
 		event.consume();
-	}
-	
-	@Override
-	public void handleScrollEvent(ScrollEvent event) {
-		Set<DefaultWeightedEdge> incoming = krv_decomposition.getGraph().incomingEdgesOf(current_tree_vertex);
-		System.out.println(incoming.size());
-		
-		if (incoming.size() > 0) {
-			DefaultWeightedEdge e = Iterables.get(incoming, 0);
-			
-			current_tree_vertex =  krv_decomposition.getGraph().getEdgeSource(e);
-			
-			for (Integer id : krv_decomposition.getAll(current_tree_vertex)) {
-				Superpixel sp = superpixel_decomposition.getSuperpixelById(id);
-				drawSuperpixel(sp);
-			}
-		}
-		
-		
-		System.out.println("scrolling..");
 	}
 	
 	@Override
