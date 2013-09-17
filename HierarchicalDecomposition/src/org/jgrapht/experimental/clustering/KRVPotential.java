@@ -25,11 +25,25 @@ public class KRVPotential<V,E> {
 	 * The set of active edges. CAUTION: Will be changed by the KRVProcedure.
 	 */
 	private Set<E> A;
+	
+	/**
+	 * Number of edges
+	 */
 	private Integer m;
 	
+	/**
+	 * flow vector projections
+	 */
 	private DoubleMatrix1D[] projections;
+	
+	/**
+	 * Random unit directions used for the flow vector projections in {@link KRVPotential.projections}.
+	 */
 	private DoubleMatrix1D[] randomDirections;
 	
+	/**
+	 * The original graph G
+	 */
 	private Graph<V,E> g;
 	
 	

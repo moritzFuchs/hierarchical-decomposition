@@ -103,6 +103,9 @@ public class SuperpixelGraph{
 		weight += boundary.size() / (rgb_distance + EPSILON);
 		weight += LAMBDA * boundary.size();
 		
+		//Make the weights integral
+		weight = Math.ceil(weight);
+		
 		return weight;
 	}
 	
