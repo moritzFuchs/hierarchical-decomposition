@@ -55,6 +55,11 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 	 */
 	private DeletionMatrix matrixContainer;
 	
+	/**
+	 * Indicates whether a restart is neccessary or not
+	 */
+	private Boolean restart_needed = false;
+	
 	private Set<E> A_old;
 	private Set<E> B_old;
 	
@@ -133,6 +138,10 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 			
 			//Delete all old flow vectors (those for edges in A_s \ A_new)
 			deleteOldFlowVectors(A_s);
+		}
+		
+		if (A_new.size() + B_new.size() <= DecompositionConstants.KRV_RESTART_BOUND * (A_old.size() + B_old.size())) {
+			restart_needed = true;
 		}
 		
 		return matrixContainer;
@@ -306,8 +315,21 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 		return new_projection;
 	}
 	
+	/**
+	 * True if no progress was made; False is progress was made.
+	 * 
+	 * @return Boolean: True if no progress was made, False otherwise.
+	 */
 	public Boolean noProgress() {
 		return A_old.containsAll(A_new) && A_new.containsAll(A_old) && B_old.containsAll(B_new) && B_new.containsAll(B_old);
+	}
+	
+	/**
+	 * True if a restart is neccessary, False otherwise
+	 * @return
+	 */
+	public Boolean restartNeeded() {
+		return restart_needed;
 	}
 
 }

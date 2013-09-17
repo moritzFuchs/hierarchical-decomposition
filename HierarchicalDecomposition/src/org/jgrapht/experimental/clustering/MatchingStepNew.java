@@ -60,7 +60,7 @@ public class MatchingStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 		
 		SparseDoubleMatrix2D matrix = new SparseDoubleMatrix2D(m,m);
 		
-		for (E e : activeEdges) {
+		for (E e : A) {
 			matrix.setQuick(edgeNum.get(e), edgeNum.get(e), 1.0);
 		}
 		

@@ -46,9 +46,15 @@ public class KRVPotential<V,E> {
 	 */
 	private FlowVectorProjector<V,E> projector;
 	
+	/**
+	 * Graph we want to decompose
+	 */
+	private Graph<V,E> g;
+	
 	
 	public KRVPotential(Graph<V,E> g, List<KRVStep<V,E>> matrices ,FlowVectorProjector<V,E> projector , Set<E> A,Map<E , Integer> edgeNum, Integer m) {
 		
+		this.g = g;
 		this.krvsteps = matrices;
 		this.projector = projector;
 		this.A = A;
@@ -95,6 +101,7 @@ public class KRVPotential<V,E> {
 		A = step.getA();
 	}
 	
+	//FIXME: Implement new potential function!
 	/**
 	 * Approximate the potential p = SUM ( 2-Norm(f_e - average_flow_vector)) by using the 'Gaussian Behavior of Projections'-Lemma. ==> Paper page 8
 	 * 

@@ -227,7 +227,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		System.out.println("Bound : " + bound);
 		
 		Double potential;
-		if (deletionStep.noProgress() || matchingPotential <= deletionPotential) {
+		if (!deletionStep.restartNeeded() && (deletionStep.noProgress() || matchingPotential <= deletionPotential)) {
 			projection = matchingStep.applyStep(r , projection);
 			potential = matchingPotential;
 			
