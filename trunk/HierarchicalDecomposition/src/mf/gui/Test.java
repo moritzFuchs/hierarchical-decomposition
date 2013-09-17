@@ -16,9 +16,10 @@ public class Test {
 
 	public static void main(String[] args) throws IOException, TransformerConfigurationException, SAXException {
 		
-		SuperpixelImport imp = new SuperpixelImport("Input/Fry/superpixel.mat" , new Image("file:Input/Fry/image.jpg"));
-		SuperpixelGraph g = new SuperpixelGraph(imp.getSuperpixels());
-		g.exportGraph(new File("Input/Fry/superpixelGraph.gml"));
+		Double x = Double.valueOf("1.6000005E7");
+		x += 1;
+		System.out.println(x);
+		
 	}
 
 }
