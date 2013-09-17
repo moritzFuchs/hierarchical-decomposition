@@ -13,6 +13,7 @@ import org.jgrapht.experimental.util.LoggerFactory;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
+import cern.colt.matrix.tdouble.DoubleMatrix2D;
 import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix2D;
 
@@ -117,7 +118,6 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		
 		DenseDoubleMatrix1D r = Util.getRandomDirection(g.edgeSet().size());
 	
-		
 		projection = projector.getFlowVectorProjection(partitionMatrices , r);
 		Double current_potential = krvpot.getPotential();
 		
@@ -126,6 +126,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			r = Util.getRandomDirection(g.edgeSet().size());
 			projection = projector.getFlowVectorProjection(partitionMatrices , r);
 						
+			//FIXME: Vertice Divider for weighted edges!!
 			PracticalVerticeDivider<V,E> divider = new PracticalVerticeDivider<V,E>(projection , edgeNum);
 			divider.divideActiveVertices(gPrime, A, projection);
 			
@@ -153,8 +154,6 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			//Rescale flow
 			FlowRescaler<V,E> rescaler = new FlowRescaler<V, E>();
 			Set<FlowPath<SplitVertex<V, E>, DefaultWeightedEdge>> paths = rescaler.rescaleFlow(gPrime, maxFlow, flow_problem);
-			
-			
 			
 			// -------------------------------- CHECK IF DELETION OR MATCHING STEP PERFORMS BETTER ---------------------------------- //
 			
@@ -223,7 +222,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 //		System.out.println("Current projection: " + projection);
 		System.out.println("Current potential: " + current_potential);
 		System.out.println("Potential for matching: " + matchingPotential);
-		System.out.println("Potential for deletion: " + deletionPotential + " Changed: " + deletionStep.noProgress());
+		System.out.println("Potential for deletion: " + deletionPotential + " No Progress?: " + deletionStep.noProgress() + " Restart:" + deletionStep.restartNeeded());
 		System.out.println("Bound : " + bound);
 		
 		Double potential;

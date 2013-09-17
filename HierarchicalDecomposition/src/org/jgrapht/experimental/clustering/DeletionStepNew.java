@@ -305,6 +305,14 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 		return B_new;
 	}
 
+	/**
+	 * Apply the deletion step.
+	 * 
+	 * @param r : The random direction that this projection relies on.
+	 * @param current_projection : The current projection of the flow vector (before this deletion step)
+	 * 
+	 * @return {@link DoubleMatrix1D} : The flow vector projection after the application of the deletion step
+	 */
 	@Override
 	public DoubleMatrix1D applyStep(DoubleMatrix1D r,
 			DoubleMatrix1D current_projection) {
