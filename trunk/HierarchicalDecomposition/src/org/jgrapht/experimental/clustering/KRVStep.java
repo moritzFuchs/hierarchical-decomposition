@@ -22,5 +22,4 @@ public interface KRVStep<V,E> {
 	public DoubleMatrix1D applyStep(DoubleMatrix1D r , DoubleMatrix1D current_projection);
 	
 	public Set<E> getA();
-	
 }

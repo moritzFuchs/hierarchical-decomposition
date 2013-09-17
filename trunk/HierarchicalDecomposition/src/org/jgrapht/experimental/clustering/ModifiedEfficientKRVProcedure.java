@@ -14,6 +14,7 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
 import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix1D;
+import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix2D;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.Iterables;
@@ -76,6 +77,10 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 	 */
 	private KRVPotential<V,E> krvpot;
 	
+	/**
+	 * Projector for this KRV procedure (projects flow vectors onto a random vector)
+	 */
+	private FlowVectorProjector<V,E> projector;
 	
 	public ModifiedEfficientKRVProcedure (Graph<V,E> g , SplitGraph<V,E> gPrime , Set<E> F , BiMap<E , Integer> edgeNum) {
 		this.g = g;
@@ -94,8 +99,11 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		
 		//Let's make it practical!
 		this.bound = this.bound * 10* g.vertexSet().size();
+	
+		this.projector = new FlowVectorProjector<V,E>(g, edgeNum);
 		
-		this.krvpot = new KRVPotential<V,E>(g,partitionMatrices,A,edgeNum,g.edgeSet().size());
+		this.krvpot = new KRVPotential<V,E>(g,partitionMatrices,projector,A,edgeNum,g.edgeSet().size());		
+		
 	}
 	
 	/**
@@ -108,13 +116,15 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		LOGGER.info("Starting modified KRV procedure.");
 		
 		DenseDoubleMatrix1D r = Util.getRandomDirection(g.edgeSet().size());
-		projection = FlowVectorProjector.getFlowVectorProjection(g,A,edgeNum,partitionMatrices , r);
+	
+		
+		projection = projector.getFlowVectorProjection(partitionMatrices , r);
 		Double current_potential = krvpot.getPotential();
 		
 		while (current_potential >= bound && A.size() > 1) {
 			
 			r = Util.getRandomDirection(g.edgeSet().size());
-			projection = FlowVectorProjector.getFlowVectorProjection(g,A,edgeNum,partitionMatrices , r);
+			projection = projector.getFlowVectorProjection(partitionMatrices , r);
 						
 			PracticalVerticeDivider<V,E> divider = new PracticalVerticeDivider<V,E>(projection , edgeNum);
 			divider.divideActiveVertices(gPrime, A, projection);
@@ -176,7 +186,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 	 * @param divider
 	 */
 	private void debugInformation(PracticalVerticeDivider<V, E> divider) {
-		KRVPotential<V,E> k = new KRVPotential<V, E>(g,partitionMatrices, A, edgeNum, g.edgeSet().size());
+		KRVPotential<V,E> k = new KRVPotential<V, E>(g,partitionMatrices, projector,A, edgeNum, g.edgeSet().size());
 		
 		System.out.println("Potential-Difference: " + (krvpot.getPotential()-k.getPotential()));
 		
@@ -248,6 +258,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		LOGGER.fine("Restarting KRV.");
 		
 		partitionMatrices.clear();
+		
 		krvpot.restart();
 		
 		//F = A+B, therefore A = A+B after a restart.
