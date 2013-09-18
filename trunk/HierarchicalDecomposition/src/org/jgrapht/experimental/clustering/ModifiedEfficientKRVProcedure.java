@@ -155,6 +155,16 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			FlowRescaler<V,E> rescaler = new FlowRescaler<V, E>();
 			Set<FlowPath<SplitVertex<V, E>, DefaultWeightedEdge>> paths = rescaler.rescaleFlow(gPrime, maxFlow, flow_problem);
 			
+			if (DecompositionConstants.DEBUG) {
+				for (FlowPath<SplitVertex<V, E>, DefaultWeightedEdge> path : flow_problem.getPaths()) {
+					DefaultWeightedEdge e  = findCutEdge(flow_problem.getCut(), path.getPath());
+					if (gPrime.getEdgeWeight(e) > Math.abs(flow_problem.getFlow().get(e))) {
+						System.out.println(" " + gPrime.getEdgeWeight(e) + " " + flow_problem.getFlow().get(e));
+						Integer a = 1;
+					} 
+				}
+			}
+			
 			// -------------------------------- CHECK IF DELETION OR MATCHING STEP PERFORMS BETTER ---------------------------------- //
 			
 			DeletionStepNew<V,E> deletionStep = new DeletionStepNew<V,E>(g,gPrime,edgeNum);
@@ -226,7 +236,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		System.out.println("Bound : " + bound);
 		
 		Double potential;
-		if (!deletionStep.restartNeeded() && (deletionStep.noProgress() || matchingPotential <= deletionPotential)) {
+		if (deletionStep.noProgress() || (!deletionStep.restartNeeded() && matchingPotential <= deletionPotential)) {
 			projection = matchingStep.applyStep(r , projection);
 			potential = matchingPotential;
 			
@@ -304,5 +314,28 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 	public Set<E> getB() {
 		return B;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	private DefaultWeightedEdge findCutEdge(Set<DefaultWeightedEdge> cut, List<SplitVertex<V, E>> path) {
+		//find the first cut edge on the path
+		Integer index = 0;
+		DefaultWeightedEdge cutEdge = null;
+		while (cutEdge == null) {
+			DefaultWeightedEdge currentEdge = gPrime.getEdge(path.get(index), path.get(index+1));
+			if (cut.contains(currentEdge)) {
+				cutEdge = currentEdge;
+			}
+			index++;
+		}
+		return cutEdge;
+	}
+	
 	
 }

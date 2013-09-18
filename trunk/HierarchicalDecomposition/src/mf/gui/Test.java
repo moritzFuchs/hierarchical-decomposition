@@ -16,9 +16,8 @@ public class Test {
 
 	public static void main(String[] args) throws IOException, TransformerConfigurationException, SAXException {
 		
-		Double x = Double.valueOf("1.6000005E7");
-		x += 1;
-		System.out.println(x);
+		Integer i=0;
+		System.out.println(i++ + " " + i);
 		
 	}
 

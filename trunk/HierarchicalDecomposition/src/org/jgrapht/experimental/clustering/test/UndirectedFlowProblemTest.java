@@ -52,6 +52,8 @@ public class UndirectedFlowProblemTest {
 		
 		Set<DefaultWeightedEdge> cut = problem.getCut();
 		
+		System.out.println(cut);
+		
 		assertTrue(cut.size() == 2);
 	}
 	
@@ -71,6 +73,8 @@ public class UndirectedFlowProblemTest {
 		assertTrue(flow.get(g.getEdge(3, 5)) == 1.0);
 		assertTrue(flow.get(g.getEdge(4, 6)) == 2.0);
 		assertTrue(flow.get(g.getEdge(5, 6)) == 1.0);
+		
+		System.out.println(problem.getPaths());
 		
 		assertTrue(problem.getPaths().size() == 3);
 		
@@ -108,7 +112,7 @@ public class UndirectedFlowProblemTest {
 		g.setEdgeWeight(e23, 1.0);
 		g.setEdgeWeight(e24, 2.0);
 		
-		FlowProblem<Integer , DefaultWeightedEdge> problem = new UndirectedFlowProblem<Integer , DefaultWeightedEdge>(g , 1 , 4);
+		UndirectedFlowProblem<Integer , DefaultWeightedEdge> problem = new UndirectedFlowProblem<Integer , DefaultWeightedEdge>(g , 1 , 4);
 		
 		Map<DefaultWeightedEdge, Double> flow = problem.getFlow();
 		assertTrue(flow.get(e12) == 1.0);
@@ -117,6 +121,8 @@ public class UndirectedFlowProblemTest {
 		assertTrue(flow.get(e24) == 2.0);
 
 		Set<FlowPath<Integer,DefaultWeightedEdge>> paths = problem.getPaths();
+		
+		System.out.println(paths);
 		
 		assertTrue(paths.size() == 2);
 		
@@ -161,7 +167,7 @@ public class UndirectedFlowProblemTest {
 		g.setEdgeWeight(e27, 10.0);
 		g.setEdgeWeight(e67, 10.0);
 				
-		FlowProblem<Integer , DefaultWeightedEdge> problem = new UndirectedFlowProblem<Integer , DefaultWeightedEdge>(g , 5 , 7);
+		UndirectedFlowProblem<Integer , DefaultWeightedEdge> problem = new UndirectedFlowProblem<Integer , DefaultWeightedEdge>(g , 5 , 7);
 		
 		Set<FlowPath<Integer,DefaultWeightedEdge>> paths = problem.getPaths();
 		
@@ -222,10 +228,9 @@ public class UndirectedFlowProblemTest {
 		A_t.add(gPrime.getSplitVertexFromEdge(e67));
 		A_t.add(gPrime.getSplitVertexFromEdge(e56));
 		
-		
 		gPrime.addSourceAndTarget(A_s, A_t);
 				
-		FlowProblem<SplitVertex<Integer , DefaultWeightedEdge> , DefaultWeightedEdge> problem = new UndirectedFlowProblem<SplitVertex<Integer, DefaultWeightedEdge > , DefaultWeightedEdge>(gPrime , gPrime.getFlowSource() , gPrime.getFlowTarget());
+		UndirectedFlowProblem<SplitVertex<Integer , DefaultWeightedEdge> , DefaultWeightedEdge> problem = new UndirectedFlowProblem<SplitVertex<Integer, DefaultWeightedEdge > , DefaultWeightedEdge>(gPrime , gPrime.getFlowSource() , gPrime.getFlowTarget());
 		
 		Set<DefaultWeightedEdge> cut = problem.getCut();
 		

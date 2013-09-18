@@ -1,6 +1,5 @@
 package org.jgrapht.experimental.clustering;
 
-import java.util.Map;
 import java.util.Set;
 
 import org.jgrapht.experimental.clustering.util.MatchedPair;
@@ -44,8 +43,6 @@ public class MatchingStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 		this.m = m;
 	}
 	
-	
-	//TODO: better documentation
 	/**
 	 * Get the Matching Matrix 
 	 * 
@@ -122,12 +119,14 @@ public class MatchingStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 			SparseDoubleMatrix2D matrix, E fromEdge, E toEdge, Integer fromNum,
 			Integer toNum) {
 		
+		Double epsilon = 0.0000001;
+		
 		DoubleMatrix1D row = matrix.viewRow(edgeNum.get(fromEdge));
 		Double sum = 0.0;
 		for (int j=0;j<row.size();j++) {
 			sum += row.get(j) * gPrime.getOriginalGraph().getEdgeWeight(edgeNum.inverse().get(j));
 		}
-		if (sum <= gPrime.getOriginalGraph().getEdgeWeight(fromEdge) - 0.000001 || sum >= gPrime.getOriginalGraph().getEdgeWeight(fromEdge) + 0.000001 ) {
+		if (sum <= gPrime.getOriginalGraph().getEdgeWeight(fromEdge) - epsilon || sum >= gPrime.getOriginalGraph().getEdgeWeight(fromEdge) + epsilon ) {
 			System.out.println("From edge fail (after) " + fromNum);
 		}
 		
@@ -136,7 +135,7 @@ public class MatchingStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 		for (int j=0;j<row.size();j++) {
 			sum += row.get(j) * gPrime.getOriginalGraph().getEdgeWeight(edgeNum.inverse().get(j));
 		}
-		if (sum <= gPrime.getOriginalGraph().getEdgeWeight(toEdge) - 0.000001 || sum >= gPrime.getOriginalGraph().getEdgeWeight(toEdge) + 0.000001 ) {
+		if (sum <= gPrime.getOriginalGraph().getEdgeWeight(toEdge) - epsilon || sum >= gPrime.getOriginalGraph().getEdgeWeight(toEdge) + epsilon ) {
 			System.out.println("To edge fail (after) " + toNum);
 		}
 		
@@ -146,7 +145,7 @@ public class MatchingStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 			sum += col.get(j);
 		}
 		
-		if ((sum >= 1.0 + 0.0000001 || sum <= 1.0 - 0.0000001) && sum != 0.0) {
+		if ((sum >= 1.0 + epsilon || sum <= 1.0 - epsilon) && sum != 0.0) {
 			System.out.println("Col " + fromNum);
 		}
 	}
