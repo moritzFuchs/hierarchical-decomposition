@@ -2,6 +2,7 @@ package org.jgrapht.experimental.clustering;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jgrapht.Graph;
 
@@ -39,6 +40,7 @@ public class FlowVectorProjector<V,E> {
 		
 		//First step = set flow vector sizes for different weights of edges in g
 		projection = capMatrix.zMult(projection, projection.copy());
+		
 		
 		for (KRVStep<V,E> step : matrices) {
 			projection = step.applyStep(projection.copy(), projection);

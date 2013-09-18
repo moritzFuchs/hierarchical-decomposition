@@ -116,12 +116,13 @@ public class KRVPotential<V,E> {
 	 * Precomputes projections of the flow vectors onto random directions
 	 */
 	private void precomputeProjections() {
+		System.out.println("precomputing");
+		
 		for (int i=0;i<DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS;i++) {
-			DoubleMatrix1D r = Util.getRandomDirection(m);
-			DoubleMatrix1D projection = projector.getFlowVectorProjection(krvsteps, r);
+			randomDirections[i] = Util.getRandomDirection(m);
+			DoubleMatrix1D projection = projector.getFlowVectorProjection(krvsteps, randomDirections[i]);
 			
 			projections[i] = projection;
-			randomDirections[i] = r;
 		}
 		
 		
@@ -146,6 +147,8 @@ public class KRVPotential<V,E> {
 	 */
 	public Double getPotential() {
 
+		System.out.println("computing potential");
+		
 		Double total = 0.0;
 		
 		for (int i=0;i<DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS;i++) {
@@ -180,10 +183,11 @@ public class KRVPotential<V,E> {
 			
 			DoubleMatrix1D after = step.applyStep(randomDirections[i], projections[i]);
 			
-			Double average = computeAverageProjection(after, A_new);
 			Double sum = 0.0;
-			for(E e : A_new) {
-				sum += Math.pow(after.getQuick(edgeNum.get(e)) - average , 2);
+			for(E e : A) {
+				Double weight = g.getEdgeWeight(e);
+				Double u_e = after.getQuick(edgeNum.get(e));
+				sum += weight * Math.pow(u_e / weight - goal_projections.getQuick(i) , 2);
 			}
 			total += A_new.size() * sum;
 		}
