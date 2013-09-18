@@ -18,6 +18,11 @@ public class DecompositionConstants {
 	public static final Boolean DEBUG = true;
 	
 	/**
+	 * Mainly for debugging: error that we are allowed to make (due to Double precision)
+	 */
+	public static final Double EPSILON = 0.000001;
+	
+	/**
 	 * In order to be a balanced clustering, the subset of the vertices defining the clustering must be smaller 
 	 * than the size of the underlying graph times this constant. 
 	 */

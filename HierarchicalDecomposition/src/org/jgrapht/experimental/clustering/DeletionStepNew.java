@@ -11,6 +11,7 @@ import org.jgrapht.experimental.clustering.old.ModifiedKRVProcedure;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
+import cern.colt.matrix.tdouble.DoubleMatrix2D;
 import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix2D;
 
 import com.google.common.collect.BiMap;
@@ -127,6 +128,8 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 
 			deleteOldFlowVectors(A_t);
 			
+			restart_needed = true;
+			
 		} else { // In this case ((A + B) - A_s) + C induces a balanced clustering and we must move the flow vectors of A_s to the cut C
 			A_new.removeAll(gPrime.getOriginalEdges(A_s));
 	
@@ -142,6 +145,28 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 		
 		if (A_new.size() + B_new.size() <= DecompositionConstants.KRV_RESTART_BOUND * (A_old.size() + B_old.size())) {
 			restart_needed = true;
+		}
+		
+		if (DecompositionConstants.DEBUG) {
+			if (!B.isEmpty()) {
+				System.out.println("B is not empty!");
+			}
+			
+			if (!restart_needed) {
+				DoubleMatrix2D matrix = matrixContainer.getMatrix();
+				for (int i=0;i<matrix.rows();i++) {
+					
+					DoubleMatrix1D row = matrix.viewRow(i);
+					Double sum = 0.0;
+					for (int j=0;j<row.size();j++) {
+						sum += row.getQuick(j) * g.getEdgeWeight(edgeNum.inverse().get(j));
+					}
+					if (sum != 0.0 && (sum < g.getEdgeWeight(edgeNum.inverse().get(i)) - DecompositionConstants.EPSILON || sum > g.getEdgeWeight(edgeNum.inverse().get(i)) + DecompositionConstants.EPSILON)) {
+						System.out.println("Flow vector too large!");
+					}
+				}
+				
+			}
 		}
 		
 		return matrixContainer;
@@ -174,9 +199,10 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 	}
 
 	/**
-	 * Assigns edges to A or B depending on the amount of flow they received by the {@link DeletionStep#computeFlowVectorMovement(FlowDecomposer, Map, Set)} operation.
-	 * If an edge has flow vectors of total length >= 1 assigned to it, it will become an active edge. Additionally the received flow vector will be normalized to have a length of 1.
-	 * If the total length of the receiver flow vectors is < 1 the edge will be marked as inactive. The assigned fractional flow vectors will be neglected.
+	 * Assigns edges to A or B depending on the amount of flow they received by {@link DeletionStep#computeFlowVectorMovement(FlowDecomposer, Map, Set)}.
+	 * If an edge has flow vectors of total length >= capacity assigned to it, it will become an active edge. Additionally the received flow vector will be normalized to have a length of capacity of the edge.
+	 * If the total length of the receiver's flow vectors is < capacity of the edge, it will be marked as inactive. (should not happen if an exact max-flow-algorithm is used.) 
+	 * The assigned fractional flow vectors will be neglected.
 	 * 
 	 * @param sum : The assignment of sums of fractional flow vectors to cut edges
 	 */
@@ -193,7 +219,8 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 				len += row.getQuick(i) * g.getEdgeWeight(edgeNum.inverse().get(i));
 			}
 			
-			if (len >= g.getEdgeWeight(e)) {
+			// + EPSILON to deal with Double precision errors
+			if (len + DecompositionConstants.EPSILON >= g.getEdgeWeight(e)) {
 				//The flow vector assignment was big enough. Therefore the edge will get an flow vector.
 				A_new.add(e);
 				B_new.remove(e);
@@ -219,6 +246,8 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 			} else {
 				//The flow vector assignment was not big enough. Therefore the edge will not get any flow vector
 				B_new.add(e);
+				System.out.println("e cap " + g.getEdgeWeight(e));
+				System.out.println("len " + len);
 				row.assign(0.0);
 			}				
 		}
@@ -245,25 +274,40 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 			
 			Double cap = g.getEdgeWeight(gPrime.getOriginalEdge(path.getPath().get(1)));
 			
-			if (weight <= cap) {
+			//FIXME: Is + EPSILON neccessary?
+			if (weight <= cap + DecompositionConstants.EPSILON) {
 				
 				//Move flow vector to first cut edge on path
 
 				DefaultWeightedEdge cutEdge = findCutEdge(cut, path.getPath());
-				E originalCutEdge = gPrime.getOriginalEdge(cutEdge);
 				
 				E to = gPrime.getOriginalEdge(cutEdge);
 				E from = gPrime.getOriginalEdge(path.getPath().get(1));
 				
 				//if the original edge is in A, then it already has a flow vector of length 1. Hence we ignore this fraction of the flow vector
-				if (!A_new.contains(originalCutEdge)) {
-					//put movement of dec.getFlowPathWeight(path) from edge "from" to edge "to"
-					Double current_weight = matrixContainer.getMatrix().getQuick(edgeNum.get(from) , edgeNum.get(to));
-					matrixContainer.getMatrix().setQuick(edgeNum.get(from), edgeNum.get(to), current_weight + weight / cap);
-					new_edges.add(originalCutEdge);
+				if (!A_new.contains(to)) {
+					//move fraction of flow vector of "from" to "to"
+					Double current_weight = matrixContainer.getMatrix().getQuick(edgeNum.get(to) , edgeNum.get(from));
+					matrixContainer.getMatrix().setQuick(edgeNum.get(to), edgeNum.get(from), current_weight + weight / cap);
+					
+					new_edges.add(to);
 				}
 			}
 		}
+		
+		DoubleMatrix2D matrix = matrixContainer.getMatrix();
+		for (int i=0;i<matrix.rows();i++) {
+			
+			DoubleMatrix1D row = matrix.viewRow(i);
+			Double sum = 0.0;
+			for (int j=0;j<row.size();j++) {
+				sum += row.getQuick(j) * g.getEdgeWeight(edgeNum.inverse().get(j));
+			}
+			if (sum != 0.0 && sum < g.getEdgeWeight(edgeNum.inverse().get(i)) - DecompositionConstants.EPSILON) {
+				System.out.println("Flow vector too large!");
+			}
+		}
+		
 		return new_edges;
 	}
 

@@ -151,13 +151,74 @@ public class UndirectedFlowProblem<V extends Comparable<V> , E> implements FlowP
 		return undirected_flow;
 	}
 
+	public Set<E> getCut() {
+		
+		LOGGER.fine("Computing the min-cut based on the max flow");
+		
+		if (this.cut != null) {
+			return cut;
+		}
+		
+		if (undirected_flow == null) {
+			getFlow();
+		}
+		
+		Queue<V> q = new LinkedList<V>();
+		Set<E> potentialCutEdges = new HashSet<E>();
+		Set<V> seen = new HashSet<V>();
+		
+		q.add(source);
+		seen.add(source);
+		
+		while(!q.isEmpty()) {
+			V v = q.poll();
+			for (E out_edge : g.edgesOf(v)) {
+				
+				Double sign = 1.0;
+				if (g.getEdgeTarget(out_edge).equals(v)) {
+					sign = -1.0;
+				}
+				
+				if (sign * undirected_flow.get(out_edge) < g.getEdgeWeight(out_edge)) {
+					V next;
+					if (sign == -1.0) {
+						next = g.getEdgeSource(out_edge);
+					} else {
+						next = g.getEdgeTarget(out_edge);
+					}
+					
+					if (!seen.contains(next)) {
+						q.add(next);
+						seen.add(next);
+					}
+				} else {
+					potentialCutEdges.add(out_edge);
+				}
+			} 
+		}
+		
+		this.cut = new HashSet<E>();
+		
+		for (E e : potentialCutEdges) {
+			if (seen.contains(g.getEdgeSource(e)) && !seen.contains(g.getEdgeTarget(e))) {
+				this.cut.add(e);
+			}
+			if (!seen.contains(g.getEdgeSource(e)) && seen.contains(g.getEdgeTarget(e))) {
+				this.cut.add(e);
+			}
+		}
+		
+		LOGGER.fine("Min-Cut done: " + cut);
+		
+		return this.cut;
+	}
+	
 	/**
 	 * Computes the Min-Cut between the source and the target of G through the Min-Cut-Max-Flow-Theorem (See e.g. https://en.wikipedia.org/wiki/Max-flow_min-cut_theorem)
 	 * 
 	 * @return: The Min-Cut between source and target of G. 
 	 */
-	@Override
-	public Set<E> getCut() {
+	public Set<E> getCutOld() {
 		
 		LOGGER.fine("Computing the min-cut based on the max flow");
 		
@@ -215,61 +276,80 @@ public class UndirectedFlowProblem<V extends Comparable<V> , E> implements FlowP
 	 */
 	public Set<FlowPath<V,E>> getPaths() {
 		
-		LOGGER.fine("Computing flow paths.");
-		
-		if (directed_flow == null) {
+		if (undirected_flow == null) {
 			getFlow();
 		}
 		
 		Set<FlowPath<V,E>> paths = new HashSet<FlowPath<V,E>>();
 		
-		LOGGER.info("Retrieving flow paths between " + source + " and " + target + " for flow " + undirected_flow);
-		
-		//Get shallow copy of flow
-		Map<DefaultWeightedEdge , Double> myflow = new HashMap<DefaultWeightedEdge,Double>(directed_flow);
+		Map<E , Double> myflow = new HashMap<E,Double>(undirected_flow);
 		Queue<V> q = new LinkedList<V>();
-		Map<V , DefaultWeightedEdge> min_previous_edge = new HashMap<V , DefaultWeightedEdge>();
-		
+		Map<V , E> min_previous_edge = new HashMap<V , E>();
 		Map<V,V> parent = new HashMap<V,V>();
-		
+
 		while (true) {
-			
 			parent.clear();
 			min_previous_edge.clear();
 			q.clear();
 			
 			parent.put(source,source);
-			
 			q.add(source);
 			while (!q.isEmpty()) {
 				V current_vertex = q.poll();
 				
 				//If we reach t we have found a s-t-path. Extract it!
 				if (current_vertex.compareTo(target) == 0) {
-					extractPath(directedG, myflow, target, min_previous_edge, parent,paths);
+					extractPathUndirected(g, myflow, target, min_previous_edge, parent,paths);
 					break;
 				}
 				
-				for(DefaultWeightedEdge e:directedG.outgoingEdgesOf(current_vertex)) {
+				for(E e:g.edgesOf(current_vertex)) {
 					
-					V target = directedG.getEdgeTarget(e);
+					V target = g.getEdgeTarget(e);
+					V source = g.getEdgeSource(e);
+					
+					Double sign = 1.0;
+					if (current_vertex.equals(target)) {
+						sign = -1.0;
+					}
 
-					//The target must be 'new' and flow must still be available
-					if (parent.get(target) == null && myflow.get(e) != null && myflow.get(e) > 0.0) {
-						
-						//remember parent for backtracking
-						parent.put(target, current_vertex);
-						
-						//add target to queue for further inspection (BFS step) 
-						q.add(target);
-						
-						DefaultWeightedEdge current_min_edge = min_previous_edge.get(current_vertex);
-						
-						if (current_min_edge == null || myflow.get(current_min_edge) > myflow.get(e)) {
-							//remember vertex with minimal flow for this path
-							min_previous_edge.put(target, e);
-						} else {
-							min_previous_edge.put(target, current_min_edge);
+					if (sign == 1.0) {
+						//The target must be 'new' and flow must still be available
+						if (parent.get(target) == null && myflow.get(e) != null && sign * myflow.get(e) > 0.0) {
+							
+							//remember parent for backtracking
+							parent.put(target, current_vertex);
+							
+							//add target to queue for further inspection (BFS step) 
+							q.add(target);
+							
+							E current_min_edge = min_previous_edge.get(current_vertex);
+							
+							if (current_min_edge == null || Math.abs(myflow.get(current_min_edge)) > sign * myflow.get(e)) {
+								//remember vertex with minimal flow for this path
+								min_previous_edge.put(target, e);
+							} else {
+								min_previous_edge.put(target, current_min_edge);
+							}
+						}
+					} else {
+						//The target must be 'new' and flow must still be available
+						if (parent.get(source) == null && myflow.get(e) != null && sign * myflow.get(e) > 0.0) {
+							
+							//remember parent for backtracking
+							parent.put(source, current_vertex);
+							
+							//add target to queue for further inspection (BFS step) 
+							q.add(source);
+							
+							E current_min_edge = min_previous_edge.get(current_vertex);
+							
+							if (current_min_edge == null || Math.abs(myflow.get(current_min_edge)) > sign * myflow.get(e)) {
+								//remember vertex with minimal flow for this path
+								min_previous_edge.put(source, e);
+							} else {
+								min_previous_edge.put(source, current_min_edge);
+							}
 						}
 					}
 				}
@@ -280,10 +360,82 @@ public class UndirectedFlowProblem<V extends Comparable<V> , E> implements FlowP
 				break;
 		}
 		
-		LOGGER.fine("Flow paths computed: " + paths);
-		
 		return paths;
 	}
+	
+	
+	
+//	public Set<FlowPath<V,E>> getPaths() {
+//		
+//		LOGGER.fine("Computing flow paths.");
+//		
+//		if (directed_flow == null) {
+//			getFlow();
+//		}
+//		
+//		Set<FlowPath<V,E>> paths = new HashSet<FlowPath<V,E>>();
+//		
+//		LOGGER.info("Retrieving flow paths between " + source + " and " + target + " for flow " + undirected_flow);
+//		
+//		//Get shallow copy of flow
+//		Map<DefaultWeightedEdge , Double> myflow = new HashMap<DefaultWeightedEdge,Double>(directed_flow);
+//		Queue<V> q = new LinkedList<V>();
+//		Map<V , DefaultWeightedEdge> min_previous_edge = new HashMap<V , DefaultWeightedEdge>();
+//		
+//		Map<V,V> parent = new HashMap<V,V>();
+//		
+//		while (true) {
+//			
+//			parent.clear();
+//			min_previous_edge.clear();
+//			q.clear();
+//			
+//			parent.put(source,source);
+//			
+//			q.add(source);
+//			while (!q.isEmpty()) {
+//				V current_vertex = q.poll();
+//				
+//				//If we reach t we have found a s-t-path. Extract it!
+//				if (current_vertex.compareTo(target) == 0) {
+//					extractPath(directedG, myflow, target, min_previous_edge, parent,paths);
+//					break;
+//				}
+//				
+//				for(DefaultWeightedEdge e:directedG.outgoingEdgesOf(current_vertex)) {
+//					
+//					V target = directedG.getEdgeTarget(e);
+//
+//					//The target must be 'new' and flow must still be available
+//					if (parent.get(target) == null && myflow.get(e) != null && myflow.get(e) > 0.0) {
+//						
+//						//remember parent for backtracking
+//						parent.put(target, current_vertex);
+//						
+//						//add target to queue for further inspection (BFS step) 
+//						q.add(target);
+//						
+//						DefaultWeightedEdge current_min_edge = min_previous_edge.get(current_vertex);
+//						
+//						if (current_min_edge == null || myflow.get(current_min_edge) > myflow.get(e)) {
+//							//remember vertex with minimal flow for this path
+//							min_previous_edge.put(target, e);
+//						} else {
+//							min_previous_edge.put(target, current_min_edge);
+//						}
+//					}
+//				}
+//			}
+//			
+//			//There are no more s-t-paths
+//			if (parent.get(target) == null)
+//				break;
+//		}
+//		
+//		LOGGER.fine("Flow paths computed: " + paths);
+//		
+//		return paths;
+//	}
 	
 	/**
 	 * Extracts a s-t-path, adds it to the paths array and reduces the flow along the extracted path
@@ -324,6 +476,49 @@ public class UndirectedFlowProblem<V extends Comparable<V> , E> implements FlowP
 		path = Lists.reverse(path);
 		
 		
+		
+		flowPathWeight.put(path , directed_edges_map.get(min_edge_on_path));
+		
+		LOGGER.finest("Found s-t-path:" + path);
+		
+		FlowPath<V,E> path_object = new FlowPath<V,E>(path,flow_on_path);
+		
+		paths.add(path_object);
+
+	}
+	
+	private void extractPathUndirected(
+			Graph<V, E> g, 
+			Map<E, Double> myflow, 
+			V t, 
+			Map<V, E> min_previous_edge, 
+			Map<V, V> parent, 
+			Set<FlowPath<V,E>>paths) {
+		V v = t;
+		E min_edge_on_path = min_previous_edge.get(v);
+		Double flow_on_path = Math.abs(myflow.get(min_edge_on_path));
+		List<V> path = new LinkedList<V>();
+		
+		while (parent.get(v) != v) {
+			E e = g.getEdge(parent.get(v), v);
+			//Substract flow of new path
+			Double new_flow = null;
+			
+			if (v.equals(g.getEdgeSource(e))) {
+				new_flow = myflow.get(e) + flow_on_path;
+			} else {
+				new_flow = myflow.get(e) - flow_on_path;
+			}
+			
+			myflow.put(e, new_flow);
+			path.add(v);
+			v = parent.get(v);
+				
+		}
+		path.add(v);
+		
+		//path is currently reversed, so we reverse it back
+		path = Lists.reverse(path);
 		
 		flowPathWeight.put(path , directed_edges_map.get(min_edge_on_path));
 		
