@@ -117,8 +117,6 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		LOGGER.info("Starting modified KRV procedure.");
 		
 		DenseDoubleMatrix1D r = Util.getRandomDirection(g.edgeSet().size());
-	
-		projection = projector.getFlowVectorProjection(partitionMatrices , r);
 		Double current_potential = krvpot.getPotential();
 		
 		while (current_potential >= bound && A.size() > 1) {
@@ -126,14 +124,15 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			r = Util.getRandomDirection(g.edgeSet().size());
 			projection = projector.getFlowVectorProjection(partitionMatrices , r);
 						
-			//FIXME: Vertice Divider for weighted edges!!
+			//FIXME: Vertice Divider for weighted edges!
 			PracticalVerticeDivider<V,E> divider = new PracticalVerticeDivider<V,E>(projection , edgeNum);
 			divider.divideActiveVertices(gPrime, A, projection);
 			
 			/////////////////////////////// START DEBUG ///////////////////////////////////////////////
-			
-			//Provide some debugging information
-			debugInformation(divider);
+			if (DecompositionConstants.DEBUG) {
+				//Provide some debugging information
+				debugInformation(divider);
+			}
 			
 			/////////////////////////////// END DEBUG /////////////////////////////////////////////////
 			
@@ -195,9 +194,9 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 	 * @param divider
 	 */
 	private void debugInformation(PracticalVerticeDivider<V, E> divider) {
-		KRVPotential<V,E> k = new KRVPotential<V, E>(g,partitionMatrices, projector,A, edgeNum, g.edgeSet().size());
-		
-		System.out.println("Potential-Difference: " + (krvpot.getPotential()-k.getPotential()));
+//		KRVPotential<V,E> k = new KRVPotential<V, E>(g,partitionMatrices, projector,A, edgeNum, g.edgeSet().size());
+//		
+//		System.out.println("Potential-Difference: " + (krvpot.getPotential()-k.getPotential()));
 		
 		Double sum = 0.0;
 		for (SplitVertex<V, E> e : divider.getAs()) {
