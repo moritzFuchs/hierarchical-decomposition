@@ -82,8 +82,8 @@ public class PracticalVerticeDivider<V extends Comparable<V> , E> {
 		}
 		
 		/**
-		 * Compute the set of active edge sources (big flow vector) and active edge targets (small flow vector)
-		 * according to Lemma 3.5 (page 7).
+		 * Compute the set of active edge sources (big flow vector projection) and active edge targets (small flow vector projection)
+		 * 
 		 * @param gPrime 
 		 * @return A pair of sets with A_s being the first and A_t being the second set
 		 */
@@ -98,6 +98,7 @@ public class PracticalVerticeDivider<V extends Comparable<V> , E> {
 
 		/**
 		 * Returns the source edges (after division)
+		 * 
 		 * @return : The source edges
 		 */
 		public Set<SplitVertex<V,E>> getAs() {
