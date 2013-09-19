@@ -80,7 +80,7 @@ public class Lemma33<V extends Comparable<V>,E> {
 	}
 	
 	/**
-	 * Returns the resulting set of edges
+	 * Returns the resulting set of edges (or A+B if Lemma 3.3 hat not been performed yet)
 	 * 
 	 * @return : The resulting set of edges after performing Lemma 3.3 (before that is returns A+B)
 	 */
@@ -103,6 +103,13 @@ public class Lemma33<V extends Comparable<V>,E> {
 	 *  @return The number of the case the Lemma ended up in.
 	 */
 	public Integer performLemma33() {
+		
+		//If either A or B is empty, we are done.
+		if (B.size() == 0 || A.size() == 0) {
+			this.caseNum = 2;
+			return this.caseNum;
+		}
+		
 		LOGGER.info("Performing Lemma 3.3");
 		while (Connectivity.<SplitVertex<V,E> , DefaultWeightedEdge>hasFlowPath(gPrime, gPrime.getFlowSource(), gPrime.getFlowTarget())) {
 			LemmaA2();
@@ -124,7 +131,7 @@ public class Lemma33<V extends Comparable<V>,E> {
 			this.caseNum = 2;
 			return this.caseNum;
 		} else {
-			LOGGER.info("F = A + C does not induce a balanced clustering. Hence F = B + C and we are in Case 1 of Lemma 3.3.");
+			LOGGER.info("Bad new everyone ... F = A+C does not induce a balanced clustering. Hence F = B+C and we are in Case 1 of Lemma 3.3.");
 			
 			//B + C must be a balanced clustering
 			F = new HashSet<E>(B);
@@ -135,7 +142,6 @@ public class Lemma33<V extends Comparable<V>,E> {
 		}
 	}
 	
-	//TODO: refactor, method is too long
 	/**
 	 * Computes flow from s to t and removes cut vertices x_e that handle more than cap(e) / 2 of flow
 	 */
@@ -143,9 +149,9 @@ public class Lemma33<V extends Comparable<V>,E> {
 		
 		FlowProblem<SplitVertex<V,E> , DefaultWeightedEdge> flow_problem = new UndirectedFlowProblem<SplitVertex<V,E>,DefaultWeightedEdge>(gPrime, gPrime.getFlowSource() , gPrime.getFlowTarget());
 	
-		Map<DefaultWeightedEdge , Double> maxFlow = flow_problem.getFlow();	
+		Map<DefaultWeightedEdge , Double> maxFlow = flow_problem.getMaxFlow();	
 		Set<FlowPath<SplitVertex<V, E>,DefaultWeightedEdge>> pathSet = flow_problem.getPaths();
-		Set<DefaultWeightedEdge> cut = flow_problem.getCut();
+		Set<DefaultWeightedEdge> cut = flow_problem.getMinCut();
 		
 		//Set of Split vertices that represent edges in G and are incident to the cut.
 		Set<SplitVertex<V,E>> cutVertices = new HashSet<SplitVertex<V,E>>();
@@ -166,7 +172,7 @@ public class Lemma33<V extends Comparable<V>,E> {
 			}
 			
 			//Assign flow path weight to first cut vertex on path as computed by getFirstSplitVertexOnPath
-			flowAssignment.put(first, flowAssignment.get(first) + flow_problem.getFlowPathWeight(path));
+			flowAssignment.put(first, flowAssignment.get(first) + path.getFlowPathWeight());
 		}
 		
 		//remove vertices with more than cap(e) / 2 of flow path weights assigned to it

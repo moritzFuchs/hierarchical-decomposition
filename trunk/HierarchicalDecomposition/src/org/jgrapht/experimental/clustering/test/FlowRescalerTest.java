@@ -58,7 +58,7 @@ public class FlowRescalerTest {
 					gPrime.getFlowTarget());
 			
 			//Compute maxFlow
-			Map <DefaultWeightedEdge , Double> maxFlow = problem.getFlow();
+			Map <DefaultWeightedEdge , Double> maxFlow = problem.getMaxFlow();
 			
 			
 			
@@ -121,7 +121,7 @@ public class FlowRescalerTest {
 					gPrime.getFlowTarget());
 			
 			//Compute maxFlow
-			Map <DefaultWeightedEdge , Double> maxFlow = problem.getFlow();
+			Map <DefaultWeightedEdge , Double> maxFlow = problem.getMaxFlow();
 					
 			// TEST START-----------------------------------------------
 			
