@@ -1,5 +1,6 @@
 package org.jgrapht.experimental.clustering;
 
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -7,9 +8,6 @@ import java.util.logging.Logger;
 import org.jgrapht.Graph;
 import org.jgrapht.experimental.util.LoggerFactory;
 import org.jgrapht.graph.DefaultWeightedEdge;
-
-//TODO More Tests
-//TODO Refactor
 
 /**
  * Performs a BiPartition depending on a previously computed clustering by {@link PartitionA} and the boundary edges of the subgraph subG
@@ -62,6 +60,7 @@ public class PartitionB<V extends Comparable<V>,E> extends Clustering<V,E> {
 	 * The right side of the bisection (the side s is attached to)
 	 */
 	private Set<V> R;
+
 	
 	
 	/**
@@ -118,6 +117,8 @@ public class PartitionB<V extends Comparable<V>,E> extends Clustering<V,E> {
 		this.boundaryVertices = new HashSet<SplitVertex<V,E>>();
 		this.clustering = clustering;
 		
+		Double log2n = (Math.log10(g.vertexSet().size()) / Math.log10(2));
+		
 		SplitGraph<V,E> subGprime = new SplitGraph<V,E>(subG);
 		
 		SplitVertex<V,E> s = new SplitVertex<V,E>();
@@ -125,6 +126,9 @@ public class PartitionB<V extends Comparable<V>,E> extends Clustering<V,E> {
 		
 		subGprime.addVertex(s);
 		subGprime.addVertex(t);
+
+		subGprime.setFlowSource(s);
+		subGprime.setFlowTarget(t);
 		
 		Set<E> boundary = getBoundary(subG, g);
 		
@@ -146,11 +150,11 @@ public class PartitionB<V extends Comparable<V>,E> extends Clustering<V,E> {
 			
 			//Connect boundary split vertex to endpoint in subG
 			DefaultWeightedEdge new_edge = subGprime.addEdge(target, splitVertex);
-			subGprime.setEdgeWeight(new_edge, 1.0 / (Math.log10(g.vertexSet().size()) / Math.log10(2)));
+			subGprime.setEdgeWeight(new_edge, g.getEdgeWeight(e) / log2n);
 			
 			//Connect boundary split vertex to s
 			DefaultWeightedEdge new_source_edge = subGprime.addEdge(s , splitVertex);
-			subGprime.setEdgeWeight(new_source_edge, 1.0 / (Math.log10(g.vertexSet().size()) / Math.log10(2)) );
+			subGprime.setEdgeWeight(new_source_edge, g.getEdgeWeight(e) / log2n );
 		}
 		
 		//Connect all edges of the clustering to a target vertex t
@@ -158,12 +162,12 @@ public class PartitionB<V extends Comparable<V>,E> extends Clustering<V,E> {
 			SplitVertex<V,E> source = subGprime.getSplitVertexFromEdge(e);
 			
 			DefaultWeightedEdge new_target_edge = subGprime.addEdge(source, t);
-			subGprime.setEdgeWeight(new_target_edge, 1.0);
+			subGprime.setEdgeWeight(new_target_edge, g.getEdgeWeight(e));
 		}
 		
 		
 		FlowProblem<SplitVertex<V,E> , DefaultWeightedEdge> flow_problem = new UndirectedFlowProblem<SplitVertex<V,E> , DefaultWeightedEdge>(subGprime,s,t);
-		Set<DefaultWeightedEdge> cut = flow_problem.getCut();
+		Set<DefaultWeightedEdge> cut = flow_problem.getMinCut();
 
 		if (F == null) {
 			F = new HashSet<E>();
@@ -233,4 +237,6 @@ public class PartitionB<V extends Comparable<V>,E> extends Clustering<V,E> {
 	public Set<V> getR() {
 		return R;
 	}
+	
+	
 }

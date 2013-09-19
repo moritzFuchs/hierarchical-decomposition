@@ -20,14 +20,14 @@ public interface FlowProblem<V,E> {
 	 * 
 	 * @return : Map from edges to their amount of flow
 	 */
-	public Map<E , Double> getFlow();
+	public Map<E , Double> getMaxFlow();
 	
 	/**
 	 * Get the min-cut for the given problem
 	 * 
 	 * @return : Set of edges that divide s from t
 	 */
-	public Set<E> getCut();
+	public Set<E> getMinCut();
 	
 	/**
 	 * Get the flow paths of the graph

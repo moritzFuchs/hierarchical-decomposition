@@ -19,9 +19,9 @@ public class FlowRescaler<V extends Comparable<V>,E> {
 	/**
 	 * Rescales a given flow in G'_st as follows: For all edges s -- x_e with flow >= RESCALE_BOUND rescale the corresponding flow paths such that s -- x_e holds 1 unit of flow
 	 * 
-	 * @param gPrime
-	 * @param flow
-	 * @return 
+	 * @param gPrime : The subdivision graph G' of G
+	 * @param flow : A feasible approximate (or exact) max-flow
+	 * @return Set<FlowPath<SplitVertex<V,E>,DefaultWeightedEdge>> : The set of rescaled flow paths. 
 	 */
 	public Set<FlowPath<SplitVertex<V,E>,DefaultWeightedEdge>> rescaleFlow(SplitGraph<V,E> gPrime , Map<DefaultWeightedEdge , Double> flow , FlowProblem<SplitVertex<V,E>, DefaultWeightedEdge> flow_problem) {
 		

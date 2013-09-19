@@ -117,7 +117,7 @@ public class UndirectedFlowProblem<V extends Comparable<V> , E> implements FlowP
 	 * @return : The Max-Flow for the given Graph G and its source and target. (all 3 are received in the constructor) 
 	 */
 	@Override
-	public Map<E , Double> getFlow() {
+	public Map<E , Double> getMaxFlow() {
 		
 		LOGGER.fine("Computing max flow for G = " + g);
 		
@@ -151,7 +151,12 @@ public class UndirectedFlowProblem<V extends Comparable<V> , E> implements FlowP
 		return undirected_flow;
 	}
 
-	public Set<E> getCut() {
+	/**
+	 * Get the cut induced by the max-flow.
+	 * 
+	 * @return Set<E> : MinCut of G.
+	 */
+	public Set<E> getMinCut() {
 		
 		LOGGER.fine("Computing the min-cut based on the max flow");
 		
@@ -160,7 +165,7 @@ public class UndirectedFlowProblem<V extends Comparable<V> , E> implements FlowP
 		}
 		
 		if (undirected_flow == null) {
-			getFlow();
+			getMaxFlow();
 		}
 		
 		Queue<V> q = new LinkedList<V>();
@@ -213,57 +218,57 @@ public class UndirectedFlowProblem<V extends Comparable<V> , E> implements FlowP
 		return this.cut;
 	}
 	
-	/**
-	 * Computes the Min-Cut between the source and the target of G through the Min-Cut-Max-Flow-Theorem (See e.g. https://en.wikipedia.org/wiki/Max-flow_min-cut_theorem)
-	 * 
-	 * @return: The Min-Cut between source and target of G. 
-	 */
-	public Set<E> getCutOld() {
-		
-		LOGGER.fine("Computing the min-cut based on the max flow");
-		
-		if (this.cut != null) {
-			return cut;
-		}
-		
-		if (directed_flow == null) {
-			getFlow();
-		}
-		
-		Queue<V> q = new LinkedList<V>();
-		Set<DefaultWeightedEdge> potentialCutEdges = new HashSet<DefaultWeightedEdge>();
-		Set<V> seen = new HashSet<V>();
-		
-		q.add(source);
-		seen.add(source);
-		
-		while(!q.isEmpty()) {
-			V v = q.poll();
-			for (DefaultWeightedEdge out_edge : directedG.outgoingEdgesOf(v)) {
-				if (directed_flow.get(out_edge) + EdmondsKarpMaximumFlow.DEFAULT_EPSILON < directedG.getEdgeWeight(out_edge)) {
-					V source_vertex = directedG.getEdgeTarget(out_edge);
-					if (!seen.contains(source_vertex)) {
-						q.add(source_vertex);
-						seen.add(source_vertex);
-					}
-				} else {
-					potentialCutEdges.add(out_edge);
-				}
-			} 
-		}
-		
-		this.cut = new HashSet<E>();
-		
-		for (DefaultWeightedEdge e : potentialCutEdges) {
-			if (seen.contains(directedG.getEdgeSource(e)) && !seen.contains(directedG.getEdgeTarget(e))) {
-				this.cut.add(directed_edges_map.get(e));
-			}
-		}
-		
-		LOGGER.fine("Min-Cut done: " + cut);
-		
-		return this.cut;
-	}
+//	/**
+//	 * Computes the Min-Cut between the source and the target of G through the Min-Cut-Max-Flow-Theorem (See e.g. https://en.wikipedia.org/wiki/Max-flow_min-cut_theorem)
+//	 * 
+//	 * @return: The Min-Cut between source and target of G. 
+//	 */
+//	public Set<E> getCutOld() {
+//		
+//		LOGGER.fine("Computing the min-cut based on the max flow");
+//		
+//		if (this.cut != null) {
+//			return cut;
+//		}
+//		
+//		if (directed_flow == null) {
+//			getMaxFlow();
+//		}
+//		
+//		Queue<V> q = new LinkedList<V>();
+//		Set<DefaultWeightedEdge> potentialCutEdges = new HashSet<DefaultWeightedEdge>();
+//		Set<V> seen = new HashSet<V>();
+//		
+//		q.add(source);
+//		seen.add(source);
+//		
+//		while(!q.isEmpty()) {
+//			V v = q.poll();
+//			for (DefaultWeightedEdge out_edge : directedG.outgoingEdgesOf(v)) {
+//				if (directed_flow.get(out_edge) + EdmondsKarpMaximumFlow.DEFAULT_EPSILON < directedG.getEdgeWeight(out_edge)) {
+//					V source_vertex = directedG.getEdgeTarget(out_edge);
+//					if (!seen.contains(source_vertex)) {
+//						q.add(source_vertex);
+//						seen.add(source_vertex);
+//					}
+//				} else {
+//					potentialCutEdges.add(out_edge);
+//				}
+//			} 
+//		}
+//		
+//		this.cut = new HashSet<E>();
+//		
+//		for (DefaultWeightedEdge e : potentialCutEdges) {
+//			if (seen.contains(directedG.getEdgeSource(e)) && !seen.contains(directedG.getEdgeTarget(e))) {
+//				this.cut.add(directed_edges_map.get(e));
+//			}
+//		}
+//		
+//		LOGGER.fine("Min-Cut done: " + cut);
+//		
+//		return this.cut;
+//	}
 	
 	/**
 	 * Extracts a s-t-path, adds it to the paths array and reduces the flow along the extracted path
@@ -277,7 +282,7 @@ public class UndirectedFlowProblem<V extends Comparable<V> , E> implements FlowP
 	public Set<FlowPath<V,E>> getPaths() {
 		
 		if (undirected_flow == null) {
-			getFlow();
+			getMaxFlow();
 		}
 		
 		Set<FlowPath<V,E>> paths = new HashSet<FlowPath<V,E>>();
@@ -299,7 +304,7 @@ public class UndirectedFlowProblem<V extends Comparable<V> , E> implements FlowP
 				
 				//If we reach t we have found a s-t-path. Extract it!
 				if (current_vertex.compareTo(target) == 0) {
-					extractPathUndirected(g, myflow, target, min_previous_edge, parent,paths);
+					extractPath(g, myflow, target, min_previous_edge, parent,paths);
 					break;
 				}
 				
@@ -447,47 +452,6 @@ public class UndirectedFlowProblem<V extends Comparable<V> , E> implements FlowP
 	 * @param parent : The backtracking information (BFS tree with root s)
 	 */
 	private void extractPath(
-			SimpleDirectedWeightedGraph<V, DefaultWeightedEdge> g, 
-			Map<DefaultWeightedEdge, Double> myflow, 
-			V t, 
-			Map<V, DefaultWeightedEdge> min_previous_edge, 
-			Map<V, V> parent, 
-			Set<FlowPath<V,E>>paths) {
-		V v = t;
-		DefaultWeightedEdge min_edge_on_path = min_previous_edge.get(v);
-		Double flow_on_path = myflow.get(min_edge_on_path);
-		List<V> path = new LinkedList<V>();
-		
-		while (parent.get(v) != v) {
-			DefaultWeightedEdge e = g.getEdge(parent.get(v), v);
-			//Substract flow of new path
-			Double new_flow = null;
-			
-			new_flow = myflow.get(e) - flow_on_path;
-			
-			myflow.put(e, new_flow);
-			path.add(v);
-			v = parent.get(v);
-				
-		}
-		path.add(v);
-		
-		//path is currently reversed, so we reverse it back
-		path = Lists.reverse(path);
-		
-		
-		
-		flowPathWeight.put(path , directed_edges_map.get(min_edge_on_path));
-		
-		LOGGER.finest("Found s-t-path:" + path);
-		
-		FlowPath<V,E> path_object = new FlowPath<V,E>(path,flow_on_path);
-		
-		paths.add(path_object);
-
-	}
-	
-	private void extractPathUndirected(
 			Graph<V, E> g, 
 			Map<E, Double> myflow, 
 			V t, 

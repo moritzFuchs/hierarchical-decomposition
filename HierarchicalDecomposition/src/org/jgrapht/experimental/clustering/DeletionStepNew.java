@@ -102,7 +102,7 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 		B_new = new HashSet<E>(B);
 		
 		//Get cut induced by flow
-		Set<DefaultWeightedEdge> cut = flow_problem.getCut();
+		Set<DefaultWeightedEdge> cut = flow_problem.getMinCut();
 		
 		Set<E> C = gPrime.translateCut(cut);
 

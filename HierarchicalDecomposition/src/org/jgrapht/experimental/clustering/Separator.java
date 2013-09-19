@@ -68,12 +68,12 @@ public class Separator<V extends Comparable<V>,E> {
 	private void iterate(Graph<V,E> g, SplitGraph<V,E> gPrime , Set<E> A , Set<E> B) {
 		//Compute the flow
 		FlowProblem<SplitVertex<V,E> , DefaultWeightedEdge> flow_problem = new UndirectedFlowProblem<SplitVertex<V,E> , DefaultWeightedEdge>(gPrime,gPrime.getFlowSource() , gPrime.getFlowTarget());
-		Map<DefaultWeightedEdge , Double> maxFlow = flow_problem.getFlow();
+		Map<DefaultWeightedEdge , Double> maxFlow = flow_problem.getMaxFlow();
 		
 		//Decompose the flow into flowPaths and a cut
 		
 		Set<FlowPath<SplitVertex<V, E>,DefaultWeightedEdge>> pathSet = flow_problem.getPaths();
-		Set<DefaultWeightedEdge> cut = flow_problem.getCut();
+		Set<DefaultWeightedEdge> cut = flow_problem.getMinCut();
 		
 		//Get SplitGraphVertices incident to cut that represent edges in G
 		Set<SplitVertex<V,E>> cutVertices = new HashSet<SplitVertex<V,E>>();

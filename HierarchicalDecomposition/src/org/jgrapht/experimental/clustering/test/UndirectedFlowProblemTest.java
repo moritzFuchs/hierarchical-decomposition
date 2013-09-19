@@ -30,7 +30,7 @@ public class UndirectedFlowProblemTest {
 		
 		UndirectedFlowProblem<Integer , DefaultWeightedEdge> problem = new UndirectedFlowProblem<Integer , DefaultWeightedEdge>(g , 1 , 6);
 		
-		Map<DefaultWeightedEdge , Double> flow = problem.getFlow();
+		Map<DefaultWeightedEdge , Double> flow = problem.getMaxFlow();
 		
 		assertTrue(flow.get(g.getEdge(1, 2)) == 1.0);
 		assertTrue(flow.get(g.getEdge(1, 3)) == 2.0);
@@ -50,7 +50,7 @@ public class UndirectedFlowProblemTest {
 		
 		UndirectedFlowProblem<Integer , DefaultWeightedEdge> problem = new UndirectedFlowProblem<Integer , DefaultWeightedEdge>(g , 1 , 6);
 		
-		Set<DefaultWeightedEdge> cut = problem.getCut();
+		Set<DefaultWeightedEdge> cut = problem.getMinCut();
 		
 		System.out.println(cut);
 		
@@ -64,7 +64,7 @@ public class UndirectedFlowProblemTest {
 		
 		UndirectedFlowProblem<Integer , DefaultWeightedEdge> problem = new UndirectedFlowProblem<Integer , DefaultWeightedEdge>(g , 1 , 6);
 		
-		Map<DefaultWeightedEdge , Double> flow = problem.getFlow();
+		Map<DefaultWeightedEdge , Double> flow = problem.getMaxFlow();
 		
 		assertTrue(flow.get(g.getEdge(1, 2)) == 1.0);
 		assertTrue(flow.get(g.getEdge(1, 3)) == 2.0);
@@ -114,7 +114,7 @@ public class UndirectedFlowProblemTest {
 		
 		UndirectedFlowProblem<Integer , DefaultWeightedEdge> problem = new UndirectedFlowProblem<Integer , DefaultWeightedEdge>(g , 1 , 4);
 		
-		Map<DefaultWeightedEdge, Double> flow = problem.getFlow();
+		Map<DefaultWeightedEdge, Double> flow = problem.getMaxFlow();
 		assertTrue(flow.get(e12) == 1.0);
 		assertTrue(flow.get(e13) == 1.0);
 		assertTrue(flow.get(e23) == -1.0);
@@ -173,7 +173,7 @@ public class UndirectedFlowProblemTest {
 		
 		assertTrue(paths.size() == 2);
 		
-		Set<DefaultWeightedEdge> cut = problem.getCut();
+		Set<DefaultWeightedEdge> cut = problem.getMinCut();
 		
 		assertTrue(cut.contains(g.getEdge(2, 7)));
 		assertTrue(cut.contains(g.getEdge(6, 7)));
@@ -232,7 +232,7 @@ public class UndirectedFlowProblemTest {
 				
 		UndirectedFlowProblem<SplitVertex<Integer , DefaultWeightedEdge> , DefaultWeightedEdge> problem = new UndirectedFlowProblem<SplitVertex<Integer, DefaultWeightedEdge > , DefaultWeightedEdge>(gPrime , gPrime.getFlowSource() , gPrime.getFlowTarget());
 		
-		Set<DefaultWeightedEdge> cut = problem.getCut();
+		Set<DefaultWeightedEdge> cut = problem.getMinCut();
 		
 		assertTrue(cut.size() == 2);
 		assertTrue(problem.getPaths().size() == 2);

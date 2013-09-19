@@ -95,8 +95,15 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		//This is the theoretical bound
 		this.bound = 1/(16 * Math.pow(g.vertexSet().size(),2));
 		
+		Double weight_sum = 0.0;
+		for (E e : g.edgeSet()) {
+			weight_sum += g.getEdgeWeight(e);
+		}
+		
+		this.bound = this.bound * weight_sum; 
+		
 		//Let's make it practical!
-		this.bound = this.bound * 10* g.vertexSet().size();
+		this.bound = this.bound * 10;
 	
 		this.projector = new FlowVectorProjector<V,E>(g, edgeNum);
 		
@@ -144,7 +151,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 				new UndirectedFlowProblem<SplitVertex<V,E>, DefaultWeightedEdge>(gPrime, gPrime.getFlowSource(), gPrime.getFlowTarget());
 			
 			//Compute maxFlow
-			Map <DefaultWeightedEdge , Double> maxFlow = flow_problem.getFlow();
+			Map <DefaultWeightedEdge , Double> maxFlow = flow_problem.getMaxFlow();
 			
 			//Rescale flow
 			FlowRescaler<V,E> rescaler = new FlowRescaler<V, E>();
@@ -152,9 +159,9 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			
 			if (DecompositionConstants.DEBUG) {
 				for (FlowPath<SplitVertex<V, E>, DefaultWeightedEdge> path : flow_problem.getPaths()) {
-					DefaultWeightedEdge e  = findCutEdge(flow_problem.getCut(), path.getPath());
-					if (gPrime.getEdgeWeight(e) > Math.abs(flow_problem.getFlow().get(e))) {
-						System.out.println(" " + gPrime.getEdgeWeight(e) + " " + flow_problem.getFlow().get(e));
+					DefaultWeightedEdge e  = findCutEdge(flow_problem.getMinCut(), path.getPath());
+					if (gPrime.getEdgeWeight(e) > Math.abs(flow_problem.getMaxFlow().get(e))) {
+						System.out.println(" " + gPrime.getEdgeWeight(e) + " " + flow_problem.getMaxFlow().get(e));
 						Integer a = 1;
 					} 
 				}
@@ -223,13 +230,13 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		Double matchingPotential = krvpot.getPotentialAfterStep(A , matchingStep);
 		Double deletionPotential = krvpot.getPotentialAfterStep(deletionStep.getA() , deletionStep);
 		
-		if (DecompositionConstants.DEBUG) {
+		
 //			System.out.println("Current projection: " + projection);
 			System.out.println("Current potential: " + current_potential);
 			System.out.println("Potential for matching: " + matchingPotential);
 			System.out.println("Potential for deletion: " + deletionPotential + " No Progress?: " + deletionStep.noProgress() + " Restart:" + deletionStep.restartNeeded());
 			System.out.println("Bound : " + bound);
-		}
+		
 		
 		Double potential;
 		if (deletionStep.noProgress() || (!deletionStep.restartNeeded() && matchingPotential <= deletionPotential)) {
@@ -310,14 +317,6 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 	public Set<E> getB() {
 		return B;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	private DefaultWeightedEdge findCutEdge(Set<DefaultWeightedEdge> cut, List<SplitVertex<V, E>> path) {
 		//find the first cut edge on the path

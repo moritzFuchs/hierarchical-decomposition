@@ -158,11 +158,11 @@ public class SplitGraph<V extends Comparable<V>,E> extends SimpleGraph<SplitVert
 		
 		//Connect all vertices in A_s to the source with capacity of the associated edge
 		for (SplitVertex<V,E> v : A) {
-			this.setEdgeWeight(this.addEdge(this.source, v) , g.getEdgeWeight(edgeMap.inverse().get(v)));
+			this.setEdgeWeight(this.addEdge(this.source, v) , g.getEdgeWeight(v.getEdge()));
 		}
 		//Connect all vertices in A_t to the target with capacity of the associated edge
 		for (SplitVertex<V,E> v : B) {
-			this.setEdgeWeight(this.addEdge(v, this.target) , g.getEdgeWeight(edgeMap.inverse().get(v)));
+			this.setEdgeWeight(this.addEdge(v, this.target) , g.getEdgeWeight(v.getEdge()));
 		}
 		
 		//return new Pair<SplitGraphVertex<V,E> , SplitGraphVertex<V,E>>(this.source,this.target);
@@ -195,7 +195,6 @@ public class SplitGraph<V extends Comparable<V>,E> extends SimpleGraph<SplitVert
 		Set<SplitVertex<V,E>> ret = new HashSet<SplitVertex<V,E>>(); 
 		for (E e: edges) {
 			ret.add(edgeMap.get(e));
-			
 		}
 		
 		return ret;
@@ -292,6 +291,26 @@ public class SplitGraph<V extends Comparable<V>,E> extends SimpleGraph<SplitVert
 		}
 		
 		return originalEdges;
+	}
+	
+	/**
+	 * Sets flow source of the graph (used for defining flow problems).
+	 * If a flow source was set previously, this will be ignored. 
+	 * 
+	 * @param s : The new flow source. 
+	 */
+	public void setFlowSource(SplitVertex<V,E> s) {
+		this.source = s;
+	}
+	
+	/**
+	 * Sets flow target of the graph (used for defining flow problems).
+	 * If a flow target was set previously, this will be ignored. 
+	 * 
+	 * @param t : The new flow target. 
+	 */
+	public void setFlowTarget(SplitVertex<V,E> t) {
+		this.target = t;
 	}
 	
 	/**
