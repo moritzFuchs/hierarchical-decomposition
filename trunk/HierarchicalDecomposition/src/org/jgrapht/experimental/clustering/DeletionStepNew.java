@@ -162,7 +162,7 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 						sum += row.getQuick(j) * g.getEdgeWeight(edgeNum.inverse().get(j));
 					}
 					if (sum != 0.0 && (sum < g.getEdgeWeight(edgeNum.inverse().get(i)) - DecompositionConstants.EPSILON || sum > g.getEdgeWeight(edgeNum.inverse().get(i)) + DecompositionConstants.EPSILON)) {
-						System.out.println("Flow vector too large!");
+						System.out.println("Flow vector too large or too small!");
 					}
 				}
 				

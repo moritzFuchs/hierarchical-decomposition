@@ -115,9 +115,7 @@ public class KRVPotential<V,E> {
 	/**
 	 * Precomputes projections of the flow vectors onto random directions
 	 */
-	private void precomputeProjections() {
-		System.out.println("precomputing");
-		
+	private void precomputeProjections() {		
 		for (int i=0;i<DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS;i++) {
 			randomDirections[i] = Util.getRandomDirection(m);
 			DoubleMatrix1D projection = projector.getFlowVectorProjection(krvsteps, randomDirections[i]);
@@ -146,8 +144,6 @@ public class KRVPotential<V,E> {
 	 * @return : The approximate potential of the flow vectors
 	 */
 	public Double getPotential() {
-
-		System.out.println("computing potential");
 		
 		Double total = 0.0;
 		

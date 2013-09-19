@@ -37,16 +37,6 @@ public class FlowRescaler<V extends Comparable<V>,E> {
 				pathFactors.put(e, gPrime.getEdgeWeight(e) / flow.get(e));
 		}
 	
-		//DEBUG START
-		
-		for (DefaultWeightedEdge e : pathFactors.keySet()) {
-			if (pathFactors.get(e) * flow.get(e) != gPrime.getEdgeWeight(e)) {
-				System.out.println(pathFactors.get(e) + "*" + flow.get(e) + "!=" + gPrime.getEdgeWeight(e));
-			}
-		}
-		
-		//DEBUG END
-		
 		//Next we need to scale each path accordingly 
 		Map<DefaultWeightedEdge , Double> newFlow = new HashMap<DefaultWeightedEdge , Double>(); 
 		

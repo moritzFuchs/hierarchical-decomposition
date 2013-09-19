@@ -13,12 +13,9 @@ import org.jgrapht.experimental.util.LoggerFactory;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
-import cern.colt.matrix.tdouble.DoubleMatrix2D;
 import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix1D;
-import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix2D;
 
 import com.google.common.collect.BiMap;
-import com.google.common.collect.Iterables;
 
 public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 
@@ -124,7 +121,6 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			r = Util.getRandomDirection(g.edgeSet().size());
 			projection = projector.getFlowVectorProjection(partitionMatrices , r);
 						
-			//FIXME: Vertice Divider for weighted edges!
 			PracticalVerticeDivider<V,E> divider = new PracticalVerticeDivider<V,E>(projection , edgeNum);
 			divider.divideActiveVertices(gPrime, A, projection);
 			
@@ -219,7 +215,6 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 	 * @param r : The current random direction
 	 * @return Double : The potential of the applied step
 	 */
-	//TODO: Remove current potential
 	private Double applyBetterStep(DeletionStepNew<V,E> deletionStep,
 			MatchingStepNew<V,E> matchingStep,
 			DoubleMatrix1D r,
@@ -228,11 +223,13 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		Double matchingPotential = krvpot.getPotentialAfterStep(A , matchingStep);
 		Double deletionPotential = krvpot.getPotentialAfterStep(deletionStep.getA() , deletionStep);
 		
-//		System.out.println("Current projection: " + projection);
-		System.out.println("Current potential: " + current_potential);
-		System.out.println("Potential for matching: " + matchingPotential);
-		System.out.println("Potential for deletion: " + deletionPotential + " No Progress?: " + deletionStep.noProgress() + " Restart:" + deletionStep.restartNeeded());
-		System.out.println("Bound : " + bound);
+		if (DecompositionConstants.DEBUG) {
+//			System.out.println("Current projection: " + projection);
+			System.out.println("Current potential: " + current_potential);
+			System.out.println("Potential for matching: " + matchingPotential);
+			System.out.println("Potential for deletion: " + deletionPotential + " No Progress?: " + deletionStep.noProgress() + " Restart:" + deletionStep.restartNeeded());
+			System.out.println("Bound : " + bound);
+		}
 		
 		Double potential;
 		if (deletionStep.noProgress() || (!deletionStep.restartNeeded() && matchingPotential <= deletionPotential)) {
