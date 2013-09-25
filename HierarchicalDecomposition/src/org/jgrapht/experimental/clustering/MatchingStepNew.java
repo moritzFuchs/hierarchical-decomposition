@@ -151,7 +151,7 @@ public class MatchingStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 	}
 	
 	/**
-	 * Returns the computed matrix
+	 * Returns the computed matrix.
 	 * 
 	 * @return : The computed matrix (or null if the matrix has not yet been computed)
 	 */
@@ -159,6 +159,11 @@ public class MatchingStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 		return matrixContainer.getMatrix();
 	}
 	
+	/**
+	 * Returns the set of active edges.
+	 * 
+	 * @return Set<E> : The set of active edges.
+	 */
 	public Set<E> getA() {
 		return A;
 	}
@@ -168,7 +173,10 @@ public class MatchingStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 			DoubleMatrix1D current_projection) {
 		
 		DoubleMatrix1D new_projection = current_projection.copy();
-		new_projection = matrixContainer.getMatrix().zMult(current_projection, new_projection);
+		
+		for (int i=0;i<DecompositionConstants.MATCHING_APPLICATIONS;i++) {
+			new_projection = matrixContainer.getMatrix().zMult(new_projection.copy(), new_projection);
+		}
 		
 		return new_projection;
 		

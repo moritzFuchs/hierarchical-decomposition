@@ -54,7 +54,7 @@ public class Util {
 		
 		//generate random vector
 		for (int i=0;i<dimensions;i++) {
-			r.setQuick(i, -1.0 + 2.0 * rand.nextDouble());
+			r.setQuick(i, -1.0 + 2.0 * rand.nextGaussian());
 		}
 		
 		Double len = 0.0;
