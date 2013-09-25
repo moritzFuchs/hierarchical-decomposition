@@ -57,4 +57,9 @@ public class DecompositionConstants {
 	 * Fraction of the available CPU Cores that are used. #Cores * this constant = number of Threads in ThreadPool.
 	 */
 	public static final Integer MULTIPLE_OF_CORES = 2;
+	
+	/**
+	 * Number of applications of a matching step.
+	 */
+	public static final Integer MATCHING_APPLICATIONS = 10;
 }
