@@ -95,13 +95,6 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		//This is the theoretical bound
 		this.bound = 1/(16 * Math.pow(g.vertexSet().size(),2));
 		
-		Double weight_sum = 0.0;
-		for (E e : g.edgeSet()) {
-			weight_sum += g.getEdgeWeight(e);
-		}
-		
-		this.bound = this.bound * weight_sum; 
-		
 		//Let's make it practical!
 		this.bound = this.bound * 10;
 	
@@ -201,6 +194,8 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 //		
 //		System.out.println("Potential-Difference: " + (krvpot.getPotential()-k.getPotential()));
 		
+		
+		
 		Double sum = 0.0;
 		for (SplitVertex<V, E> e : divider.getAs()) {
 			sum += projection.getQuick(edgeNum.get(gPrime.getOriginalEdge(e)));
@@ -230,6 +225,13 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		Double matchingPotential = krvpot.getPotentialAfterStep(A , matchingStep);
 		Double deletionPotential = krvpot.getPotentialAfterStep(deletionStep.getA() , deletionStep);
 		
+		Double sum = 0.0;
+		for (E e : A) {
+			sum += g.getEdgeWeight(e);
+		}
+		
+		System.out.println("Current summed up edge weight: " + sum);
+		System.out.println("Mean of edge weights: " + sum / A.size());
 		
 //			System.out.println("Current projection: " + projection);
 			System.out.println("Current potential: " + current_potential);

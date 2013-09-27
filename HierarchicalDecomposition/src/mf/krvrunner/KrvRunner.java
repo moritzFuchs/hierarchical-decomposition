@@ -13,8 +13,6 @@ import mf.superpixel.SuperpixelDecomposition;
 import mf.superpixel.SuperpixelGraph;
 import mf.superpixel.SuperpixelImport;
 
-//TODO: Think of better name than 'KRV-Decomposition'
-
 /**
  * Takes the {@link Superpixel-Graph} and computes a KRV-Decomposition.
  * 

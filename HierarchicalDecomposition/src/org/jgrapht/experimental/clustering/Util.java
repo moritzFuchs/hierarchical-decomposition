@@ -52,9 +52,9 @@ public class Util {
 		Random rand = new Random();
 		rand.setSeed(System.nanoTime());
 		
-		//generate random vector
+		//generate random gaussian vector
 		for (int i=0;i<dimensions;i++) {
-			r.setQuick(i, -1.0 + 2.0 * rand.nextGaussian());
+			r.setQuick(i, rand.nextGaussian());
 		}
 		
 		Double len = 0.0;

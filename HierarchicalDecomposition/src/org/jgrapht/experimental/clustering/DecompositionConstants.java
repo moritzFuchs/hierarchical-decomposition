@@ -15,7 +15,7 @@ public class DecompositionConstants {
 	/**
 	 * Turn debugging mode on/off. On will be very slow since a lot of stuff is double-checked.
 	 */
-	public static final Boolean DEBUG = false;
+	public static final Boolean DEBUG = true;
 	
 	/**
 	 * Mainly for debugging: error that we are allowed to make (due to Double precision)
@@ -54,12 +54,12 @@ public class DecompositionConstants {
 	public static final Double MAX_SOURCE_EDGES = 1.0/8.0;
 	
 	/**
-	 * Fraction of the available CPU Cores that are used. #Cores * this constant = number of Threads in ThreadPool.
+	 * Multiple of the available CPU Cores that are used. #Cores * this constant = number of Threads in ThreadPool.
 	 */
 	public static final Integer MULTIPLE_OF_CORES = 2;
 	
 	/**
 	 * Number of applications of a matching step.
 	 */
-	public static final Integer MATCHING_APPLICATIONS = 10;
+	public static final Integer MATCHING_APPLICATIONS = 15;
 }
