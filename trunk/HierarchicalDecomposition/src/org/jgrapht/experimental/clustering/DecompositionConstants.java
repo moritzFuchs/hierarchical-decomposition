@@ -1,5 +1,7 @@
 package org.jgrapht.experimental.clustering;
 
+import org.jgrapht.experimental.clustering.old.TheoreticalVerticeDivider;
+
 /**
  * Parameters for the decomposition algorithm.
  * 

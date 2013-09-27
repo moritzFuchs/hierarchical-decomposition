@@ -1,9 +1,15 @@
-package org.jgrapht.experimental.clustering;
+package org.jgrapht.experimental.clustering.old;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.jgrapht.Graph;
+import org.jgrapht.experimental.clustering.DecompositionConstants;
+import org.jgrapht.experimental.clustering.SplitGraph;
+import org.jgrapht.experimental.clustering.SplitVertex;
+import org.jgrapht.experimental.clustering.VectorPotential;
 
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
 
@@ -46,6 +52,8 @@ public class TheoreticalVerticeDivider<V extends Comparable<V> , E> {
 		private DoubleMatrix1D projection;
 
 		private VectorPotential<V, E> pot;
+		
+		private Graph<V,E> g;
 
 		//------------------------------ INNER CLASS -----------------------------/
 		
@@ -77,14 +85,15 @@ public class TheoreticalVerticeDivider<V extends Comparable<V> , E> {
 		
 		//--------------------------------- Inner Class END --------------------------//
 		
-		public TheoreticalVerticeDivider(DoubleMatrix1D projection, Map<E , Integer> edgeNum) {
+		public TheoreticalVerticeDivider(Graph<V,E> g, DoubleMatrix1D projection, Map<E , Integer> edgeNum) {
 			this.projection = projection;
 			this.edgeNum = edgeNum;
+			this.g = g;
 			
 			this.A_t = new HashSet<SplitVertex<V,E>>();
 			this.A_s = new HashSet<SplitVertex<V,E>>();
 			
-			this.pot = new VectorPotential<V,E>(edgeNum);
+			this.pot = new VectorPotential<V,E>(g, edgeNum);
 		}
 		
 		/**
@@ -427,7 +436,7 @@ public class TheoreticalVerticeDivider<V extends Comparable<V> , E> {
 		 * @return : The current division potential
 		 */
 		private Double getDivisionPotential(Set<E> L) {
-			VectorPotential<V,E> pot = new VectorPotential<V,E>(edgeNum);
+			VectorPotential<V,E> pot = new VectorPotential<V,E>(g, edgeNum);
 			return pot.getPotential(projection, L);
 		}
 		
