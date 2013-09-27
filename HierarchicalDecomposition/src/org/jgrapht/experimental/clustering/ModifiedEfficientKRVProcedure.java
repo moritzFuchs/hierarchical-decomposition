@@ -121,7 +121,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			r = Util.getRandomDirection(g.edgeSet().size());
 			projection = projector.getFlowVectorProjection(partitionMatrices , r);
 						
-			PracticalVerticeDivider<V,E> divider = new PracticalVerticeDivider<V,E>(projection , edgeNum);
+			PracticalVerticeDivider<V,E> divider = new PracticalVerticeDivider<V,E>(g, projection , edgeNum);
 			divider.divideActiveVertices(gPrime, A, projection);
 			
 			/////////////////////////////// START DEBUG ///////////////////////////////////////////////

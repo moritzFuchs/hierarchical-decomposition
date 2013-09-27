@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.jgrapht.Graph;
+
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
 
 import com.google.common.collect.Ordering;
@@ -40,6 +42,11 @@ public class PracticalVerticeDivider<V extends Comparable<V> , E> {
 		private DoubleMatrix1D projection;
 
 		private VectorPotential<V, E> pot;
+		
+		/**
+		 * The original graph G
+		 */
+		private Graph<V,E> g;
 
 		//------------------------------ INNER CLASS -----------------------------/
 		
@@ -71,14 +78,16 @@ public class PracticalVerticeDivider<V extends Comparable<V> , E> {
 		
 		//--------------------------------- Inner Class END --------------------------//
 		
-		public PracticalVerticeDivider(DoubleMatrix1D projection, Map<E , Integer> edgeNum) {
+		public PracticalVerticeDivider(Graph<V,E> g, DoubleMatrix1D projection, Map<E , Integer> edgeNum) {
 			this.projection = projection;
 			this.edgeNum = edgeNum;
+			
+			this.g = g;
 			
 			this.A_t = new HashSet<SplitVertex<V,E>>();
 			this.A_s = new HashSet<SplitVertex<V,E>>();
 			
-			this.pot = new VectorPotential<V,E>(edgeNum);
+			this.pot = new VectorPotential<V,E>(g, edgeNum);
 		}
 		
 		/**
@@ -216,6 +225,7 @@ public class PracticalVerticeDivider<V extends Comparable<V> , E> {
 			// * R = {e \in A | u_e >= avg_len}
 			for (E e: A ){
 				Double p = projection.getQuick(edgeNum.get(e));
+				p = p / g.getEdgeWeight(e);
 				if (p < split_value) {
 					L.add(e);
 					//All edges in L need to be comparable => add an edge container for them

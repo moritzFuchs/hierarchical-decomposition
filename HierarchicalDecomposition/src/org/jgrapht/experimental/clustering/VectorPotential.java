@@ -3,6 +3,8 @@ package org.jgrapht.experimental.clustering;
 import java.util.Map;
 import java.util.Set;
 
+import org.jgrapht.Graph;
+
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
 
 public class VectorPotential<V,E> {
@@ -12,8 +14,14 @@ public class VectorPotential<V,E> {
 	 */
 	private Map<E, Integer> edgeNum;
 	
-	public VectorPotential(Map<E , Integer> edgeNum) {
+	/**
+	 * The original graph G
+	 */
+	private Graph<V,E> g;
+	
+	public VectorPotential(Graph<V,E> g, Map<E , Integer> edgeNum) {
 		this.edgeNum = edgeNum;
+		this.g = g;
 	}
 	
 	/**
@@ -28,7 +36,7 @@ public class VectorPotential<V,E> {
 		
 		//compute potential (paper page 6, bottom)
 		for (E e: A) {
-			potential += Math.pow(projection.getQuick(edgeNum.get(e)) - avg, 2);	
+			potential += Math.pow((projection.getQuick(edgeNum.get(e)) / g.getEdgeWeight(e))- avg, 2);	
 		}
 		
 		return potential;
@@ -42,11 +50,20 @@ public class VectorPotential<V,E> {
 	 * @return Double : The average flow vector projection
 	 */
 	public Double computeAverageProjection(DoubleMatrix1D projection , Set<E> A) {
+//		Double avg = 0.0;
+//		for (E e : A) {
+//			avg += projection.getQuick(edgeNum.get(e));
+//		}
+//		return avg / A.size();
+		
 		Double avg = 0.0;
+		Double weight = 0.0;
 		for (E e : A) {
 			avg += projection.getQuick(edgeNum.get(e));
+			weight += g.getEdgeWeight(e);
 		}
-		return avg / A.size();
+		
+		return avg / weight;
 	}
 
 }
