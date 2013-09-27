@@ -51,18 +51,7 @@ public class KRVPotential<V,E> {
 	/**
 	 * Graph we want to decompose
 	 */
-	private Graph<V,E> g;
-	
-	/**
-	 * The goal vector which the flow vectors want to reach
-	 */
-	private DoubleMatrix1D goal;
-	
-	/**
-	 * Projections of the goal vector onto the random directions
-	 */
-	private DoubleMatrix1D goal_projections;
-	
+	private Graph<V,E> g;	
 	
 	public KRVPotential(Graph<V,E> g, List<KRVStep<V,E>> matrices ,FlowVectorProjector<V,E> projector , Set<E> A,Map<E , Integer> edgeNum, Integer m) {
 		
@@ -73,33 +62,10 @@ public class KRVPotential<V,E> {
 		this.edgeNum = edgeNum;
 		this.m = m;
 		
-		//Compute the 'goal'
-		goal = new DenseDoubleMatrix1D(m);
-		Double cap_sum = 0.0;
-		
-		for (E e : g.edgeSet()) {
-			cap_sum += g.getEdgeWeight(e);
-		}
-		
-		for (E e : g.edgeSet()) {
-			goal.setQuick(edgeNum.get(e), g.getEdgeWeight(e) / cap_sum);
-		}
-		
 		projections = new DoubleMatrix1D[DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS];
 		randomDirections = new DoubleMatrix1D[DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS];
 		
 		precomputeProjections();
-		
-		goal_projections = new DenseDoubleMatrix1D(m); 
-		
-		goal_projections.assign(0.0);
-		for (int i=0;i<DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS;i++) {
-			Double new_weight = 0.0;
-			for (E e : A) {
-				new_weight += goal.getQuick(i) * randomDirections[i].get(edgeNum.get(e));
-			}
-			goal_projections.setQuick(i, new_weight);
-		}
 	}
 
 	/**
@@ -122,8 +88,6 @@ public class KRVPotential<V,E> {
 			
 			projections[i] = projection;
 		}
-		
-		
 	}
 	
 	/**
@@ -145,17 +109,17 @@ public class KRVPotential<V,E> {
 	 */
 	public Double getPotential() {
 		
+		Integer m = g.edgeSet().size();
 		Double total = 0.0;
 		
 		for (int i=0;i<DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS;i++) {
-			
-//			Double average = computeAverageProjection(projections[i], A);
+			Double avg_projection = computeAverageProjection(projections[i], A);
 
 			Double sum = 0.0;
 			for(E e : A) {
 				Double weight = g.getEdgeWeight(e);
 				Double u_e = projections[i].getQuick(edgeNum.get(e));
-				sum += weight * Math.pow(u_e / weight - goal_projections.getQuick(i) , 2);
+				sum += weight * Math.pow(u_e / weight - avg_projection , 2);
 			}
 			
 			//Could also be m instead of A.size()
@@ -173,17 +137,19 @@ public class KRVPotential<V,E> {
 	 */
 	public Double getPotentialAfterStep(Set<E> A_new , KRVStep<V,E> step) {
 		
+		Integer m = g.edgeSet().size();
 		Double total = 0.0;
 		
 		for (int i=0;i<DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS;i++) {
-			
+		
+			Double avg_projection = computeAverageProjection(projections[i], A_new);
 			DoubleMatrix1D after = step.applyStep(randomDirections[i], projections[i]);
 			
 			Double sum = 0.0;
 			for(E e : A) {
 				Double weight = g.getEdgeWeight(e);
 				Double u_e = after.getQuick(edgeNum.get(e));
-				sum += weight * Math.pow(u_e / weight - goal_projections.getQuick(i) , 2);
+				sum += weight * Math.pow(u_e / weight - avg_projection , 2);
 			}
 			total += A_new.size() * sum;
 		}
@@ -200,9 +166,12 @@ public class KRVPotential<V,E> {
 	 */
 	public Double computeAverageProjection(DoubleMatrix1D projection , Set<E> A) {
 		Double avg = 0.0;
+		Double weight = 0.0;
 		for (E e : A) {
 			avg += projection.getQuick(edgeNum.get(e));
+			weight += g.getEdgeWeight(e);
 		}
-		return avg / A.size();
+		
+		return avg / weight;
 	}
 }

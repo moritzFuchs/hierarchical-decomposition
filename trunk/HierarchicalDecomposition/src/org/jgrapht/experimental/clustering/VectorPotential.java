@@ -39,7 +39,7 @@ public class VectorPotential<V,E> {
 	 * 
 	 * @param projection : The current projection of flow vectors onto a random direction
 	 * @param A : The set of active edges (only they have flow vectors)
-	 * @return : The average flow vector projection
+	 * @return Double : The average flow vector projection
 	 */
 	public Double computeAverageProjection(DoubleMatrix1D projection , Set<E> A) {
 		Double avg = 0.0;
