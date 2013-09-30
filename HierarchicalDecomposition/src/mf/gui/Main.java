@@ -36,9 +36,15 @@ public class Main extends Application {
 	public void init(Stage primaryStage) {
 		primaryStage.setResizable(false);
 		
+		
+		
 		Group root = new Group();
-	    primaryStage.setScene(new Scene(root));
+		Scene scene= new Scene(root);
+		scene.getStylesheets().add("/css/style.css");
+		
+	    primaryStage.setScene(scene);
 	    BorderPane borderPane = new BorderPane();
+	    
 	    final TabPane tabPane = new TabPane();
 	    tabPane.setPrefSize(1200, 600);
 	    tabPane.setSide(Side.TOP);

@@ -125,8 +125,8 @@ public class DecompositionTree<V> implements Serializable{
 	 * 
 	 * @return Integer : The height of the decomposition tree.
 	 */
-	public Integer getHeight() {
-		return traverseHeight(root , 0);
+	public Integer getHeight(Boolean collapseInfEdges) {
+		return traverseHeight(root , 0 , collapseInfEdges);
 	}
 	
 	/**
@@ -136,7 +136,7 @@ public class DecompositionTree<V> implements Serializable{
 	 * @param current_height : The current height
 	 * @return Integer : The max-height below the given vertex v.  
 	 */
-	private Integer traverseHeight(TreeVertex<V> v , Integer current_height) {
+	private Integer traverseHeight(TreeVertex<V> v , Integer current_height , Boolean collapseInfEdge) {
 		
 		if (v.getType() == TreeVertexType.LEAF) {
 			return current_height;
@@ -144,8 +144,13 @@ public class DecompositionTree<V> implements Serializable{
 			Integer max_height = 0;
 			for (DefaultWeightedEdge e : tree.outgoingEdgesOf(v)) {
 				TreeVertex<V> target = tree.getEdgeTarget(e);
+				Integer height;
+				if (collapseInfEdge && tree.getEdgeWeight(e) == Double.POSITIVE_INFINITY) {
+					 height = traverseHeight(target , current_height , collapseInfEdge);
+				} else {
+					height = traverseHeight(target , current_height+1 , collapseInfEdge);
+				}
 				
-				Integer height = traverseHeight(target , current_height+1);
 				if (height > max_height) {
 					max_height = height;
 				}
