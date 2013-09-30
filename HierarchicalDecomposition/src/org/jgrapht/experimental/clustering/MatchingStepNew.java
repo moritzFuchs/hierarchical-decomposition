@@ -35,10 +35,12 @@ public class MatchingStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 	 */
 	private Integer m;
 	
+	/**
+	 * The set of active edges (edges that own a flow vector)
+	 */
 	private Set<E> A;
 	
 	public MatchingStepNew(BiMap<E , Integer> edgeNum , Integer m) {
-		
 		this.edgeNum = edgeNum;
 		this.m = m;
 	}
@@ -96,7 +98,6 @@ public class MatchingStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 			if (DecompositionConstants.DEBUG) {
 				debugTests(gPrime, matrix, fromEdge, toEdge, fromNum, toNum);
 			}
-			
 		}
 		
 		matrixContainer = new MatchingMatrix(matrix);

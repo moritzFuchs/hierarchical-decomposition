@@ -44,7 +44,6 @@ public class PartitionB<V extends Comparable<V>,E> extends Clustering<V,E> {
 	 */
 	private Graph<V,E> subG;
 	
-	
 	/****************** RESULTS *****************/
 	/**
 	 * Set of edges inducing the clustering

@@ -15,7 +15,7 @@ public class DecompositionConstants {
 	private DecompositionConstants() {}
 
 	/**
-	 * Turn debugging mode on/off. On will be very slow since a lot of stuff is double-checked.
+	 * Turn debugging mode on/off. 'On' will be very slow since a lot of stuff is double-checked / recomputed.
 	 */
 	public static final Boolean DEBUG = true;
 	
@@ -38,7 +38,7 @@ public class DecompositionConstants {
 	/**
 	 * Used by {@link KRVPotential}. Number of iterations that are used to approximate the potential. (bigger => more space + time needed!)
 	 */
-	public static final Integer POTENTIAL_APPROXIMATION_ITERATIONS = 1000;
+	public static final Integer POTENTIAL_APPROXIMATION_ITERATIONS = 100;
 	
 	/**
 	 * User by {@link MatchingStepNew}. Fraction of the flow vector that is moved during a matching.
