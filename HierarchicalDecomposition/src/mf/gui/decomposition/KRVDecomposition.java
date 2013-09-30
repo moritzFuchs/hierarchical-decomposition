@@ -279,7 +279,7 @@ public class KRVDecomposition extends Drawable{
 		
 		for (int i=0;i<=height;i++) {
 			MenuItem item = new MenuItem("" + i);
-			item.setOnAction(new KRVMenuActionHandler(this , i));
+			item.setOnAction(new LevelJumpHandler(this , i));
 			mb.getItems().add(item);
 		}
 	
