@@ -1,4 +1,4 @@
-package mf.gui.decomposition;
+package mf.gui.decomposition.superpixel;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import mf.gui.ButtonRow;
 import mf.gui.Markable;
 import mf.gui.Pixel;
+import mf.gui.decomposition.Drawable;
 import mf.superpixel.Superpixel;
 import mf.superpixel.SuperpixelDecomposition;
 

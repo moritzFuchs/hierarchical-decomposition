@@ -6,9 +6,9 @@ import java.util.List;
 
 import name.antonsmirnov.javafx.dialog.Dialog;
 import mf.gui.decomposition.Drawable;
-import mf.gui.decomposition.KRVDecomposition;
 import mf.gui.decomposition.NoDecomposition;
-import mf.gui.decomposition.SuperpixelDrawable;
+import mf.gui.decomposition.rst.RSTDecomposition;
+import mf.gui.decomposition.superpixel.SuperpixelDrawable;
 import mf.superpixel.SuperpixelDecomposition;
 import mf.superpixel.SuperpixelImport;
 import javafx.collections.FXCollections;
@@ -96,6 +96,7 @@ public class NewTabHandler implements EventHandler<Event> {
 		    for (File file : dir.listFiles()) {
 		    	String name = file.getName();
 		    	
+		    	//Superpixel decomposition
 		    	if (name.toLowerCase().startsWith("superpixel") && name.toLowerCase().endsWith(".mat")) {
 		    		SuperpixelImport imp = new SuperpixelImport(file.getPath() , drawable.getImage());
 		    		SuperpixelDecomposition dec = new SuperpixelDecomposition(imp.getSuperpixels(),imp.getPixelMap());
@@ -104,14 +105,15 @@ public class NewTabHandler implements EventHandler<Event> {
 		    		items.add(super_drawable);
 		    	}
 		    	
-		    	if (name.toLowerCase().startsWith("tree") && name.toLowerCase().endsWith(".ser")) {
+		    	//RST Decomposition
+		    	if (name.toLowerCase().startsWith("tree") && name.toLowerCase().endsWith(".rst")) {
 		    		
 		    		String num_str = name.substring(4, name.length()-4);
 		    		
 		    		SuperpixelImport imp = new SuperpixelImport(file.getParent() + "/superpixel"+num_str+".mat" , drawable.getImage());
 		    		SuperpixelDecomposition dec = new SuperpixelDecomposition(imp.getSuperpixels(),imp.getPixelMap());
 		    		
-		    		KRVDecomposition krv_dec = new KRVDecomposition(file.getPath(), dec, drawable,buttonRow);
+		    		RSTDecomposition krv_dec = new RSTDecomposition(file.getPath(), dec, drawable,buttonRow);
 		    		
 		    		items.add(krv_dec);
 		    	}

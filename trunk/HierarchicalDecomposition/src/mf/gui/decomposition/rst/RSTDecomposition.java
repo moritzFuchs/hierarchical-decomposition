@@ -1,4 +1,4 @@
-package mf.gui.decomposition;
+package mf.gui.decomposition.rst;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -36,10 +36,11 @@ import com.google.common.collect.Iterables;
 import mf.gui.ButtonRow;
 import mf.gui.Markable;
 import mf.gui.Pixel;
+import mf.gui.decomposition.Drawable;
 import mf.superpixel.Superpixel;
 import mf.superpixel.SuperpixelDecomposition;
 
-public class KRVDecomposition extends Drawable{
+public class RSTDecomposition extends Drawable{
 
 	private SuperpixelDecomposition superpixel_decomposition;
 	private DecompositionTree<Integer> krv_decomposition;
@@ -49,8 +50,8 @@ public class KRVDecomposition extends Drawable{
 	
 	private static final Boolean COLLAPSE_INF_EDGES = true;
 	
-	public KRVDecomposition(String path_to_krv_dec , SuperpixelDecomposition superpixel_decomposition , Markable m, ButtonRow buttonRow) {
-		super("KRV Decomposition" , m, buttonRow);
+	public RSTDecomposition(String path_to_krv_dec , SuperpixelDecomposition superpixel_decomposition , Markable m, ButtonRow buttonRow) {
+		super("RST Decomposition" , m, buttonRow);
 		
 		this.superpixel_decomposition = superpixel_decomposition;
 		try {
@@ -100,7 +101,7 @@ public class KRVDecomposition extends Drawable{
 	}
 	
 	/**
-	 * Draws the current state of the segmentation given by {@link KRVDecomposition.current_vertex_tree}.
+	 * Draws the current state of the segmentation given by {@link RSTDecomposition.current_vertex_tree}.
 	 */
 	private void  drawCurrentSegmentation() {
 		m.clear();
@@ -135,7 +136,6 @@ public class KRVDecomposition extends Drawable{
 	 * @param n : Number of levels to move down
 	 */
 	public void decomposeNLevel(Integer n) {
-		System.out.println("down " + n);
 		
 		Collection<TreeVertex<Integer>> state = new HashSet<TreeVertex<Integer>>();
 		state.addAll(current_tree_vertex.values());
@@ -153,8 +153,7 @@ public class KRVDecomposition extends Drawable{
 	 * @param n : Number of levels to move up
 	 */
 	public void composeNLevel(Integer n) {
-		System.out.println("up " + n);
-		
+
 		Collection<TreeVertex<Integer>> state = new HashSet<TreeVertex<Integer>>();
 		state.addAll(current_tree_vertex.values());
 		
@@ -168,11 +167,10 @@ public class KRVDecomposition extends Drawable{
 	/**
 	 * Takes a {@link Superpixel}, gets the segmentation area it is part of and makes one more segmentation step on it.
 	 * 
-	 * @param sp
+	 * @param sp : The {@link Superpixel}
 	 */
 	private void decompose(Superpixel sp) {
 		TreeVertex<Integer> tree_vertex = current_tree_vertex.get(sp);
-		
 		decompose(krv_decomposition.getGraph(), tree_vertex, 1);
 	}
 	
@@ -183,7 +181,6 @@ public class KRVDecomposition extends Drawable{
 	 */
 	private void compose(Superpixel sp) {
 		TreeVertex<Integer> tree_vertex = current_tree_vertex.get(sp);
-
 		compose(krv_decomposition.getGraph(), tree_vertex , 1);
 	}
 	
@@ -213,7 +210,6 @@ public class KRVDecomposition extends Drawable{
 					mark_superpixel_below(vertex, vertex);
 				}
 			}
-			
 		}
 	}
 	
@@ -233,8 +229,6 @@ public class KRVDecomposition extends Drawable{
 			
 			for (DefaultWeightedEdge e : tree.outgoingEdgesOf(vertex)) {
 				TreeVertex<Integer> target = tree.getEdgeTarget(e);
-				
-				System.out.println(tree.getEdgeWeight(e));
 				
 				if (COLLAPSE_INF_EDGES && tree.getEdgeWeight(e) == Double.POSITIVE_INFINITY) {
 					decompose(tree, target, steps_left);
@@ -272,7 +266,8 @@ public class KRVDecomposition extends Drawable{
 	
 	@Override
 	public void onActivate() {
-		draw();		
+		m.clear();
+		draw();
 		this.buttonRow.reset();
 		
 		MenuButton mb = new MenuButton("Show Level");
@@ -292,6 +287,7 @@ public class KRVDecomposition extends Drawable{
 		this.buttonRow.addButton(up);
 		this.buttonRow.addButton(down);
 		
+		//Level up is current problematic since root might be reached instantly!
 		up.setDisable(true);
 	}
 }
