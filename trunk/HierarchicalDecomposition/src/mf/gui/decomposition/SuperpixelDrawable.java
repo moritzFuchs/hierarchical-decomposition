@@ -7,7 +7,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
-
+import mf.gui.ButtonRow;
 import mf.gui.Markable;
 import mf.gui.Pixel;
 import mf.superpixel.Superpixel;
@@ -18,8 +18,8 @@ public class SuperpixelDrawable extends Drawable implements EventHandler<Event>{
 	
 	private SuperpixelDecomposition dec;
 	
-	public SuperpixelDrawable(SuperpixelDecomposition dec, String name, Markable m) {
-		super(name , m);		
+	public SuperpixelDrawable(SuperpixelDecomposition dec, String name, Markable m, ButtonRow buttonRow) {
+		super(name , m, buttonRow);		
 		this.dec = dec;
 	}
 	

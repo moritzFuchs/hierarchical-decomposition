@@ -5,6 +5,7 @@ import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import mf.gui.ButtonRow;
 import mf.gui.Markable;
 
 /**
@@ -28,9 +29,12 @@ public abstract class Drawable implements EventHandler<Event>{
 	 */
 	protected Markable m;
 	
-	public Drawable(String name , Markable m) {
+	protected ButtonRow buttonRow;
+	
+	public Drawable(String name , Markable m, ButtonRow buttonRow) {
 		this.name = name;
 		this.m = m;
+		this.buttonRow = buttonRow;
 	}
 	
 	/**
@@ -76,6 +80,8 @@ public abstract class Drawable implements EventHandler<Event>{
 		m.registerMouseHandler(this);
 		m.registerScrollHandler(this);
 		m.registerKeyHandler(this);
+		
+		buttonRow.reset();
 		
 		onActivate();
 	}

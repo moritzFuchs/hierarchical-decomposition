@@ -1,6 +1,8 @@
 package mf.gui;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 import name.antonsmirnov.javafx.dialog.Dialog;
 import mf.gui.decomposition.Drawable;
@@ -13,11 +15,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 
 /**
@@ -65,27 +70,36 @@ public class NewTabHandler implements EventHandler<Event> {
 			Tab new_tab = new Tab();
 			new_tab.setText(dir.getName());
 		
-			BorderPane b = new BorderPane();
+			BorderPane outer = new BorderPane();
 			
 			ListView<Drawable> list = new ListView<Drawable>();
 			ObservableList<Drawable> items = FXCollections.observableArrayList ();
 
 		    BorderPane inner = new BorderPane();
-		    b.setCenter(inner);
-		    
-		    
-		    
+		    outer.setCenter(inner);
 		    
 			DrawableImageView drawable = new DrawableImageView(img_path);
 		    
-//          canvas.setOnMouseClicked(new ClickHandler<MouseEvent>());
+			//Create Button row
+            List<Button> defaultButtons = new LinkedList<Button>();
+            
+            Button button = new Button("Save Image");
+			button.setOnAction(new SaveMarkableHandler(drawable));
+            
+			defaultButtons.add(button);
+			
+            ButtonRow buttonRow = new ButtonRow(defaultButtons);
+            
+		    inner.setBottom(buttonRow);
+			
+			
 		    for (File file : dir.listFiles()) {
 		    	String name = file.getName();
 		    	
 		    	if (name.toLowerCase().startsWith("superpixel") && name.toLowerCase().endsWith(".mat")) {
 		    		SuperpixelImport imp = new SuperpixelImport(file.getPath() , drawable.getImage());
 		    		SuperpixelDecomposition dec = new SuperpixelDecomposition(imp.getSuperpixels(),imp.getPixelMap());
-		    		SuperpixelDrawable super_drawable = new SuperpixelDrawable(dec, file.getName(),drawable);
+		    		SuperpixelDrawable super_drawable = new SuperpixelDrawable(dec, file.getName(),drawable,buttonRow);
 		    		
 		    		items.add(super_drawable);
 		    	}
@@ -96,30 +110,25 @@ public class NewTabHandler implements EventHandler<Event> {
 		    		
 		    		SuperpixelImport imp = new SuperpixelImport(file.getParent() + "/superpixel"+num_str+".mat" , drawable.getImage());
 		    		SuperpixelDecomposition dec = new SuperpixelDecomposition(imp.getSuperpixels(),imp.getPixelMap());
-		    		SuperpixelDrawable super_drawable = new SuperpixelDrawable(dec, file.getName(),drawable);
 		    		
-		    		KRVDecomposition krv_dec = new KRVDecomposition(file.getPath(), dec, drawable);
+		    		KRVDecomposition krv_dec = new KRVDecomposition(file.getPath(), dec, drawable,buttonRow);
 		    		
 		    		items.add(krv_dec);
-		    		
 		    	}
 		    	
-		    	//TODO: Add more decompositions (KRV , Region growing)
+		    	//TODO: Add more decompositions (Region growing)
 		    }
 		    
-		    items.add(new NoDecomposition(drawable));
+		    items.add(new NoDecomposition(drawable, buttonRow));
 		    
 			list.setItems(items);
 			list.setOnMouseClicked(new DecompositionSelectedHandler());
 			list.setEditable(false);
-			b.setLeft(list);
+			outer.setLeft(list);
 		    
-			Button button = new Button("Save Image");
-			button.setOnAction(new SaveMarkableHandler(drawable));
-			b.setBottom(button);
-			
             inner.setCenter(drawable);
-			new_tab.setContent(b);
+            
+			new_tab.setContent(outer);
 		
 			pane.getTabs().add(pane.getTabs().size()-2, new_tab);
 			pane.getSelectionModel().select(new_tab);
