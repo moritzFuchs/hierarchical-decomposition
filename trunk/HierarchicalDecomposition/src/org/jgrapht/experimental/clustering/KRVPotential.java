@@ -69,7 +69,7 @@ public class KRVPotential<V,E> {
 	}
 
 	/**
-	 * KRVProcedure has restarted. Reset the projections
+	 * Restart KRVProcedure. Reset the projections
 	 */
 	public void restart() {
 		for (int i=0;i<DecompositionConstants.POTENTIAL_APPROXIMATION_ITERATIONS;i++) {

@@ -98,7 +98,7 @@ public class KRVDecomposition extends Drawable{
 	}
 	
 	/**
-	 * Saves given {@link TreeVertex} (marker) as segmentation point in the tree fow all {@link Superpixel} below the given {@link TreeVertex} (marked).
+	 * Saves given {@link TreeVertex} (marker) as segmentation point in the tree for all {@link Superpixel} below the given {@link TreeVertex} (marked).
 	 * 
 	 * @param marker : Point in the tree
 	 * @param marked : Superpixels below this {@link TreeVertex} will be marked with the given marker
@@ -126,6 +126,45 @@ public class KRVDecomposition extends Drawable{
 						m.markPixelComplementary(p.getX(), p.getY());
 					}
 				}
+			}
+		}
+	}
+	
+	/**
+	 * Shows the given level of the decomposition tree. 
+	 * 
+	 * @param level : The level we want to show
+	 */
+	public void showLevel(Integer level) {
+		DirectedGraph<TreeVertex<Integer>, DefaultWeightedEdge> tree = krv_decomposition.getGraph();
+		TreeVertex<Integer> root = krv_decomposition.getRoot();
+		
+		traverse(tree, root, level);
+		
+		drawCurrentSegmentation();
+	}
+	
+	/**
+	 * Subroutine of {@link KRVDecomposition.showLevel}. Recursively traverses the decomposition tree until the desired level is reached.
+	 * 
+	 * @param tree : The decomposition tree.
+	 * @param vertex : The current vertex of the decomposition tree.
+	 * @param steps_left : Number of times we still want to descend.
+	 */
+	private void traverse(DirectedGraph<TreeVertex<Integer>, DefaultWeightedEdge> tree , TreeVertex<Integer> vertex , Integer steps_left) {
+		if (steps_left == 0) {
+			mark_superpixel_below(vertex, vertex);
+		} else {
+			if (vertex.getType() == TreeVertexType.LEAF) {
+				mark_superpixel_below(vertex, vertex);
+			} else {
+				
+				for (DefaultWeightedEdge e : tree.outgoingEdgesOf(vertex)) {
+					TreeVertex<Integer> target = tree.getEdgeTarget(e);
+					//TODO: Skip INF-edges here by removing the -1 below
+					traverse(tree, target, steps_left-1);
+				}
+				
 			}
 		}
 	}

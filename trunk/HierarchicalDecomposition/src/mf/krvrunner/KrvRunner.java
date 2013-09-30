@@ -25,7 +25,7 @@ public class KrvRunner {
 		
 		String base_path = args[0];
 		String path_to_image = args[0] + "/image.jpg";
-		String path_to_superpixel = args[0] + "/superpixel1000.mat";
+		String path_to_superpixel = args[0] + "/superpixel200.mat";
 		
 		SuperpixelImport importer = new SuperpixelImport(path_to_superpixel , new Image("file:" + path_to_image));
 		SuperpixelDecomposition superpixel_dec = new SuperpixelDecomposition(importer.getSuperpixels(), importer.getPixelMap());
@@ -43,7 +43,7 @@ public class KrvRunner {
 				
 		try {
 			FileOutputStream fileOut =
-			new FileOutputStream(base_path + "/tree1000.ser");
+			new FileOutputStream(base_path + "/tree200new.ser");
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
 			out.writeObject(tree);
 			
