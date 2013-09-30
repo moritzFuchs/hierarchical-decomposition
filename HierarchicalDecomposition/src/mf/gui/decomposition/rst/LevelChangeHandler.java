@@ -1,4 +1,4 @@
-package mf.gui.decomposition;
+package mf.gui.decomposition.rst;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -6,9 +6,9 @@ import javafx.event.EventHandler;
 public class LevelChangeHandler implements EventHandler<ActionEvent> {
 
 	private Integer change;
-	private KRVDecomposition dec;
+	private RSTDecomposition dec;
 	
-	public LevelChangeHandler(Integer change , KRVDecomposition dec) {
+	public LevelChangeHandler(Integer change , RSTDecomposition dec) {
 		this.change = change;
 		this.dec = dec;
 	}
