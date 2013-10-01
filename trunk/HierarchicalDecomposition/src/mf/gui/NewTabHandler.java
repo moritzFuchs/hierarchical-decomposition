@@ -17,6 +17,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -81,20 +82,18 @@ public class NewTabHandler implements EventHandler<Event> {
 			DrawableImageView drawable = new DrawableImageView(img_path);
 		    
 			//Create Button row
-            List<Button> defaultButtons = new LinkedList<Button>();
+            List<ButtonBase> defaultButtons = new LinkedList<ButtonBase>();
             
             Button button = new Button("Save Image");
 			button.setOnAction(new SaveMarkableHandler(drawable));
             
 			defaultButtons.add(button);
-			
             ButtonRow buttonRow = new ButtonRow(defaultButtons);
             
 		    inner.setBottom(buttonRow);
 			
-			
 		    for (File file : dir.listFiles()) {
-		    	String name = file.getName();
+		    	String name = file.getName();	
 		    	
 		    	//Superpixel decomposition
 		    	if (name.toLowerCase().startsWith("superpixel") && name.toLowerCase().endsWith(".mat")) {

@@ -268,7 +268,6 @@ public class RSTDecomposition extends Drawable{
 	public void onActivate() {
 		m.clear();
 		draw();
-		this.buttonRow.reset();
 		
 		MenuButton mb = new MenuButton("Show Level");
 		
