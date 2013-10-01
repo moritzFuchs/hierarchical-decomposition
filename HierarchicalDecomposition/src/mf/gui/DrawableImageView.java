@@ -74,6 +74,11 @@ public class DrawableImageView extends StackPane implements Markable {
 
 	private PixelWriter canvas_writer;
 	
+	/**
+	 * True if loading animation is shown, false otherwise
+	 */
+	private Boolean loading = false;
+	
 	public DrawableImageView(String url) {
 		super();
 
@@ -87,18 +92,9 @@ public class DrawableImageView extends StackPane implements Markable {
 		canvas.setOpacity(0.8);
 		
 		loader = new Canvas(img.getWidth() , img.getHeight());
-		loader.setOpacity(0.0);
-		loader.setMouseTransparent(true);
-
+		loader.setOpacity(0.5);
 		loader.getGraphicsContext2D().setFill(new Color(0.0,0.0,0.0,1.0));
 		loader.getGraphicsContext2D().fillRect(0, 0, img.getWidth(), img.getHeight());
-		
-		
-		for (int i=0;i<100;i++) {
-			for (int j=0;j<100;j++) {
-				loader.getGraphicsContext2D().getPixelWriter().setColor(i, j, new Color(0.0,0.0,0.0,1.0));
-			}
-		}
 		
 		this.setHeight(img.getHeight());
 		this.setWidth(img.getWidth());
@@ -106,10 +102,20 @@ public class DrawableImageView extends StackPane implements Markable {
 		getChildren().add(this.img_view);
 		getChildren().add(this.canvas);
 		getChildren().add(this.loader);
-		//TODO: Add context menu for saving image
 
+		loader.toBack();
+		
 		canvas_writer = canvas.getGraphicsContext2D().getPixelWriter();
 		
+	}
+	
+	
+	public int getImageWidth() {
+		return (int)img.getWidth();
+	}
+	
+	public int getImageHeight() {
+		return (int)img.getHeight();
 	}
 	
 	/**
@@ -136,6 +142,22 @@ public class DrawableImageView extends StackPane implements Markable {
 		g.drawImage(out, 0, 0, null);
 		g.drawImage(SwingFXUtils.fromFXImage(wim, null), 0, 0, null);
 		ImageIO.write(combined, "PNG", file);
+	}
+	
+	/**
+	 * Set a different {@Image} to be painted
+	 * 
+	 * @param image : New {@link Image} to be painted
+	 */
+	public void setImage(Image image) {
+		img_view.setImage(image);
+	}
+	
+	/**
+	 * Restore {@link Image} that was originally painted
+	 */
+	public void resetImage() {
+		img_view.setImage(img);
 	}
 	
 	/**
@@ -200,6 +222,10 @@ public class DrawableImageView extends StackPane implements Markable {
 		}
 	}
 		
+	public void drawText(String s) {
+		canvas.getGraphicsContext2D().fillText(s, 10, 20);
+	}
+	
 	/**
 	 * Returns the underlying image
 	 * 
@@ -210,19 +236,28 @@ public class DrawableImageView extends StackPane implements Markable {
 	}
 	
 	/**
+	 * Returns True if loading animation is shown, false otherwise
+	 * 
+	 * @return Boolean : True if loading animation is shown, false otherwise
+	 */
+	public Boolean isLoading() {
+		return loading;
+	}
+	
+	/**
 	 * Show loading screen / animation
 	 */
 	public void startLoading() {
-		loader.setOpacity(0.5);
-		loader.getGraphicsContext2D().setFill(new Color(0.0,0.0,0.0,1.0));
-		loader.getGraphicsContext2D().fillRect(0, 0, img.getWidth(), img.getHeight());
+		loader.toFront();
+		loading = true;
 	}
 	
 	/**
 	 * Hide loading screen / animation
 	 */
 	public void stopLoading() {
-		loader.setOpacity(0.0);
+		loader.toBack();
+		loading = false;
 	}
 	
 	/**

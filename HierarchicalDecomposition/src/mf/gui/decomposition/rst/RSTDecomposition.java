@@ -104,6 +104,7 @@ public class RSTDecomposition extends Drawable{
 	 * Draws the current state of the segmentation given by {@link RSTDecomposition.current_vertex_tree}.
 	 */
 	private void  drawCurrentSegmentation() {
+		m.startLoading();
 		m.clear();
 		for (Superpixel sp : current_tree_vertex.keySet()) {
 			for (Superpixel neighbor : sp.getNeighbors()) {
@@ -114,6 +115,7 @@ public class RSTDecomposition extends Drawable{
 				}
 			}
 		}
+		m.stopLoading();
 	}
 	
 	/**

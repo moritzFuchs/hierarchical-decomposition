@@ -20,6 +20,21 @@ import javafx.scene.paint.Color;
  */
 public class Superpixel {
 
+	/******************** START CONSTANTS **********************/
+	
+	/**
+	 * Constant for the edge weight computation: ||I_u - I_v|| might be 0, therefore we add EPSILON to it.
+	 */
+	private final static Double EPSILON = 0.000001;
+	
+	/**
+	 * Factor by which the boundary length is factored in.
+	 */
+	private final static Double LAMBDA = 0.3;
+	
+	/******************* END CONSTANTS *************************/
+	
+	
 	/**
 	 * ID of the {@link Superpixel} as given by the MATLAB script
 	 */
@@ -160,6 +175,54 @@ public class Superpixel {
 		rgb[2] = rgb[2] / pixel.size();
 		
 		return rgb;
+	}
+	
+	/**
+	 * Get weight of edge between this {@link Superpixel} and a given {@link Superpixel} 
+	 * 
+	 * @param neighbor : Another {@link Superpixel}
+	 * @return Double : Weight of edge between the superpixels
+	 */
+	public Double getEdgeWeight(Superpixel neighbor) {
+		if (!this.boundary_to.keySet().contains(neighbor)) {
+			return 0.0;
+		}
+		
+		Double weight = 0.0;
+		
+		Set<Pixel> boundary = this.getBoundaryPixels(neighbor);
+		Double[] rgb_source = this.getMeanRGB();
+		Double[] rgb_target = neighbor.getMeanRGB();
+		
+		Double rgb_distance = RGBDistance(rgb_source, rgb_target);
+		
+		weight += boundary.size() / (rgb_distance + EPSILON);
+		weight += LAMBDA * boundary.size();
+		
+		//Make the weights integral
+		weight = Math.ceil(weight);
+		
+		return weight;
+	}
+	
+	
+	/**
+	 * Computes the l2-distance between two RGB-vectors.
+	 * 
+	 * @param rgb1 : First RGB-vector
+	 * @param rgb2 : Second RGB-vector
+	 * @return Double : The l2-distance of the RGB-vectors
+	 */
+	private Double RGBDistance(Double[] rgb1 , Double[] rgb2) {
+		
+		Double distance = 0.0;
+		distance += Math.pow(rgb1[0] - rgb2[0], 2);
+		distance += Math.pow(rgb1[1] - rgb2[1], 2);
+		distance += Math.pow(rgb1[2] - rgb2[2], 2);
+		
+		distance = Math.sqrt(distance);
+		
+		return distance;
 	}
 	
 	/**

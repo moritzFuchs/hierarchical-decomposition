@@ -38,15 +38,6 @@ public class SuperpixelGraph{
 	 */
 	private WeightedGraph<Integer , DefaultWeightedEdge> graph;
 	
-	/**
-	 * Constant for the edge weight computation: ||I_u - I_v|| might be 0, therefore we add EPSILON to it.
-	 */
-	private final static Double EPSILON = 0.000001;
-	
-	/**
-	 * Factor by which the boundary length is factored in.
-	 */
-	private final static Double LAMBDA = 0.3;
 	
 	/**
 	 * Map from {@link Integer} to {@link Superpixel} with the corresponding ID
@@ -68,7 +59,7 @@ public class SuperpixelGraph{
 				Integer target = neighbor.getId();
 				if (graph.getEdge(source, target) == null) {
 					DefaultWeightedEdge e = graph.addEdge(source, target);
-					graph.setEdgeWeight(e, getEdgeWeight(p , neighbor));
+					graph.setEdgeWeight(e, p.getEdgeWeight(neighbor));
 				}
 			}
 		}
@@ -83,51 +74,7 @@ public class SuperpixelGraph{
 		return superpixel_map;
 	}
 	
-	/**
-	 * Returns the edge weight between two {@link Superpixel}.
-	 * 
-	 * @param source : The source {@link Superpixel}
-	 * @param target : The target {@link Superpixel}
-	 * @return Double : The distance between source and target.
-	 */
-	private Double getEdgeWeight(Superpixel source , Superpixel target) {
-		
-		Double weight = 0.0;
-		
-		Set<Pixel> boundary = source.getBoundaryPixels(target);
-		Double[] rgb_source = source.getMeanRGB();
-		Double[] rgb_target = target.getMeanRGB();
-		
-		Double rgb_distance = RGBDistance(rgb_source, rgb_target);
-		
-		weight += boundary.size() / (rgb_distance + EPSILON);
-		weight += LAMBDA * boundary.size();
-		
-		//Make the weights integral
-		weight = Math.ceil(weight);
-		
-		return weight;
-	}
-	
-	/**
-	 * Computes the l2-distance between two RGB-vectors.
-	 * 
-	 * @param rgb1 : First RGB-vector
-	 * @param rgb2 : Second RGB-vector
-	 * @return Double : The l2-distance of the RGB-vectors
-	 */
-	private Double RGBDistance(Double[] rgb1 , Double[] rgb2) {
-		
-		Double distance = 0.0;
-		distance += Math.pow(rgb1[0] - rgb2[0], 2);
-		distance += Math.pow(rgb1[1] - rgb2[1], 2);
-		distance += Math.pow(rgb1[2] - rgb2[2], 2);
-		
-		distance = Math.sqrt(distance);
-		
-		return distance;
-	}
-	
+
 	public WeightedGraph<Integer , DefaultWeightedEdge> getGraph() {
 		return graph;
 	}
