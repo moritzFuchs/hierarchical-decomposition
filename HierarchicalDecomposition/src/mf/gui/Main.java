@@ -36,11 +36,10 @@ public class Main extends Application {
 	public void init(Stage primaryStage) {
 		primaryStage.setResizable(false);
 		
-		
-		
 		Group root = new Group();
 		Scene scene= new Scene(root);
-		scene.getStylesheets().add("/css/style.css");
+		scene.getStylesheets().add(this.getClass()
+				.getResource("style.css").toExternalForm());
 		
 	    primaryStage.setScene(scene);
 	    BorderPane borderPane = new BorderPane();
