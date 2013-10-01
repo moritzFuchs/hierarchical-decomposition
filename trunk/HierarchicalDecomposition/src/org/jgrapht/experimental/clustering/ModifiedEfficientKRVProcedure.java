@@ -24,7 +24,6 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 	 */
 	private static final Logger LOGGER = LoggerFactory.getLogger(ModifiedEfficientKRVProcedure.class.getName());
 	
-	
 	/**
 	 * The graph G we want to decompose
 	 */
@@ -80,6 +79,23 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 	 */
 	private FlowVectorProjector<V,E> projector;
 	
+	/************************************* STATISTICS ****************************************/
+	
+	/**
+	 * Number of iterations
+	 */
+	private Integer iterations = 0;
+	
+	/**
+	 * Time spent in maxFlow computations
+	 */
+	private Long timeInMaxFlow = 0L;
+	
+	/**
+	 * Total time spent in the KRV procedure
+	 */
+	private Long time = 0L; 
+	
 	public ModifiedEfficientKRVProcedure (Graph<V,E> g , SplitGraph<V,E> gPrime , Set<E> F , BiMap<E , Integer> edgeNum) {
 		this.g = g;
 		this.gPrime = gPrime;
@@ -95,13 +111,12 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		//This is the theoretical bound
 		this.bound = 1/(16 * Math.pow(g.vertexSet().size(),2));
 		
-		//Let's make it practical!
+		//Let's make it practical! (cut is very unlikely to change at such low potentials)
 		this.bound = this.bound * 10;
 	
 		this.projector = new FlowVectorProjector<V,E>(g, edgeNum);
 		
 		this.krvpot = new KRVPotential<V,E>(g,partitionMatrices,projector,A,edgeNum,g.edgeSet().size());		
-		
 	}
 	
 	/**
@@ -111,6 +126,8 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 	 */
 	public Integer performKRV() {
 		
+		Long startTime = System.currentTimeMillis();
+		
 		LOGGER.info("Starting modified KRV procedure.");
 		
 		DenseDoubleMatrix1D r = Util.getRandomDirection(g.edgeSet().size());
@@ -118,19 +135,18 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		
 		while (current_potential >= bound && A.size() > 1) {
 			
+			iterations++;
+			
 			r = Util.getRandomDirection(g.edgeSet().size());
 			projection = projector.getFlowVectorProjection(partitionMatrices , r);
 						
 			PracticalVerticeDivider<V,E> divider = new PracticalVerticeDivider<V,E>(g, projection , edgeNum);
 			divider.divideActiveVertices(gPrime, A, projection);
 			
-			/////////////////////////////// START DEBUG ///////////////////////////////////////////////
 			if (DecompositionConstants.DEBUG) {
 				//Provide some debugging information
 				debugInformation(divider);
 			}
-			
-			/////////////////////////////// END DEBUG /////////////////////////////////////////////////
 			
 			//Skip this iteration if Source or Target set is empty (in this case there is no flow and therefore no matching / deletion)
 			if (divider.getAs().isEmpty() || divider.getAt().isEmpty()) {
@@ -139,12 +155,16 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			
 			gPrime.addSourceAndTarget(divider.getAs(), divider.getAt());
 
+			Long startTimeMaxFlow = System.currentTimeMillis();
+			
 			//Create the flow problem
 			FlowProblem<SplitVertex<V,E> , DefaultWeightedEdge> flow_problem = 
 				new UndirectedFlowProblem<SplitVertex<V,E>, DefaultWeightedEdge>(gPrime, gPrime.getFlowSource(), gPrime.getFlowTarget());
 			
 			//Compute maxFlow
 			Map <DefaultWeightedEdge , Double> maxFlow = flow_problem.getMaxFlow();
+			
+			timeInMaxFlow = timeInMaxFlow + System.currentTimeMillis() - startTimeMaxFlow;
 			
 			//Rescale flow
 			FlowRescaler<V,E> rescaler = new FlowRescaler<V, E>();
@@ -181,6 +201,8 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			}
 		}
 
+		time = System.currentTimeMillis() - startTime;
+		
 		return getResultCase();
 	}
 
@@ -225,19 +247,20 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		Double matchingPotential = krvpot.getPotentialAfterStep(A , matchingStep);
 		Double deletionPotential = krvpot.getPotentialAfterStep(deletionStep.getA() , deletionStep);
 		
+		/****************** INFO ***********/
 		Double sum = 0.0;
 		for (E e : A) {
 			sum += g.getEdgeWeight(e);
 		}
 		
-		System.out.println("Current summed up edge weight: " + sum);
-		System.out.println("Mean of edge weights: " + sum / A.size());
+		LOGGER.fine("Current summed up edge weight: " + sum);
+		LOGGER.fine("Mean of edge weights: " + sum / A.size());
+		LOGGER.info("Current potential: " + current_potential);
+		LOGGER.info("Potential for matching: " + matchingPotential);
+		LOGGER.info("Potential for deletion: " + deletionPotential + " No Progress?: " + deletionStep.noProgress() + " Restart:" + deletionStep.restartNeeded());
+		LOGGER.info("Bound : " + bound);
 		
-//			System.out.println("Current projection: " + projection);
-			System.out.println("Current potential: " + current_potential);
-			System.out.println("Potential for matching: " + matchingPotential);
-			System.out.println("Potential for deletion: " + deletionPotential + " No Progress?: " + deletionStep.noProgress() + " Restart:" + deletionStep.restartNeeded());
-			System.out.println("Bound : " + bound);
+		/************************************/
 		
 		
 		Double potential;
@@ -249,7 +272,6 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			
 			partitionMatrices.add(matchingStep);
 		} else {
-			System.out.println("Applying deletion step");
 			A = deletionStep.getA();
 			B = deletionStep.getB();
 			
@@ -284,8 +306,6 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		return krvpot.getPotential();
 	}
 
-	
-	
 	/**
 	 * Returns the case in which the Lemma stopped
 	 * 
@@ -320,6 +340,40 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		return B;
 	}
 	
+	/**
+	 * Returns the number of iterations that were needed for this modified KRV procedure 
+	 * 
+	 * @return Integer : The number of iterations that were needed.
+	 */
+	public Integer getIterations() {
+		return iterations;
+	}
+	
+	/**
+	 * Returns time spent on max flow computations [ms]
+	 * 
+	 * @return Long: Time spent on max flow computations in ms 
+	 */
+	public Long getTimeInMaxFlow() {
+		return timeInMaxFlow;
+	}
+	
+	/**
+	 * Returns time in ms that the algorithm needed. Returns 0 while the procedure is still running.
+	 * 
+	 * @return Long : Time needed for this modified KRV procedure [ms] 
+	 */
+	public Long getCompleteTime() {
+		return time;
+	}
+	
+	/**
+	 * Finds the first cut edge on a given path
+	 * 
+	 * @param cut : The cut
+	 * @param path : The path
+	 * @return DefaultWeightedEdge : The first cut edge on the given path. 
+	 */
 	private DefaultWeightedEdge findCutEdge(Set<DefaultWeightedEdge> cut, List<SplitVertex<V, E>> path) {
 		//find the first cut edge on the path
 		Integer index = 0;
