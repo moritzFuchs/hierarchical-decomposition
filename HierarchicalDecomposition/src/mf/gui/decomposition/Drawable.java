@@ -81,7 +81,7 @@ public abstract class Drawable implements EventHandler<Event>{
 		m.registerScrollHandler(this);
 		m.registerKeyHandler(this);
 		
-		buttonRow.reset();
+		this.buttonRow.reset();
 		
 		onActivate();
 	}

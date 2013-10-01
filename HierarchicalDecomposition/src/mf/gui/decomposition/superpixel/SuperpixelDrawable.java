@@ -2,6 +2,7 @@ package mf.gui.decomposition.superpixel;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.scene.control.Button;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -38,6 +39,13 @@ public class SuperpixelDrawable extends Drawable implements EventHandler<Event>{
 		m.stopLoading();
 	}
 
+	/**
+	 * Reset the canvas
+	 */
+	public void reset() {
+		m.clear();
+	}
+	
 	/**
 	 * Draws a single {@link Superpixel} onto the drawable.
 	 * 
@@ -92,5 +100,12 @@ public class SuperpixelDrawable extends Drawable implements EventHandler<Event>{
 	@Override
 	public void onActivate() {
 		m.clear();
+		
+		Button showAll = new Button("Show Superpixels");
+		showAll.setOnAction(new ShowSuperpixelHandler(this));
+		Button hideAll = new Button("Clear");
+		
+		buttonRow.getChildren().add(showAll);
+		buttonRow.getChildren().add(hideAll);
 	}
 }

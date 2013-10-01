@@ -20,14 +20,15 @@ public class ButtonRow extends HBox{
 	 */
 	private Set<ButtonBase> addedButtons;
 	
-	public ButtonRow(Iterable<Button> defaultButtons){
+	public ButtonRow(Iterable<ButtonBase> defaultButtons){
         addedButtons = new HashSet<ButtonBase>();
+        this.defaultButtons = defaultButtons;
         
 		setPadding(new Insets(15, 12, 15, 12));
         setSpacing(10);
         setStyle("-fx-background-color: #336699;");
         
-        for (Button b : defaultButtons) {
+        for (ButtonBase b : defaultButtons) {
         	getChildren().add(b);
         }
 	}
@@ -46,6 +47,10 @@ public class ButtonRow extends HBox{
 	 * Removes all added buttons; Default Buttons stay.
 	 */
 	public void reset() {
-		getChildren().removeAll(addedButtons);
+		getChildren().clear();
+		for (ButtonBase b : defaultButtons) {
+			getChildren().addAll(b);
+		}
+		addedButtons.clear();
 	}
 }
