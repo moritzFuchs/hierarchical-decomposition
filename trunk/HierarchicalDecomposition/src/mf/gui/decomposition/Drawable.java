@@ -29,6 +29,9 @@ public abstract class Drawable implements EventHandler<Event>{
 	 */
 	protected Markable m;
 	
+	/**
+	 * The {@link ButtonRow} for this drawable.
+	 */
 	protected ButtonRow buttonRow;
 	
 	public Drawable(String name , Markable m, ButtonRow buttonRow) {
@@ -81,6 +84,9 @@ public abstract class Drawable implements EventHandler<Event>{
 		m.registerScrollHandler(this);
 		m.registerKeyHandler(this);
 		
+		m.resetImage();
+		m.clear();
+		
 		this.buttonRow.reset();
 		
 		onActivate();
@@ -119,5 +125,5 @@ public abstract class Drawable implements EventHandler<Event>{
 	/**
 	 * Called when the Object is activated. OVERRIDE ME!
 	 */
-	public void onActivate() {}
+	public abstract void onActivate();
 }
