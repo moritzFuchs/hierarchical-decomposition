@@ -150,7 +150,7 @@ public class Lemma33<V extends Comparable<V>,E> {
 		FlowProblem<SplitVertex<V,E> , DefaultWeightedEdge> flow_problem = new UndirectedFlowProblem<SplitVertex<V,E>,DefaultWeightedEdge>(gPrime, gPrime.getFlowSource() , gPrime.getFlowTarget());
 	
 		Map<DefaultWeightedEdge , Double> maxFlow = flow_problem.getMaxFlow();	
-		Set<FlowPath<SplitVertex<V, E>,DefaultWeightedEdge>> pathSet = flow_problem.getPaths();
+		Set<FlowPath<SplitVertex<V, E>>> pathSet = flow_problem.getPaths();
 		Set<DefaultWeightedEdge> cut = flow_problem.getMinCut();
 		
 		//Set of Split vertices that represent edges in G and are incident to the cut.
@@ -164,7 +164,7 @@ public class Lemma33<V extends Comparable<V>,E> {
 		Map<SplitVertex<V,E> , Double> flowAssignment = new HashMap<SplitVertex<V,E> , Double>();
 
 		//Assign each flow path (its weight) to the first cut vertex representing an edge in G on the path
-		for (FlowPath<SplitVertex<V,E> , DefaultWeightedEdge> path : pathSet) {
+		for (FlowPath<SplitVertex<V,E>> path : pathSet) {
 			
 			SplitVertex<V,E> first = getFirstSplitVertexOnPath(path.getPath() , cutVertices);
 			if (flowAssignment.get(first) == null) {

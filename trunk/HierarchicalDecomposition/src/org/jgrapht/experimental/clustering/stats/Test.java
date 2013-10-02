@@ -9,20 +9,7 @@ import java.sql.Statement;
 public class Test {
 
 	public static void main(String[] args) {
-		
-		KRVStats stats = KRVStats.getInstance();
-		
-		Integer id = stats.registerKRVRun(13, 37);
-		System.out.println("id " + id);
-		stats.updateKRVRun(id, 300L);
-		
-		stats.addIteration(id, 20, 40L,20L, 1, 100.0);
-		stats.addIteration(id, 15, 30L,15L, 2, 50.0);
-		stats.addIteration(id, 14, 20L,10L, 3, 40.0);
-		stats.addIteration(id, 6, 10L,5L, 4, 25.0);
-		
-		stats.close();
-		
+
 		try {
 	      Class.forName("org.sqlite.JDBC");
 
@@ -31,23 +18,40 @@ public class Test {
 	      Statement statement = c.createStatement();
 	      statement.setQueryTimeout(30);  // set timeout to 30 sec
 	      
+	      statement.executeUpdate("INSERT INTO krv_runs (edges , nodes, timestamp) VALUES (100,1000, CURRENT_TIMESTAMP)");
 	      
-	      ResultSet rs = statement.executeQuery("SELECT * FROM krv_runs");
+	      
+	      ResultSet rs = statement.executeQuery("SELECT * FROM 'krv_runs'");
 
 	      while (rs.next()) {
-	    	  System.out.println(rs.getInt("edges"));
-	    	  System.out.println(rs.getInt("nodes"));
-	    	  System.out.println(rs.getLong("time"));
+	    	  System.out.print(rs.getInt("edges"));
+	    	  System.out.print(" - ");
+	    	  System.out.print(rs.getInt("nodes"));
+	    	  System.out.print(" - ");
+	    	  System.out.print(rs.getLong("time"));
+	    	  System.out.print(" - ");
+	    	  System.out.print(rs.getString("os"));
+	    	  System.out.print(" - ");
+	    	  System.out.println(rs.getString("timestamp"));
 	      }
 	      
 	      rs = statement.executeQuery("SELECT * FROM krv_iterations");
 	      System.out.println("*************");
 	      
 	      while (rs.next()) {
-	    	  System.out.println(rs.getInt("krv_run_id"));
-	    	  System.out.println(rs.getLong("time"));
-	    	  System.out.println(rs.getDouble("potential"));
-	    	  System.out.println(rs.getDouble("edges_in_game"));
+	    	  System.out.print(rs.getInt("krv_run_id"));
+	    	  System.out.print(" - ");
+	    	  System.out.print(rs.getLong("time"));
+	    	  System.out.print(" - ");
+	    	  System.out.print(rs.getLong("time_max_flow"));
+	    	  System.out.print(" - ");
+	    	  System.out.print(rs.getDouble("potential"));
+	    	  System.out.print(" - ");
+	    	  System.out.print(rs.getDouble("edges_in_game"));
+	    	  System.out.print(" - ");
+	    	  System.out.print(rs.getString("os"));
+	    	  System.out.print(" - ");
+	    	  System.out.println(rs.getString("timestamp"));
 	      }
 	      
 	      c.close();

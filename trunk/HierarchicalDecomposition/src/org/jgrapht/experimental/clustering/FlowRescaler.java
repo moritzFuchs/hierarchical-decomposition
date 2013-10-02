@@ -6,6 +6,8 @@ import java.util.Set;
 
 import org.jgrapht.graph.DefaultWeightedEdge;
 
+import com.google.common.collect.Lists;
+
 /**
  * Bundles algorithms to rescale a given flow in G'_st as follows: For all edges s -- x_e with flow >= 0.5 rescale the corresponding flow paths such that s -- x_e holds 1 unit of flow 
  * 
@@ -23,10 +25,10 @@ public class FlowRescaler<V extends Comparable<V>,E> {
 	 * @param flow : A feasible approximate (or exact) max-flow
 	 * @return Set<FlowPath<SplitVertex<V,E>,DefaultWeightedEdge>> : The set of rescaled flow paths. 
 	 */
-	public Set<FlowPath<SplitVertex<V,E>,DefaultWeightedEdge>> rescaleFlow(SplitGraph<V,E> gPrime , Map<DefaultWeightedEdge , Double> flow , FlowProblem<SplitVertex<V,E>, DefaultWeightedEdge> flow_problem) {
+	public Set<FlowPath<SplitVertex<V,E>>> rescaleFlow(SplitGraph<V,E> gPrime , Map<DefaultWeightedEdge , Double> flow , FlowProblem<SplitVertex<V,E>, DefaultWeightedEdge> flow_problem) {
 		
 		//Decompose flow paths
-		Set<FlowPath<SplitVertex<V,E>, DefaultWeightedEdge>> paths = flow_problem.getPaths();
+		Set<FlowPath<SplitVertex<V,E>>> paths = flow_problem.getPaths();
 		
 		//Rescale the resulting flow: All flow paths with flow > 1/2 from s to x_e \in A_s get scaled up to have flow 1		
 		Map<DefaultWeightedEdge , Double> pathFactors = new HashMap<DefaultWeightedEdge , Double>();
@@ -46,7 +48,7 @@ public class FlowRescaler<V extends Comparable<V>,E> {
 		}
 		
 		//scale paths according to gathered information
-		for (FlowPath<SplitVertex<V,E>,DefaultWeightedEdge> path : paths) {
+		for (FlowPath<SplitVertex<V,E>> path : paths) {
 			SplitVertex<V,E> s = path.getPath().get(0);
 			SplitVertex<V,E> x_e = path.getPath().get(1);
 			if (pathFactors.get(gPrime.getEdge(s, x_e)) != null) {
@@ -96,7 +98,7 @@ public class FlowRescaler<V extends Comparable<V>,E> {
 	 * @param factor : The factor by which the s-t-flow-path will be scaled up
 	 * @param dec : The flow decomposer which caches flow path weights
 	 */
-	private void scalePath(SplitGraph<V,E> gPrime , FlowPath<SplitVertex<V, E> , DefaultWeightedEdge> path,
+	private void scalePath(SplitGraph<V,E> gPrime , FlowPath<SplitVertex<V, E>> path,
 			Map<DefaultWeightedEdge, Double> flow,
 			Map<DefaultWeightedEdge, Double> newFlow, Double factor, FlowProblem<SplitVertex<V, E>, DefaultWeightedEdge> flow_problem) {
 		

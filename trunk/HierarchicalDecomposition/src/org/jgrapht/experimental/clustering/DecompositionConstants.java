@@ -17,7 +17,7 @@ public class DecompositionConstants {
 	/**
 	 * Turn debugging mode on/off. 'On' will be very slow since a lot of stuff is double-checked / recomputed.
 	 */
-	public static final Boolean DEBUG = true;
+	public static final Boolean DEBUG = false;
 	
 	/**
 	 * Mainly for debugging: error that we are allowed to make (due to Double precision)

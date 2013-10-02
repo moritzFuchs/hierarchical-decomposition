@@ -1,21 +1,12 @@
 package mf.gui;
 
-import java.io.File;
-import java.io.IOException;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import javax.xml.transform.TransformerConfigurationException;
-
-import mf.superpixel.SuperpixelGraph;
-import mf.superpixel.SuperpixelImport;
-
-import org.xml.sax.SAXException;
-
-import javafx.scene.image.Image;
 
 public class Test {
 

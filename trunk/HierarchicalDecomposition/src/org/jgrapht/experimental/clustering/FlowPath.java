@@ -4,7 +4,7 @@ import java.util.List;
 
 //TODO: Document
 
-public class FlowPath<V,E> {
+public class FlowPath<V> {
 
 	private Double weight;
 	
