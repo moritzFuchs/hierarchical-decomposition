@@ -72,7 +72,7 @@ public class Separator<V extends Comparable<V>,E> {
 		
 		//Decompose the flow into flowPaths and a cut
 		
-		Set<FlowPath<SplitVertex<V, E>,DefaultWeightedEdge>> pathSet = flow_problem.getPaths();
+		Set<FlowPath<SplitVertex<V, E>>> pathSet = flow_problem.getPaths();
 		Set<DefaultWeightedEdge> cut = flow_problem.getMinCut();
 		
 		//Get SplitGraphVertices incident to cut that represent edges in G
@@ -86,7 +86,7 @@ public class Separator<V extends Comparable<V>,E> {
 		Map<SplitVertex<V,E> , Double> flowAssignment = new HashMap<SplitVertex<V,E> , Double>();
 
 		//Assign each flow path (its weight) to the first cut vertex representing an edge in G on the path
-		for (FlowPath<SplitVertex<V,E>,DefaultWeightedEdge> path : pathSet) {
+		for (FlowPath<SplitVertex<V,E>> path : pathSet) {
 			
 			SplitVertex<V,E> first = getFirstCutOnPath(path.getPath() , cutVertices);
 			if (flowAssignment.get(first) == null) {

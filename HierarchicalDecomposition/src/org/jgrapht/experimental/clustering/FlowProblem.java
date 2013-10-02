@@ -34,7 +34,7 @@ public interface FlowProblem<V,E> {
 	 * 
 	 * @return : The set of flow paths (which are represented as List<V>)
 	 */
-	public Set<FlowPath<V,E>> getPaths();
+	public Set<FlowPath<V>> getPaths();
 	
 	/**
 	 * Get the flow path weight for a given path.
@@ -42,7 +42,7 @@ public interface FlowProblem<V,E> {
 	 * @param path : A flow path as computed by {@link FlowProblem.getPath}.
 	 * @return : The weight of the given path
 	 */
-	public Double getFlowPathWeight(FlowPath<V,E> path);
+	public Double getFlowPathWeight(FlowPath<V> path);
 	
-	public Set<MatchedPair<V>> getFractionalPartialMatching(Set<FlowPath<V,E>> paths);
+	public Set<MatchedPair<V>> getFractionalPartialMatching(Set<FlowPath<V>> paths);
 }

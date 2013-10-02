@@ -40,6 +40,9 @@ package org.jgrapht.alg;
 import java.util.*;
 
 import org.jgrapht.*;
+import org.jgrapht.experimental.clustering.FlowPath;
+
+import com.google.common.collect.Lists;
 
 
 /**
@@ -82,6 +85,7 @@ public final class EdmondsKarpMaximumFlow<V, E>
                                      // in the internal representation
     private List<Node> nodes; // internal representation of the network
 
+    
     //~ Constructors -----------------------------------------------------------
 
     /**

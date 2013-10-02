@@ -42,7 +42,15 @@ public class KRVStats {
 		      Statement statement = c.createStatement();
 		      statement.setQueryTimeout(30);  // set timeout to 30 sec
 		      
-		      statement.executeUpdate("CREATE TABLE IF NOT EXISTS krv_runs (id INTEGER PRIMARY KEY AUTOINCREMENT, nodes INTEGER, edges INTEGER, time LONG)");
+		      statement.executeUpdate("CREATE TABLE IF NOT EXISTS krv_runs ("
+		      		+ "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+		      		+ "nodes INTEGER, "
+		      		+ "edges INTEGER, "
+		      		+ "time LONG, "
+		      		+ "os STRING,"
+		      		+ "timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
+		      		+ ")");
+		      
 		      statement.executeUpdate("CREATE TABLE IF NOT EXISTS krv_iterations ("
 		      		+ "id INTEGER PRIMARY KEY AUTOINCREMENT, "
 		      		+ "krv_run_id INTEGER, "
@@ -50,7 +58,9 @@ public class KRVStats {
 		      		+ "time_max_flow INTEGER,"
 		      		+ "iteration INTEGER,"
 		      		+ "potential DOUBLE,"
-		      		+ "edges_in_game INTEGER"
+		      		+ "edges_in_game INTEGER,"
+		      		+ "os STRING,"
+		      		+ "timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
 		      		+ ")");
 		      
 		    } catch(SQLException e) {
@@ -87,7 +97,7 @@ public class KRVStats {
 		
 		try {
 			Statement statement = c.createStatement();
-			statement.executeUpdate("INSERT INTO krv_runs ('nodes', 'edges') VALUES (" + nodes + "," + edges + ")");
+			statement.executeUpdate("INSERT INTO krv_runs ('nodes', 'edges', 'os') VALUES (" + nodes + "," + edges + ", '" + System.getProperty("os.name") + "')");
 			ResultSet rs = statement.executeQuery("SELECT last_insert_rowid()");
 			result = rs.getInt(1);
 			statement.close();
@@ -132,8 +142,8 @@ public class KRVStats {
 	public void addIteration(Integer id, Integer edges_in_game, Long time,Long timeMaxFlow, Integer iteration, Double potential) {
 		try {
 			if (krv_iteration_insert == null) {
-				krv_iteration_insert = c.prepareStatement("INSERT INTO krv_iterations(krv_run_id, time, time_max_flow, iteration, potential, edges_in_game) "
-						+ "VALUES (?,?,?,?,?,?)");
+				krv_iteration_insert = c.prepareStatement("INSERT INTO krv_iterations(krv_run_id, time, time_max_flow, iteration, potential, edges_in_game, os) "
+						+ "VALUES (?,?,?,?,?,?,?)");
 			}
 
 			krv_iteration_insert.setInt(1, id);
@@ -142,7 +152,8 @@ public class KRVStats {
 			krv_iteration_insert.setInt(4, iteration);
 			krv_iteration_insert.setDouble(5, potential);
 			krv_iteration_insert.setInt(6, edges_in_game);
-			
+			krv_iteration_insert.setString(7, System.getProperty("os.name"));
+
 			krv_iteration_insert.execute();
 			
 		} catch (SQLException e) {

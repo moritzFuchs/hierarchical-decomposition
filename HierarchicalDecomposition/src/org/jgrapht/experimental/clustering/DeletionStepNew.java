@@ -84,7 +84,7 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 			Set<SplitVertex<V,E>> A_s , 
 			Set<SplitVertex<V,E>> A_t , 
 			FlowProblem<SplitVertex<V,E>, DefaultWeightedEdge> flow_problem , 
-			Set<FlowPath<SplitVertex<V,E>,DefaultWeightedEdge>> paths) {
+			Set<FlowPath<SplitVertex<V,E>>> paths) {
 		
 		A_old = A;
 		B_old = B;
@@ -246,8 +246,7 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 			} else {
 				//The flow vector assignment was not big enough. Therefore the edge will not get any flow vector
 				B_new.add(e);
-				System.out.println("e cap " + g.getEdgeWeight(e));
-				System.out.println("len " + len);
+				
 				row.assign(0.0);
 			}				
 		}
@@ -264,12 +263,12 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 	 * @return An assignment of sums of fractional flow vectors to cut edges in G
 	 */
 	private Set<E> computeFlowVectorMovement(
-			Set<FlowPath<SplitVertex<V,E>, DefaultWeightedEdge>> paths,
+			Set<FlowPath<SplitVertex<V,E>>> paths,
 			Set<DefaultWeightedEdge> cut) {
 		
 		Set<E> new_edges = new HashSet<E>();
 		
-		for (FlowPath<SplitVertex<V, E>, DefaultWeightedEdge> path : paths) {
+		for (FlowPath<SplitVertex<V, E>> path : paths) {
 			Double weight = path.getFlowPathWeight(); 
 			
 			Double cap = g.getEdgeWeight(gPrime.getOriginalEdge(path.getPath().get(1)));
@@ -294,17 +293,18 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 				}
 			}
 		}
-		
-		DoubleMatrix2D matrix = matrixContainer.getMatrix();
-		for (int i=0;i<matrix.rows();i++) {
-			
-			DoubleMatrix1D row = matrix.viewRow(i);
-			Double sum = 0.0;
-			for (int j=0;j<row.size();j++) {
-				sum += row.getQuick(j) * g.getEdgeWeight(edgeNum.inverse().get(j));
-			}
-			if (sum != 0.0 && sum < g.getEdgeWeight(edgeNum.inverse().get(i)) - DecompositionConstants.EPSILON) {
-				System.out.println("Flow vector too large!");
+		if (DecompositionConstants.DEBUG) {
+			DoubleMatrix2D matrix = matrixContainer.getMatrix();
+			for (int i=0;i<matrix.rows();i++) {
+				
+				DoubleMatrix1D row = matrix.viewRow(i);
+				Double sum = 0.0;
+				for (int j=0;j<row.size();j++) {
+					sum += row.getQuick(j) * g.getEdgeWeight(edgeNum.inverse().get(j));
+				}
+				if (sum != 0.0 && sum < g.getEdgeWeight(edgeNum.inverse().get(i)) - DecompositionConstants.EPSILON) {
+					System.out.println("Flow vector too large!");
+				}
 			}
 		}
 		

@@ -186,20 +186,22 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			//Compute maxFlow
 			Map <DefaultWeightedEdge , Double> maxFlow = flow_problem.getMaxFlow();
 			
-			timeInMaxFlow = timeInMaxFlow + System.currentTimeMillis() - startTimeMaxFlow;
+			timeInMaxFlow = System.currentTimeMillis() - startTimeMaxFlow;
 			
 			//Rescale flow
 			FlowRescaler<V,E> rescaler = new FlowRescaler<V, E>();
-			Set<FlowPath<SplitVertex<V, E>, DefaultWeightedEdge>> paths = rescaler.rescaleFlow(gPrime, maxFlow, flow_problem);
+			Set<FlowPath<SplitVertex<V, E>>> paths = rescaler.rescaleFlow(gPrime, maxFlow, flow_problem);
 			
 			if (DecompositionConstants.DEBUG) {
-				for (FlowPath<SplitVertex<V, E>, DefaultWeightedEdge> path : flow_problem.getPaths()) {
+				for (FlowPath<SplitVertex<V, E>> path : flow_problem.getPaths()) {
 					DefaultWeightedEdge e  = findCutEdge(flow_problem.getMinCut(), path.getPath());
 					if (gPrime.getEdgeWeight(e) > Math.abs(flow_problem.getMaxFlow().get(e))) {
 						System.out.println(" " + gPrime.getEdgeWeight(e) + " " + flow_problem.getMaxFlow().get(e));
 					} 
 				}
 			}
+			
+			
 			
 			// -------------------------------- CHECK IF DELETION OR MATCHING STEP PERFORMS BETTER ---------------------------------- //
 			

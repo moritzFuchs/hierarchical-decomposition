@@ -124,6 +124,7 @@ public class UndirectedFlowProblem<V extends Comparable<V> , E> implements FlowP
 		if (undirected_flow == null) {
 			EdmondsKarpMaximumFlow<V, DefaultWeightedEdge> flowComputation = new EdmondsKarpMaximumFlow<V, DefaultWeightedEdge>(directedG);
 			flowComputation.calculateMaximumFlow(source, target);
+			
 			directed_flow = flowComputation.getMaximumFlow();
 			undirected_flow = new HashMap<E , Double>();
 			
@@ -279,19 +280,22 @@ public class UndirectedFlowProblem<V extends Comparable<V> , E> implements FlowP
 	 * @param min_flow : The map of minimal flow to any vertex
 	 * @param parent : The backtracking information (BFS tree with root s)
 	 */
-	public Set<FlowPath<V,E>> getPaths() {
+	public Set<FlowPath<V>> getPaths() {
 		
 		if (undirected_flow == null) {
 			getMaxFlow();
 		}
 		
-		Set<FlowPath<V,E>> paths = new HashSet<FlowPath<V,E>>();
+		
+		
+		 
+		Set<FlowPath<V>> paths = new HashSet<FlowPath<V>>();
 		
 		Map<E , Double> myflow = new HashMap<E,Double>(undirected_flow);
 		Queue<V> q = new LinkedList<V>();
 		Map<V , E> min_previous_edge = new HashMap<V , E>();
 		Map<V,V> parent = new HashMap<V,V>();
-
+	
 		while (true) {
 			parent.clear();
 			min_previous_edge.clear();
@@ -457,7 +461,7 @@ public class UndirectedFlowProblem<V extends Comparable<V> , E> implements FlowP
 			V t, 
 			Map<V, E> min_previous_edge, 
 			Map<V, V> parent, 
-			Set<FlowPath<V,E>>paths) {
+			Set<FlowPath<V>>paths) {
 		V v = t;
 		E min_edge_on_path = min_previous_edge.get(v);
 		Double flow_on_path = Math.abs(myflow.get(min_edge_on_path));
@@ -488,7 +492,7 @@ public class UndirectedFlowProblem<V extends Comparable<V> , E> implements FlowP
 		
 		LOGGER.finest("Found s-t-path:" + path);
 		
-		FlowPath<V,E> path_object = new FlowPath<V,E>(path,flow_on_path);
+		FlowPath<V> path_object = new FlowPath<V>(path,flow_on_path);
 		
 		paths.add(path_object);
 
@@ -504,7 +508,7 @@ public class UndirectedFlowProblem<V extends Comparable<V> , E> implements FlowP
 	 * @return Returns the weight of a flow path. 
 	 */
 	@Override
-	public Double getFlowPathWeight(FlowPath<V,E> path) {
+	public Double getFlowPathWeight(FlowPath<V> path) {
 		return path.getFlowPathWeight();
 	}
 	
@@ -516,13 +520,13 @@ public class UndirectedFlowProblem<V extends Comparable<V> , E> implements FlowP
 	 */
 	@Override
 	public Set<MatchedPair<V>> getFractionalPartialMatching(
-			Set<FlowPath<V, E>> paths) {
+			Set<FlowPath<V>> paths) {
 		Set<MatchedPair<V>> matching = new HashSet<MatchedPair<V>>();
 		
 		//Each flow path corresponds to one  Matching edge.
 		//A flow path has to following form: s -- x_e --- *** --- x_h --- t
 		//The matching will be between x_e and x_h with weight equal to the weight of the flow path.
-		for (FlowPath<V,E> path : paths) {
+		for (FlowPath<V> path : paths) {
 			V x_e = path.getPath().get(1);
 			V x_h = path.getPath().get(path.getPath().size()-2);
 
