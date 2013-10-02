@@ -64,4 +64,9 @@ public class DecompositionConstants {
 	 * Number of applications of a matching step.
 	 */
 	public static final Integer MATCHING_APPLICATIONS = 15;
+	
+	/**
+	 * Statistics are gathered if this constant is set to true
+	 */
+	public static final Boolean STATS = true;
 }

@@ -48,7 +48,7 @@ public class RSTDecomposition extends Drawable{
 	private Map<Superpixel , TreeVertex<Integer>> current_tree_vertex;
 	private Integer height;
 	
-	private static final Boolean COLLAPSE_INF_EDGES = true;
+	private static final Boolean COLLAPSE_INF_EDGES = false;
 	
 	public RSTDecomposition(String path_to_krv_dec , SuperpixelDecomposition superpixel_decomposition , Markable m, ButtonRow buttonRow) {
 		super("RST Decomposition" , m, buttonRow);
@@ -71,6 +71,8 @@ public class RSTDecomposition extends Drawable{
 		height = krv_decomposition.getHeight(COLLAPSE_INF_EDGES);
 		
 		current_tree_vertex = new HashMap<Superpixel , TreeVertex<Integer>>();
+		
+		System.out.println(krv_decomposition.getRoot());
 		
 		for (Superpixel sp : superpixel_decomposition.getSuperpixelMap().values()) {
 			current_tree_vertex.put(sp, krv_decomposition.getRoot());
@@ -173,6 +175,8 @@ public class RSTDecomposition extends Drawable{
 	 */
 	private void decompose(Superpixel sp) {
 		TreeVertex<Integer> tree_vertex = current_tree_vertex.get(sp);
+		System.out.println(tree_vertex);
+		System.out.println(tree_vertex);
 		decompose(krv_decomposition.getGraph(), tree_vertex, 1);
 	}
 	
@@ -252,7 +256,7 @@ public class RSTDecomposition extends Drawable{
 			Double x =  mouse_event.getX();
 			Double y = mouse_event.getY();
 			if (mouse_event.getButton().equals(MouseButton.PRIMARY)) {
-				Superpixel sp = superpixel_decomposition.getSuperpixelByPixel(new Pixel(x.intValue(),y.intValue()));				
+				Superpixel sp = superpixel_decomposition.getSuperpixelByPixel(new Pixel(x.intValue(),y.intValue()));		
 				decompose(sp);
 			}
 			if (mouse_event.getButton().equals(MouseButton.SECONDARY)) {
@@ -290,5 +294,9 @@ public class RSTDecomposition extends Drawable{
 		
 		//Level up is current problematic since root might be reached instantly!
 		up.setDisable(true);
+		
+		for (Superpixel sp : superpixel_decomposition.getSuperpixelMap().values()) {
+			current_tree_vertex.put(sp, krv_decomposition.getRoot());
+		}
 	}
 }

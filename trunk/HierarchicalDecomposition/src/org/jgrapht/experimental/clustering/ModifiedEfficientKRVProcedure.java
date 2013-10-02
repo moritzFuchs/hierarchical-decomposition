@@ -1,5 +1,10 @@
 package org.jgrapht.experimental.clustering;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
@@ -8,6 +13,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.jgrapht.Graph;
+import org.jgrapht.experimental.clustering.stats.KRVStats;
 import org.jgrapht.experimental.clustering.util.MatchedPair;
 import org.jgrapht.experimental.util.LoggerFactory;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -82,17 +88,27 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 	/************************************* STATISTICS ****************************************/
 	
 	/**
-	 * Number of iterations
+	 * ID of this run in the database.
+	 */
+	private Integer db_id;
+	
+	/**
+	 * Object to write statistics to the database.
+	 */
+	private KRVStats stats;
+	
+	/**
+	 * Number of iterations.
 	 */
 	private Integer iterations = 0;
 	
 	/**
-	 * Time spent in maxFlow computations
+	 * Time spent in maxFlow computations.
 	 */
 	private Long timeInMaxFlow = 0L;
 	
 	/**
-	 * Total time spent in the KRV procedure
+	 * Total time spent in the KRV procedure.
 	 */
 	private Long time = 0L; 
 	
@@ -117,6 +133,11 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		this.projector = new FlowVectorProjector<V,E>(g, edgeNum);
 		
 		this.krvpot = new KRVPotential<V,E>(g,partitionMatrices,projector,A,edgeNum,g.edgeSet().size());		
+		
+		if (DecompositionConstants.STATS) {
+			this.stats = KRVStats.getInstance();
+			this.db_id = stats.registerKRVRun(g.vertexSet().size(), g.edgeSet().size());
+		}
 	}
 	
 	/**
@@ -135,6 +156,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		
 		while (current_potential >= bound && A.size() > 1) {
 			
+			Long startTimeIteration = System.currentTimeMillis();
 			iterations++;
 			
 			r = Util.getRandomDirection(g.edgeSet().size());
@@ -175,7 +197,6 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 					DefaultWeightedEdge e  = findCutEdge(flow_problem.getMinCut(), path.getPath());
 					if (gPrime.getEdgeWeight(e) > Math.abs(flow_problem.getMaxFlow().get(e))) {
 						System.out.println(" " + gPrime.getEdgeWeight(e) + " " + flow_problem.getMaxFlow().get(e));
-						Integer a = 1;
 					} 
 				}
 			}
@@ -199,9 +220,18 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 				System.out.println("Restarting KRV");
 				current_potential = restart();
 			}
+			
+			Long timeIteration = System.currentTimeMillis() - startTimeIteration;
+			
+			stats.addIteration(db_id, A.size()+B.size(), timeIteration,timeInMaxFlow, iterations, current_potential);
 		}
 
 		time = System.currentTimeMillis() - startTime;
+		
+		//Update stitistics on this KRV run
+		if (DecompositionConstants.STATS) {
+			stats.updateKRVRun(db_id, time);
+		}
 		
 		return getResultCase();
 	}
