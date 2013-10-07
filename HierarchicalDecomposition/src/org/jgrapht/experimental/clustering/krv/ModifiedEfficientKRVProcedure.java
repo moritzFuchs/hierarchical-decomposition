@@ -17,6 +17,10 @@ import org.jgrapht.experimental.clustering.SplitGraph;
 import org.jgrapht.experimental.clustering.SplitVertex;
 import org.jgrapht.experimental.clustering.UndirectedFlowProblem;
 import org.jgrapht.experimental.clustering.Util;
+import org.jgrapht.experimental.clustering.krv.breakCondition.KRVBreakCondition;
+import org.jgrapht.experimental.clustering.krv.breakCondition.KRVBreakConditionComposition;
+import org.jgrapht.experimental.clustering.krv.breakCondition.NoDeletionBreakCondition;
+import org.jgrapht.experimental.clustering.krv.breakCondition.PracticalPotentialBreakCondition;
 import org.jgrapht.experimental.clustering.stats.KRVStats;
 import org.jgrapht.experimental.clustering.util.MatchedPair;
 import org.jgrapht.experimental.util.LoggerFactory;
@@ -163,7 +167,11 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		DenseDoubleMatrix1D r = Util.getRandomDirection(g.edgeSet().size());
 		Double current_potential = krvpot.getPotential();
 		
-		while (breakCondition(current_potential)) {
+		KRVBreakConditionComposition cond = new KRVBreakConditionComposition();
+		cond.addBreakCondition(new PracticalPotentialBreakCondition(g));
+		cond.addBreakCondition(new NoDeletionBreakCondition(g));
+		
+		while (!cond.breakIteration(current_potential, noDeletionStep)) {
 			
 			Long startTimeIteration = System.currentTimeMillis();
 			iterations++;
