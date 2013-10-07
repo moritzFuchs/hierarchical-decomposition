@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.jgrapht.Graph;
+import org.jgrapht.experimental.clustering.stats.BoundaryStats;
 import org.jgrapht.experimental.util.LoggerFactory;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
@@ -196,8 +197,14 @@ public class PartitionB<V extends Comparable<V>,E> extends Clustering<V,E> {
 		
 		LOGGER.info("PartitionB finished. Notifying observers.");
 		
+		//Notify observers
 		setChanged();
 		notifyObservers(L);
+		
+		//Gather some statistics about this run
+		Boolean empty = (L.isEmpty() || R.isEmpty());
+		BoundaryStats stats = BoundaryStats.getInstance();
+		stats.addRun(subG.vertexSet().size(), subG.edgeSet().size(), boundaryVertices.size(), empty);
 	}
 	
 	/**
@@ -218,7 +225,6 @@ public class PartitionB<V extends Comparable<V>,E> extends Clustering<V,E> {
 		return F;
 	}
 	
-	
 	/**
 	 * Returns the 'left' side of the bisection (= the side t is attached to)
 	 * 
@@ -236,6 +242,4 @@ public class PartitionB<V extends Comparable<V>,E> extends Clustering<V,E> {
 	public Set<V> getR() {
 		return R;
 	}
-	
-	
 }

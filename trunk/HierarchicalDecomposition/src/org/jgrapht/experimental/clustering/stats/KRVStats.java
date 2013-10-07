@@ -8,8 +8,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Logger;
 
+import org.jgrapht.experimental.clustering.ModifiedEfficientKRVProcedure;
 import org.jgrapht.experimental.util.LoggerFactory;
 
+/**
+ * Writes statistics concerning the modified KRV procedure ({@link ModifiedEfficientKRVProcedure}).
+ * 
+ * @author moritzfuchs
+ * @date 07.10.2013
+ *
+ */
 public class KRVStats {
 
 	/**
@@ -26,23 +34,24 @@ public class KRVStats {
 	 * Database connection
 	 */
 	private Connection c;
-	
-	
+
+	/**
+	 * {@link PreparedStatement} to update a KRV run. 
+	 */
 	private PreparedStatement krv_run_update = null;
+	
+	/**
+	 * {@link PreparedStatement} to add a new KRV run.
+	 */
 	private PreparedStatement krv_iteration_insert = null;
-	
-	
 	
 	private KRVStats() {
 		try {
-		      Class.forName("org.sqlite.JDBC");
-
-		      // create a database connection
-		      c = DriverManager.getConnection("jdbc:sqlite:db/stats.db");
-		      Statement statement = c.createStatement();
-		      statement.setQueryTimeout(30);  // set timeout to 30 sec
+			c = SQLiteConnection.getConnection();
+		    Statement statement = c.createStatement();
+		    statement.setQueryTimeout(30);  // set timeout to 30 sec
 		      
-		      statement.executeUpdate("CREATE TABLE IF NOT EXISTS krv_runs ("
+		    statement.executeUpdate("CREATE TABLE IF NOT EXISTS krv_runs ("
 		      		+ "id INTEGER PRIMARY KEY AUTOINCREMENT, "
 		      		+ "nodes INTEGER, "
 		      		+ "edges INTEGER, "
@@ -51,7 +60,7 @@ public class KRVStats {
 		      		+ "timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
 		      		+ ")");
 		      
-		      statement.executeUpdate("CREATE TABLE IF NOT EXISTS krv_iterations ("
+		    statement.executeUpdate("CREATE TABLE IF NOT EXISTS krv_iterations ("
 		      		+ "id INTEGER PRIMARY KEY AUTOINCREMENT, "
 		      		+ "krv_run_id INTEGER, "
 		      		+ "time LONG, "
@@ -63,13 +72,10 @@ public class KRVStats {
 		      		+ "timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
 		      		+ ")");
 		      
-		    } catch(SQLException e) {
-		    	e.printStackTrace();
-		    	LOGGER.warning("SQL-Exception: " + e.getMessage());
-		    } catch(ClassNotFoundException e) {
-		    	e.printStackTrace();
-		    	LOGGER.warning("Could not find JDBC driver for SQLite database.");
-		    }
+		} catch(SQLException e) {
+		 	e.printStackTrace();
+		  	LOGGER.warning("SQL-Exception: " + e.getMessage());
+		} 
 	}
 	
 	/**
