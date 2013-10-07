@@ -341,7 +341,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			
 			partitionMatrices.add(matchingStep);
 			
-			noDeletionStep = 0;
+			noDeletionStep++;
 		} else {
 			A = deletionStep.getA();
 			B = deletionStep.getB();
@@ -352,7 +352,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			partitionMatrices.add(deletionStep);
 			krvpot.permanentlyAddKRVStep(deletionStep);
 			
-			noDeletionStep++;
+			noDeletionStep = 0;
 		}
 		
 		return potential;
