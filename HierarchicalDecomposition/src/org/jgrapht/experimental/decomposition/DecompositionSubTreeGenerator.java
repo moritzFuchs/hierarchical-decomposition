@@ -16,8 +16,6 @@ import org.jgrapht.experimental.clustering.TreeVertex;
 import org.jgrapht.experimental.clustering.krv.PartitionA;
 import org.jgrapht.experimental.clustering.krv.PartitionATask;
 import org.jgrapht.experimental.util.LoggerFactory;
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleGraph;
 
 /**
  * Takes a {@link DecompositionTask} and runs the decomposition algorithm in {@link PartitionA} and {@link PartitionB}. 
