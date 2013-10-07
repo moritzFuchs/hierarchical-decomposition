@@ -15,13 +15,15 @@ public class NoDeletionBreakCondition implements KRVBreakCondition {
 	private Double bound;
 	
 	public NoDeletionBreakCondition(Integer n) {
-		bound = Math.log(n) / Math.log(2);
+		bound = 15* Math.log(n) / Math.log(2);
 	}
 	
 	@Override
 	public Boolean breakIteration(Double current_potential,
 			Integer noDeletionStep) {
+		
+		System.out.println("NoDel: " + bound + " " + noDeletionStep);
+		
 		return (noDeletionStep > bound);
 	}
-
 }

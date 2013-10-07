@@ -35,7 +35,7 @@ public class RstRunner {
 		System.out.println(graph.getGraph().vertexSet().size());
 		System.out.println(graph.getGraph().edgeSet().size());
 		
-		Decomposition<Integer , DefaultWeightedEdge> graph_dec = new Decomposition<Integer , DefaultWeightedEdge>(graph.getGraph());
+		Decomposition<Integer, DefaultWeightedEdge> graph_dec = new Decomposition<Integer , DefaultWeightedEdge>(graph.getGraph());
 		DecompositionTree<Integer> tree = graph_dec.performDecomposition();
 		
 		System.out.println(tree.getGraph().vertexSet().size());
