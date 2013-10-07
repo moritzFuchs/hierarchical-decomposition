@@ -14,7 +14,7 @@ import java.util.logging.SimpleFormatter;
  */
 public class LoggerFactory {
 
-	private static final Level LEVEL = Level.FINE;
+	private static final Level LEVEL = Level.OFF;
 	
 	private static FileHandler handler = null;
 	

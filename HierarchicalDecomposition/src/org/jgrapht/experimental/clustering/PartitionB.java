@@ -197,14 +197,16 @@ public class PartitionB<V extends Comparable<V>,E> extends Clustering<V,E> {
 		
 		LOGGER.info("PartitionB finished. Notifying observers.");
 		
+		if (DecompositionConstants.STATS) {
+			//Gather some statistics about this run
+			Boolean empty = (L.isEmpty() || R.isEmpty());
+			BoundaryStats stats = BoundaryStats.getInstance();
+			stats.addRun(subG.vertexSet().size(), subG.edgeSet().size(), boundaryVertices.size(), empty);
+		}
+		
 		//Notify observers
 		setChanged();
 		notifyObservers(L);
-		
-		//Gather some statistics about this run
-		Boolean empty = (L.isEmpty() || R.isEmpty());
-		BoundaryStats stats = BoundaryStats.getInstance();
-		stats.addRun(subG.vertexSet().size(), subG.edgeSet().size(), boundaryVertices.size(), empty);
 	}
 	
 	/**
