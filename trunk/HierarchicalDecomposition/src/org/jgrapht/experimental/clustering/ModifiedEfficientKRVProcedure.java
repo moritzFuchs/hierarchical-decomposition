@@ -1,10 +1,5 @@
 package org.jgrapht.experimental.clustering;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
@@ -159,7 +154,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		DenseDoubleMatrix1D r = Util.getRandomDirection(g.edgeSet().size());
 		Double current_potential = krvpot.getPotential();
 		
-		while (current_potential >= bound && A.size() > 1) {
+		while (breakCondition(current_potential)) {
 			
 			Long startTimeIteration = System.currentTimeMillis();
 			iterations++;
@@ -224,13 +219,15 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			gPrime.resetWeights();
 			
 			if (A.size() + B.size() < DecompositionConstants.KRV_RESTART_BOUND * originalClusterSize) {
-				System.out.println("Restarting KRV");
+				LOGGER.info("Restarting KRV procedure");
 				current_potential = restart();
 			}
 			
 			Long timeIteration = System.currentTimeMillis() - startTimeIteration;
 			
-			stats.addIteration(db_id, A.size()+B.size(), timeIteration,timeInMaxFlow, iterations, current_potential);
+			if (DecompositionConstants.STATS) {
+				stats.addIteration(db_id, A.size()+B.size(), timeIteration,timeInMaxFlow, iterations, current_potential);
+			}
 		}
 
 		time = System.currentTimeMillis() - startTime;
@@ -243,6 +240,21 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		return getResultCase();
 	}
 
+	/**
+	 * Break condition for the KRV-Iteration
+	 * 
+	 * @param current_potential : The current potential of the KRV procedure
+	 * @return true if the procedure continues, false otherwise
+	 */
+	private Boolean breakCondition(Double current_potential) {
+		Integer n = g.vertexSet().size();
+		System.out.println(Math.log(n) / Math.log(2));
+		Boolean deletionStepCondition = (noDeletionStep <= Math.log(n) / Math.log(2)); 
+		Boolean potentialCondition = (current_potential >= bound);
+		
+		return potentialCondition && deletionStepCondition;
+	}
+	
 	/**
 	 * Prints some random debug information (changes every now and then..)
 	 * 
@@ -294,8 +306,14 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		LOGGER.info("Potential for matching: " + matchingPotential);
 		LOGGER.info("Potential for deletion: " + deletionPotential + " No Progress?: " + deletionStep.noProgress() + " Restart:" + deletionStep.restartNeeded());
 		LOGGER.info("Bound : " + bound);
-		/************************************/
 		
+		System.out.println("Current summed up edge weight: " + sum);
+		System.out.println("Mean of edge weights: " + sum / A.size());
+		System.out.println("Current potential: " + current_potential);
+		System.out.println("Potential for matching: " + matchingPotential);
+		System.out.println("Potential for deletion: " + deletionPotential + " No Progress?: " + deletionStep.noProgress() + " Restart:" + deletionStep.restartNeeded());
+		System.out.println("Bound : " + bound);
+		/************************************/
 		
 		Double potential;
 		if (deletionStep.noProgress() || (!deletionStep.restartNeeded() && matchingPotential <= deletionPotential)) {
@@ -352,7 +370,6 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 	public Integer getResultCase() {
 		//log2 = log_2(n)
 		Double log2 = Math.log(g.vertexSet().size())/Math.log(2);
-		//Double log10 = Math.log10(n);
 		
 		if (B.size() <= 2 * A.size() / log2) {
 			return 2; 
@@ -425,6 +442,4 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		}
 		return cutEdge;
 	}
-	
-	
 }
