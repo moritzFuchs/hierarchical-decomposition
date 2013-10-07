@@ -1,4 +1,4 @@
-package org.jgrapht.experimental.clustering;
+package org.jgrapht.experimental.clustering.krv;
 
 import java.util.HashSet;
 import java.util.List;
@@ -6,6 +6,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jgrapht.Graph;
+import org.jgrapht.experimental.clustering.DecompositionConstants;
+import org.jgrapht.experimental.clustering.SplitGraph;
+import org.jgrapht.experimental.clustering.SplitVertex;
+import org.jgrapht.experimental.clustering.VectorPotential;
 
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
 

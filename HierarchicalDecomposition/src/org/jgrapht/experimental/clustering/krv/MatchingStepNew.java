@@ -1,7 +1,10 @@
-package org.jgrapht.experimental.clustering;
+package org.jgrapht.experimental.clustering.krv;
 
 import java.util.Set;
 
+import org.jgrapht.experimental.clustering.DecompositionConstants;
+import org.jgrapht.experimental.clustering.SplitGraph;
+import org.jgrapht.experimental.clustering.SplitVertex;
 import org.jgrapht.experimental.clustering.util.MatchedPair;
 
 import com.google.common.collect.BiMap;

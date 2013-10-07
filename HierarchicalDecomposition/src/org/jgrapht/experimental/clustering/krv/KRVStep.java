@@ -1,4 +1,4 @@
-package org.jgrapht.experimental.clustering;
+package org.jgrapht.experimental.clustering.krv;
 
 import java.util.Set;
 

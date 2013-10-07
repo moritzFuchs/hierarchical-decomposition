@@ -1,4 +1,4 @@
-package org.jgrapht.experimental.clustering;
+package org.jgrapht.experimental.clustering.krv;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -8,6 +8,15 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.jgrapht.Graph;
+import org.jgrapht.experimental.clustering.DecompositionConstants;
+import org.jgrapht.experimental.clustering.FlowPath;
+import org.jgrapht.experimental.clustering.FlowProblem;
+import org.jgrapht.experimental.clustering.FlowRescaler;
+import org.jgrapht.experimental.clustering.FlowVectorProjector;
+import org.jgrapht.experimental.clustering.SplitGraph;
+import org.jgrapht.experimental.clustering.SplitVertex;
+import org.jgrapht.experimental.clustering.UndirectedFlowProblem;
+import org.jgrapht.experimental.clustering.Util;
 import org.jgrapht.experimental.clustering.stats.KRVStats;
 import org.jgrapht.experimental.clustering.util.MatchedPair;
 import org.jgrapht.experimental.util.LoggerFactory;

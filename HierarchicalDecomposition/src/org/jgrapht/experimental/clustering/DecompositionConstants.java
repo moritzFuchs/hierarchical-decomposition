@@ -1,5 +1,9 @@
 package org.jgrapht.experimental.clustering;
 
+import org.jgrapht.experimental.clustering.krv.KRVPotential;
+import org.jgrapht.experimental.clustering.krv.MatchingStepNew;
+import org.jgrapht.experimental.clustering.krv.ModifiedEfficientKRVProcedure;
+import org.jgrapht.experimental.clustering.krv.PracticalVerticeDivider;
 import org.jgrapht.experimental.clustering.old.TheoreticalVerticeDivider;
 
 /**

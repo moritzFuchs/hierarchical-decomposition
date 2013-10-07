@@ -1,4 +1,6 @@
-package org.jgrapht.experimental.clustering;
+package org.jgrapht.experimental.clustering.krv;
+
+import org.jgrapht.experimental.clustering.PartitionMatrix;
 
 import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix2D;
 

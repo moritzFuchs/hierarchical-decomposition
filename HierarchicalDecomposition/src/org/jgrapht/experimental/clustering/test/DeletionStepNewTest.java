@@ -8,11 +8,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jgrapht.Graph;
-import org.jgrapht.experimental.clustering.DeletionStepNew;
 import org.jgrapht.experimental.clustering.FlowProblem;
 import org.jgrapht.experimental.clustering.SplitGraph;
 import org.jgrapht.experimental.clustering.SplitVertex;
 import org.jgrapht.experimental.clustering.UndirectedFlowProblem;
+import org.jgrapht.experimental.clustering.krv.DeletionStepNew;
 import org.jgrapht.experimental.clustering.old.DeletionStep;
 import org.jgrapht.experimental.clustering.old.DummyFlow;
 import org.jgrapht.experimental.clustering.old.FlowDecomposer;

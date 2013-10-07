@@ -3,6 +3,7 @@ package org.jgrapht.experimental.clustering;
 import java.util.Set;
 
 import org.jgrapht.Graph;
+import org.jgrapht.experimental.clustering.krv.PartitionA;
 
 public class PartitionBTask<V, E> extends ClusteringTask<V,E>{
 

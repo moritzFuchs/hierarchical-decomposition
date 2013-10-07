@@ -1,4 +1,4 @@
-package org.jgrapht.experimental.clustering;
+package org.jgrapht.experimental.clustering.krv;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,6 +8,12 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.jgrapht.Graph;
+import org.jgrapht.experimental.clustering.Connectivity;
+import org.jgrapht.experimental.clustering.FlowPath;
+import org.jgrapht.experimental.clustering.FlowProblem;
+import org.jgrapht.experimental.clustering.SplitGraph;
+import org.jgrapht.experimental.clustering.SplitVertex;
+import org.jgrapht.experimental.clustering.UndirectedFlowProblem;
 import org.jgrapht.experimental.util.LoggerFactory;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
