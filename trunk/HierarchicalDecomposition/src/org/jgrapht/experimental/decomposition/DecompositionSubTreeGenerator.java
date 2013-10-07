@@ -9,12 +9,12 @@ import java.util.logging.Logger;
 
 import org.jgrapht.Graph;
 import org.jgrapht.experimental.clustering.Connectivity;
-import org.jgrapht.experimental.clustering.PartitionA;
-import org.jgrapht.experimental.clustering.PartitionATask;
 import org.jgrapht.experimental.clustering.PartitionB;
 import org.jgrapht.experimental.clustering.PartitionBTask;
 import org.jgrapht.experimental.clustering.SubGraphGenerator;
 import org.jgrapht.experimental.clustering.TreeVertex;
+import org.jgrapht.experimental.clustering.krv.PartitionA;
+import org.jgrapht.experimental.clustering.krv.PartitionATask;
 import org.jgrapht.experimental.util.LoggerFactory;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleGraph;
@@ -27,10 +27,10 @@ import org.jgrapht.graph.SimpleGraph;
  * were 'good'.
  * The weights between the root and nodes on level 1 are as follows:
  *  * The weight between the root and the node representing the set L (the one near t) gets weight equal to the out degree of the induced cluster
- *  * The weight between the root and the node representing the set R (the one near s) gets infinite weight (as discussed with Prof. RŠcke)
+ *  * The weight between the root and the node representing the set R (the one near s) gets infinite weight (as discussed with Prof. Rï¿½cke)
  * 
  * The nodes on the second level represent the clusters produced by PartitionA intersected with L / R. The weight between the second first level
- * is always infinite (as discussed with Prof. RŠcke)
+ * is always infinite (as discussed with Prof. Rï¿½cke)
  * 
  * If the intersection of clusters of PartitionA and L / R produces any clusters of size 1 or 2 there will be a third level:
  *  * If a cluster has size 1 we cannot partition it anymore, therefore we connect it to the second level with weight equal to the out degree of the node

@@ -8,10 +8,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jgrapht.Graph;
-import org.jgrapht.experimental.clustering.MatchingMatrix;
-import org.jgrapht.experimental.clustering.MatchingStepNew;
 import org.jgrapht.experimental.clustering.SplitGraph;
 import org.jgrapht.experimental.clustering.SplitVertex;
+import org.jgrapht.experimental.clustering.krv.MatchingMatrix;
+import org.jgrapht.experimental.clustering.krv.MatchingStepNew;
 import org.jgrapht.experimental.clustering.old.MatchingStep;
 import org.jgrapht.experimental.clustering.util.MatchedPair;
 import org.jgrapht.graph.DefaultWeightedEdge;

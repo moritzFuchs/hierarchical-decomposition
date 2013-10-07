@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.jgrapht.experimental.clustering.MatchingMatrix;
 import org.jgrapht.experimental.clustering.SplitGraph;
 import org.jgrapht.experimental.clustering.SplitVertex;
 import org.jgrapht.experimental.clustering.Util;
+import org.jgrapht.experimental.clustering.krv.MatchingMatrix;
 import org.jgrapht.experimental.clustering.util.MatchedPair;
 
 import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;

@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.jgrapht.Graph;
+import org.jgrapht.experimental.clustering.krv.PartitionA;
 import org.jgrapht.experimental.clustering.stats.BoundaryStats;
 import org.jgrapht.experimental.util.LoggerFactory;
 import org.jgrapht.graph.DefaultWeightedEdge;

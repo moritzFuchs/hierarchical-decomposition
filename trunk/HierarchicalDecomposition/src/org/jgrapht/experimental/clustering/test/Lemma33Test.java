@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.jgrapht.Graph;
 import org.jgrapht.experimental.clustering.Connectivity;
-import org.jgrapht.experimental.clustering.Lemma33;
+import org.jgrapht.experimental.clustering.krv.Lemma33;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.junit.Test;
 

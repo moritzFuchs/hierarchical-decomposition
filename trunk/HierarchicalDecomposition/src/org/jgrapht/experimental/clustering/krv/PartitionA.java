@@ -1,10 +1,12 @@
-package org.jgrapht.experimental.clustering;
+package org.jgrapht.experimental.clustering.krv;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import org.jgrapht.Graph;
+import org.jgrapht.experimental.clustering.Clustering;
+import org.jgrapht.experimental.clustering.SplitGraph;
 import org.jgrapht.experimental.util.LoggerFactory;
 
 import com.google.common.collect.BiMap;
