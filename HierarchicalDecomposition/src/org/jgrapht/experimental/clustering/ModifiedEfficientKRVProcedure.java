@@ -103,6 +103,11 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 	private Integer iterations = 0;
 	
 	/**
+	 * Number of iterations since last deletion step
+	 */
+	private Integer noDeletionStep = 0;
+	
+	/**
 	 * Time spent in maxFlow computations.
 	 */
 	private Long timeInMaxFlow = 0L;
@@ -247,9 +252,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 //		KRVPotential<V,E> k = new KRVPotential<V, E>(g,partitionMatrices, projector,A, edgeNum, g.edgeSet().size());
 //		
 //		System.out.println("Potential-Difference: " + (krvpot.getPotential()-k.getPotential()));
-		
-		
-		
+
 		Double sum = 0.0;
 		for (SplitVertex<V, E> e : divider.getAs()) {
 			sum += projection.getQuick(edgeNum.get(gPrime.getOriginalEdge(e)));
@@ -291,7 +294,6 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		LOGGER.info("Potential for matching: " + matchingPotential);
 		LOGGER.info("Potential for deletion: " + deletionPotential + " No Progress?: " + deletionStep.noProgress() + " Restart:" + deletionStep.restartNeeded());
 		LOGGER.info("Bound : " + bound);
-		
 		/************************************/
 		
 		
@@ -303,6 +305,8 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			krvpot.permanentlyAddKRVStep(matchingStep);
 			
 			partitionMatrices.add(matchingStep);
+			
+			noDeletionStep = 0;
 		} else {
 			A = deletionStep.getA();
 			B = deletionStep.getB();
@@ -312,6 +316,8 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			
 			partitionMatrices.add(deletionStep);
 			krvpot.permanentlyAddKRVStep(deletionStep);
+			
+			noDeletionStep++;
 		}
 		
 		return potential;
