@@ -168,8 +168,8 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		Double current_potential = krvpot.getPotential();
 		
 		KRVBreakConditionComposition cond = new KRVBreakConditionComposition();
-		cond.addBreakCondition(new PracticalPotentialBreakCondition(g));
-		cond.addBreakCondition(new NoDeletionBreakCondition(g));
+		cond.addBreakCondition(new PracticalPotentialBreakCondition(g.vertexSet().size()));
+		cond.addBreakCondition(new NoDeletionBreakCondition(g.vertexSet().size()));
 		
 		while (!cond.breakIteration(current_potential, noDeletionStep)) {
 			

@@ -1,7 +1,5 @@
 package org.jgrapht.experimental.clustering.krv.breakCondition;
 
-import org.jgrapht.Graph;
-
 /**
  * Break condition for the {@link ModifiedEfficientKRVProcedure} that relies on the number of iterations since the last {@link DeletionStepNew}.
  * 
@@ -12,17 +10,11 @@ import org.jgrapht.Graph;
 public class NoDeletionBreakCondition implements KRVBreakCondition {
 
 	/**
-	 * Number of nodes in G
-	 */
-	private Integer n;
-	
-	/**
 	 * Number of consecutive iterations without {@link DeletionStepNew} that are tolerated.
 	 */
 	private Double bound;
 	
-	public NoDeletionBreakCondition(Graph g) {
-		n = g.vertexSet().size();
+	public NoDeletionBreakCondition(Integer n) {
 		bound = Math.log(n) / Math.log(2);
 	}
 	

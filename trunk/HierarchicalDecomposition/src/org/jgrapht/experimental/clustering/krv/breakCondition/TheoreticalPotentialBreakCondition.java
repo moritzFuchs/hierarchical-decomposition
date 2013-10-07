@@ -1,16 +1,24 @@
 package org.jgrapht.experimental.clustering.krv.breakCondition;
 
-import org.jgrapht.Graph;
-
+/**
+ * Break condition exactly as defined in the paper (Chapter 3.1.1):
+ * Potential < 1/(16 n^2) => Stop KRV procedure
+ * WARNING: DO NOT USE THIS IN PRACTICE! (there will be lots of unneccessary iterations)
+ * 
+ * @author moritzfuchs
+ * @date 07.10.2013
+ *
+ */
 public class TheoreticalPotentialBreakCondition implements KRVBreakCondition {
 
+	/**
+	 * Potential bound we want to reach
+	 */
 	private Double bound;
 	
-	public TheoreticalPotentialBreakCondition(Graph g) {
-		bound = 1.0/(16 * g.vertexSet().size());
-		System.out.println(bound);
+	public TheoreticalPotentialBreakCondition(Integer nodes) {
+		bound = 1.0/(16 * nodes);
 	}
-	
 	
 	@Override
 	public Boolean breakIteration(Double current_potential , Integer noDeletionStep) {
