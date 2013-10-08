@@ -49,5 +49,14 @@ public class KRVBreakConditionComposition implements KRVBreakCondition {
 		
 		return breakIteration;
 	}
+	
+	/**
+	 * Resets all {@link KRVBreakConditions}.
+	 */
+	public void reset() {
+		for (KRVBreakCondition cond : conditions) {
+			cond.reset();
+		}
+	}
 
 }

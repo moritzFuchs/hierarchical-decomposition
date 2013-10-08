@@ -167,9 +167,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		DenseDoubleMatrix1D r = Util.getRandomDirection(g.edgeSet().size());
 		Double current_potential = krvpot.getPotential();
 		
-		KRVBreakConditionComposition cond = new KRVBreakConditionComposition();
-		cond.addBreakCondition(new PracticalPotentialBreakCondition(g.vertexSet().size()));
-		cond.addBreakCondition(new NoDeletionBreakCondition(g.vertexSet().size()));
+		KRVBreakCondition cond = getBreakCondition();
 		
 		while (!cond.breakIteration(current_potential, noDeletionStep)) {
 			
@@ -258,18 +256,15 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 	}
 
 	/**
-	 * Break condition for the KRV-Iteration
+	 * Returns a new {@link KRVBreakCondition}
 	 * 
-	 * @param current_potential : The current potential of the KRV procedure
-	 * @return true if the procedure continues, false otherwise
+	 * @return KRVBreakCondition : A new {@link KRVBreakCondition}
 	 */
-	private Boolean breakCondition(Double current_potential) {
-		Integer n = g.vertexSet().size();
-		System.out.println(Math.log(n) / Math.log(2));
-		Boolean deletionStepCondition = (noDeletionStep <= Math.log(n) / Math.log(2)); 
-		Boolean potentialCondition = (current_potential >= bound);
-		
-		return potentialCondition && deletionStepCondition;
+	private KRVBreakCondition getBreakCondition() {
+		KRVBreakConditionComposition cond = new KRVBreakConditionComposition();
+		cond.addBreakCondition(new PracticalPotentialBreakCondition(g.vertexSet().size()));
+		cond.addBreakCondition(new NoDeletionBreakCondition(g.vertexSet().size()));
+		return cond;
 	}
 	
 	/**
