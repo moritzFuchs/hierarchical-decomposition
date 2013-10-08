@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 
 import org.jgrapht.experimental.decomposition.Decomposition;
 import org.jgrapht.experimental.decomposition.DecompositionTree;
+import org.jgrapht.experimental.decomposition.RSTDecomposition;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 import javafx.scene.image.Image;
@@ -35,7 +36,7 @@ public class RstRunner {
 		System.out.println(graph.getGraph().vertexSet().size());
 		System.out.println(graph.getGraph().edgeSet().size());
 		
-		Decomposition<Integer, DefaultWeightedEdge> graph_dec = new Decomposition<Integer , DefaultWeightedEdge>(graph.getGraph());
+		RSTDecomposition<Integer, DefaultWeightedEdge> graph_dec = new RSTDecomposition<Integer , DefaultWeightedEdge>(graph.getGraph());
 		DecompositionTree<Integer> tree = graph_dec.performDecomposition();
 		
 		System.out.println(tree.getGraph().vertexSet().size());
