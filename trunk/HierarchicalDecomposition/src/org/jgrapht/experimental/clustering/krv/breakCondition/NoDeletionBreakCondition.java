@@ -26,4 +26,6 @@ public class NoDeletionBreakCondition implements KRVBreakCondition {
 		
 		return (noDeletionStep > bound);
 	}
+	
+	public void reset() {}
 }

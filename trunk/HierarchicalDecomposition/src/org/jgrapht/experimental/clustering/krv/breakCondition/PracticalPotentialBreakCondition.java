@@ -25,4 +25,5 @@ public class PracticalPotentialBreakCondition implements KRVBreakCondition {
 		return current_potential < bound;
 	}
 
+	public void reset() {}
 }
