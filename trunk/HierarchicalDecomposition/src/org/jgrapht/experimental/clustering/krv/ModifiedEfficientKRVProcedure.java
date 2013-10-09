@@ -19,6 +19,7 @@ import org.jgrapht.experimental.clustering.UndirectedFlowProblem;
 import org.jgrapht.experimental.clustering.Util;
 import org.jgrapht.experimental.clustering.krv.breakCondition.KRVBreakCondition;
 import org.jgrapht.experimental.clustering.krv.breakCondition.KRVBreakConditionComposition;
+import org.jgrapht.experimental.clustering.krv.breakCondition.MinimalProgressBreakCondition;
 import org.jgrapht.experimental.clustering.krv.breakCondition.NoDeletionBreakCondition;
 import org.jgrapht.experimental.clustering.krv.breakCondition.PracticalPotentialBreakCondition;
 import org.jgrapht.experimental.clustering.stats.KRVStats;
@@ -216,8 +217,6 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 				}
 			}
 			
-			
-			
 			// -------------------------------- CHECK IF DELETION OR MATCHING STEP PERFORMS BETTER ---------------------------------- //
 			
 			DeletionStepNew<V,E> deletionStep = new DeletionStepNew<V,E>(g,gPrime,edgeNum);
@@ -264,6 +263,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		KRVBreakConditionComposition cond = new KRVBreakConditionComposition();
 		cond.addBreakCondition(new PracticalPotentialBreakCondition(g.vertexSet().size()));
 		cond.addBreakCondition(new NoDeletionBreakCondition(g.vertexSet().size()));
+//		cond.addBreakCondition(new MinimalProgressBreakCondition(g.vertexSet().size()));
 		return cond;
 	}
 	
@@ -380,7 +380,6 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 	 * @return Integer : 1 if Case 1 holds, 2 if Case 2 holds
 	 */
 	public Integer getResultCase() {
-		//log2 = log_2(n)
 		Double log2 = Math.log(g.vertexSet().size())/Math.log(2);
 		
 		if (B.size() <= 2 * A.size() / log2) {

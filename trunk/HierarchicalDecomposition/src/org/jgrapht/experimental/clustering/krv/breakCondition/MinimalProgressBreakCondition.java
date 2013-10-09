@@ -19,7 +19,7 @@ public class MinimalProgressBreakCondition implements KRVBreakCondition {
 	/**
 	 * Iterations we look at (more => more memory needed)
 	 */
-	private Integer iterations = 30;
+	private Integer iterations = 50;
 	
 	/**
 	 * The bound at which the condition fires
@@ -33,7 +33,7 @@ public class MinimalProgressBreakCondition implements KRVBreakCondition {
 	
 	public MinimalProgressBreakCondition(Integer n) {
 		progress = new LinkedList<Double>();
-		bound = 1.0/Math.pow(n,2);
+		bound = 1.0/(4*Math.pow(n,2));
 	}
 	
 	@Override
@@ -51,6 +51,9 @@ public class MinimalProgressBreakCondition implements KRVBreakCondition {
 		}
 	}
 	
+	/**
+	 * Resets the break condition state: All currently saved potentials of the last few iterations will be deleted.
+	 */
 	public void reset() {
 		saved = 0;
 		progress.clear();
