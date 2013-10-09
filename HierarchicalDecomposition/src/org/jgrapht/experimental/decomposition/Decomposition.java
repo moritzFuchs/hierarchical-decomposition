@@ -2,11 +2,13 @@ package org.jgrapht.experimental.decomposition;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.jgrapht.Graph;
+import org.jgrapht.experimental.clustering.DecompositionConstants;
 
-public abstract class Decomposition<V extends Comparable<V>, E> extends Observable implements Observer{
+public class Decomposition<V extends Comparable<V>, E> extends Observable implements Observer{
 
 	/**
 	 * Graph we want to decompose
@@ -28,9 +30,21 @@ public abstract class Decomposition<V extends Comparable<V>, E> extends Observab
 	 * The {@link DecompositionTask} we are currently working on
 	 */
 	protected DecompositionTask<V,E> task;
+	
+	private DecompositionSubTreeGeneratorFactory<V,E> factory;
 
-	public Decomposition() {
+	public Decomposition(Graph<V,E> g , DecompositionSubTreeGeneratorFactory<V,E> factory) {
 		super();
+		
+		this.factory = factory;
+		this.originalGraph = g;
+		
+		this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * DecompositionConstants.MULTIPLE_OF_CORES);
+		
+		//Generate decomposition tree
+		this.decomposition = new DecompositionTree<V>();
+		
+		task = new DecompositionTask<V,E>(g,g,decomposition.getRoot());
 	}
 
 	public DecompositionTree<V> performDecomposition() {
@@ -60,7 +74,9 @@ public abstract class Decomposition<V extends Comparable<V>, E> extends Observab
 		return originalGraph;
 	}
 
-	protected abstract DecompositionSubTreeGenerator<V,E> getDecompositionSubtreeGenerator(DecompositionTask<V,E> task);
+	protected  DecompositionSubTreeGenerator<V,E> getDecompositionSubtreeGenerator(DecompositionTask<V,E> task) {
+		return factory.getInstance(decomposition, task, executor, this);
+	}
 	
 	/**
 	 * Enqueues a new {@link DecompositionTask} 
