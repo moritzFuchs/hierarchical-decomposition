@@ -42,12 +42,30 @@ import mf.superpixel.SuperpixelDecomposition;
 
 public class RSTDecomposition extends Drawable{
 
+	/**
+	 * The underlying {@link SuperpixelDecomposition}
+	 */
 	private SuperpixelDecomposition superpixel_decomposition;
-	private DecompositionTree<Integer> krv_decomposition;
-//	private TreeVertex<Integer> current_tree_vertex;
+
+	/**
+	 * The decomposition tree computed by the RST algorithm
+	 */
+	private DecompositionTree<Integer> rst_decomposition;
+
+	/**
+	 * Each Superpixel is part of a partition. This map points each Superpixel to its current partition represented by a tree vertex.
+	 */
 	private Map<Superpixel , TreeVertex<Integer>> current_tree_vertex;
+	
+	/**
+	 * Height of the tree
+	 */
 	private Integer height;
 	
+	/**
+	 * True => INF-edges in tree are skipped; False => INF-edges in tree are not skipped (skipping is meaningful in the context of the paper, however
+	 * it yields unexpected - but correct - bahavior in the GUI)
+	 */
 	private static final Boolean COLLAPSE_INF_EDGES = false;
 	
 	public RSTDecomposition(String num, String path_to_krv_dec , SuperpixelDecomposition superpixel_decomposition , Markable m, ButtonRow buttonRow) {
@@ -58,7 +76,7 @@ public class RSTDecomposition extends Drawable{
 			FileInputStream fileIn;
 			fileIn = new FileInputStream(path_to_krv_dec);
 			ObjectInputStream in = new ObjectInputStream(fileIn);
-			this.krv_decomposition = (DecompositionTree<Integer>)in.readObject();
+			this.rst_decomposition = (DecompositionTree<Integer>)in.readObject();
 			in.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -68,16 +86,12 @@ public class RSTDecomposition extends Drawable{
 			e.printStackTrace();
 		}
 		
-		height = krv_decomposition.getHeight(COLLAPSE_INF_EDGES);
-		
+		height = rst_decomposition.getHeight(COLLAPSE_INF_EDGES);		
 		current_tree_vertex = new HashMap<Superpixel , TreeVertex<Integer>>();
-		
-		System.out.println(krv_decomposition.getRoot());
-		
+
 		for (Superpixel sp : superpixel_decomposition.getSuperpixelMap().values()) {
-			current_tree_vertex.put(sp, krv_decomposition.getRoot());
+			current_tree_vertex.put(sp, rst_decomposition.getRoot());
 		}
-		
 	}
 
 	@Override
@@ -95,7 +109,7 @@ public class RSTDecomposition extends Drawable{
 		if (marked.getType() == TreeVertexType.LEAF) {
 			current_tree_vertex.put(superpixel_decomposition.getSuperpixelById(marked.getVertex()), marker);
 		} else {
-			DirectedGraph<TreeVertex<Integer>, DefaultWeightedEdge> tree = krv_decomposition.getGraph();
+			DirectedGraph<TreeVertex<Integer>, DefaultWeightedEdge> tree = rst_decomposition.getGraph();
 			for (DefaultWeightedEdge e : tree.outgoingEdgesOf(marked)) {
 				mark_superpixel_below(marker , tree.getEdgeTarget(e));
 			}
@@ -126,8 +140,8 @@ public class RSTDecomposition extends Drawable{
 	 * @param level : The level we want to show
 	 */
 	public void showLevel(Integer level) {
-		DirectedGraph<TreeVertex<Integer>, DefaultWeightedEdge> tree = krv_decomposition.getGraph();
-		TreeVertex<Integer> root = krv_decomposition.getRoot();
+		DirectedGraph<TreeVertex<Integer>, DefaultWeightedEdge> tree = rst_decomposition.getGraph();
+		TreeVertex<Integer> root = rst_decomposition.getRoot();
 		
 		decompose(tree, root, level);
 		
@@ -145,7 +159,7 @@ public class RSTDecomposition extends Drawable{
 		state.addAll(current_tree_vertex.values());
 		
 		for (TreeVertex<Integer> v : state) {
-			decompose(krv_decomposition.getGraph() , v , n);
+			decompose(rst_decomposition.getGraph() , v , n);
 		}
 		
 		drawCurrentSegmentation();
@@ -162,7 +176,7 @@ public class RSTDecomposition extends Drawable{
 		state.addAll(current_tree_vertex.values());
 		
 		for (TreeVertex<Integer> v : state) {
-			compose(krv_decomposition.getGraph() , v , n);
+			compose(rst_decomposition.getGraph() , v , n);
 		}
 		
 		drawCurrentSegmentation();
@@ -175,9 +189,7 @@ public class RSTDecomposition extends Drawable{
 	 */
 	private void decompose(Superpixel sp) {
 		TreeVertex<Integer> tree_vertex = current_tree_vertex.get(sp);
-		System.out.println(tree_vertex);
-		System.out.println(tree_vertex);
-		decompose(krv_decomposition.getGraph(), tree_vertex, 1);
+		decompose(rst_decomposition.getGraph(), tree_vertex, 1);
 	}
 	
 	/**
@@ -187,7 +199,7 @@ public class RSTDecomposition extends Drawable{
 	 */
 	private void compose(Superpixel sp) {
 		TreeVertex<Integer> tree_vertex = current_tree_vertex.get(sp);
-		compose(krv_decomposition.getGraph(), tree_vertex , 1);
+		compose(rst_decomposition.getGraph(), tree_vertex , 1);
 	}
 	
 	/**
@@ -200,7 +212,7 @@ public class RSTDecomposition extends Drawable{
 	 */
 	private void compose(DirectedGraph<TreeVertex<Integer>, DefaultWeightedEdge> tree , TreeVertex<Integer> vertex , Integer steps_left) {
 		
-		if (vertex == krv_decomposition.getRoot()) {
+		if (vertex == rst_decomposition.getRoot()) {
 			mark_superpixel_below(vertex, vertex);
 		} else {
 			DefaultWeightedEdge e = Iterables.get(tree.incomingEdgesOf(vertex) , 0);
@@ -270,6 +282,9 @@ public class RSTDecomposition extends Drawable{
 		event.consume();
 	}
 	
+	/**
+	 * Adds buttons to the {@link ButtonRow}; Puts Root node of the tree as current partition for all superpixels.
+	 */
 	@Override
 	public void onActivate() {
 		m.clear();
@@ -296,7 +311,7 @@ public class RSTDecomposition extends Drawable{
 		up.setDisable(true);
 		
 		for (Superpixel sp : superpixel_decomposition.getSuperpixelMap().values()) {
-			current_tree_vertex.put(sp, krv_decomposition.getRoot());
+			current_tree_vertex.put(sp, rst_decomposition.getRoot());
 		}
 	}
 }
