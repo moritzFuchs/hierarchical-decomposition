@@ -112,7 +112,7 @@ public class NewTabHandler implements EventHandler<Event> {
 		    		SuperpixelImport imp = new SuperpixelImport(file.getParent() + "/superpixel"+num_str+".mat" , drawable.getImage());
 		    		SuperpixelDecomposition dec = new SuperpixelDecomposition(imp.getSuperpixels(),imp.getPixelMap());
 		    		
-		    		RSTDecomposition krv_dec = new RSTDecomposition(file.getPath(), dec, drawable,buttonRow);
+		    		RSTDecomposition krv_dec = new RSTDecomposition(num_str, file.getPath(), dec, drawable,buttonRow);
 		    		
 		    		items.add(krv_dec);
 		    	}

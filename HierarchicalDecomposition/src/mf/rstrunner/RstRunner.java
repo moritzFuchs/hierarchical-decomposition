@@ -26,7 +26,7 @@ public class RstRunner {
 		
 		String base_path = args[0];
 		String path_to_image = args[0] + "/image.jpg";
-		String path_to_superpixel = args[0] + "/superpixel1000.mat";
+		String path_to_superpixel = args[0] + "/superpixel2000.mat";
 		
 		SuperpixelImport importer = new SuperpixelImport(path_to_superpixel , new Image("file:" + path_to_image));
 		SuperpixelDecomposition superpixel_dec = new SuperpixelDecomposition(importer.getSuperpixels(), importer.getPixelMap());
@@ -44,7 +44,7 @@ public class RstRunner {
 				
 		try {
 			FileOutputStream fileOut =
-			new FileOutputStream(base_path + "/tree1000.rst");
+			new FileOutputStream(base_path + "/tree2000.rst");
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
 			out.writeObject(tree);
 			

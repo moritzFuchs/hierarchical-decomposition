@@ -1,4 +1,4 @@
-package mf.superpixel;
+package mf.superpixelrunner;
 
 
 import java.io.File;
@@ -14,6 +14,9 @@ import matlabcontrol.MatlabInvocationException;
 import matlabcontrol.MatlabProxy;
 import matlabcontrol.MatlabProxyFactory;
 import matlabcontrol.MatlabProxyFactoryOptions;
+import mf.superpixel.SuperpixelDecomposition;
+import mf.superpixel.SuperpixelGraph;
+import mf.superpixel.SuperpixelImport;
 
 
 /**

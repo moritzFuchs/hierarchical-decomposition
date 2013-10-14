@@ -50,8 +50,8 @@ public class RSTDecomposition extends Drawable{
 	
 	private static final Boolean COLLAPSE_INF_EDGES = false;
 	
-	public RSTDecomposition(String path_to_krv_dec , SuperpixelDecomposition superpixel_decomposition , Markable m, ButtonRow buttonRow) {
-		super("RST Decomposition" , m, buttonRow);
+	public RSTDecomposition(String num, String path_to_krv_dec , SuperpixelDecomposition superpixel_decomposition , Markable m, ButtonRow buttonRow) {
+		super("RST Decomposition " + num , m, buttonRow);
 		
 		this.superpixel_decomposition = superpixel_decomposition;
 		try {

@@ -21,9 +21,6 @@ public class NoDeletionBreakCondition implements KRVBreakCondition {
 	@Override
 	public Boolean breakIteration(Double current_potential,
 			Integer noDeletionStep) {
-		
-		System.out.println("NoDel: " + bound + " " + noDeletionStep);
-		
 		return (noDeletionStep > bound);
 	}
 	
