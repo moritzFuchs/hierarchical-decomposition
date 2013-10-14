@@ -1,7 +1,5 @@
 package mf.gui.decomposition.superpixel;
 
-import java.awt.Graphics2D;
-
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -34,6 +32,9 @@ public class SuperpixelDrawable extends Drawable implements EventHandler<Event>{
 	 */
 	private Boolean superpixels_shown = false;
 	
+	/**
+	 * True if mean image is currently shown. False otherwise
+	 */
 	private Boolean mean_image_shown = false;
 	
 	public SuperpixelDrawable(SuperpixelDecomposition dec, String name, Markable m, ButtonRow buttonRow) {
