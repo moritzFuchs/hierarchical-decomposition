@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageInputStreamImpl;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
@@ -130,16 +131,14 @@ public class DrawableImageView extends StackPane implements Markable {
 		Integer height = (int)canvas.getHeight();
 		
 		WritableImage wim = new WritableImage(width, height);
-
-		BufferedImage out = ImageIO.read(new File(url));
-			
+		
 		SnapshotParameters param = new SnapshotParameters();
 		param.setFill(Color.TRANSPARENT);
 		canvas.snapshot(param, wim);
 
 		BufferedImage combined = new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
 		Graphics g = combined.getGraphics();
-		g.drawImage(out, 0, 0, null);
+		g.drawImage(SwingFXUtils.fromFXImage(img_view.getImage(), null), 0, 0, null);
 		g.drawImage(SwingFXUtils.fromFXImage(wim, null), 0, 0, null);
 		ImageIO.write(combined, "PNG", file);
 	}
