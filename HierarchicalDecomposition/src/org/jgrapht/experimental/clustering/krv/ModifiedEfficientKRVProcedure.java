@@ -18,6 +18,7 @@ import org.jgrapht.experimental.clustering.SplitVertex;
 import org.jgrapht.experimental.clustering.UndirectedFlowProblem;
 import org.jgrapht.experimental.clustering.Util;
 import org.jgrapht.experimental.clustering.krv.breakCondition.KRVBreakCondition;
+import org.jgrapht.experimental.clustering.krv.breakCondition.KRVBreakConditionAND;
 import org.jgrapht.experimental.clustering.krv.breakCondition.KRVBreakConditionComposition;
 import org.jgrapht.experimental.clustering.krv.breakCondition.MinimalProgressBreakCondition;
 import org.jgrapht.experimental.clustering.krv.breakCondition.NoDeletionBreakCondition;
@@ -260,7 +261,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 	 * @return KRVBreakCondition : A new {@link KRVBreakCondition}
 	 */
 	private KRVBreakCondition getBreakCondition() {
-		KRVBreakConditionComposition cond = new KRVBreakConditionComposition();
+		KRVBreakConditionComposition cond = new KRVBreakConditionAND();
 		cond.addBreakCondition(new PracticalPotentialBreakCondition(g.vertexSet().size()));
 		cond.addBreakCondition(new NoDeletionBreakCondition(g.vertexSet().size()));
 //		cond.addBreakCondition(new MinimalProgressBreakCondition(g.vertexSet().size()));

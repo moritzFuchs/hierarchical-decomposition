@@ -10,7 +10,7 @@ import java.util.List;
  * @date 07.10.2013
  *
  */
-public class KRVBreakConditionComposition implements KRVBreakCondition {
+public abstract class KRVBreakConditionComposition implements KRVBreakCondition {
 
 	/**
 	 * List of {@link KRVBreakCondition} that will be applied
@@ -44,11 +44,13 @@ public class KRVBreakConditionComposition implements KRVBreakCondition {
 		Boolean breakIteration = false;
 		
 		for (KRVBreakCondition cond : conditions) {
-			breakIteration = breakIteration || cond.breakIteration(current_potential, noDeletionStep);
+			breakIteration = compose(breakIteration , cond.breakIteration(current_potential, noDeletionStep));
 		}
 		
 		return breakIteration;
 	}
+	
+	protected abstract Boolean compose(Boolean a, Boolean b);
 	
 	/**
 	 * Resets all {@link KRVBreakConditions}.
