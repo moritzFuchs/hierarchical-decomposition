@@ -179,7 +179,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			r = Util.getRandomDirection(g.edgeSet().size());
 			projection = projector.getFlowVectorProjection(partitionMatrices , r);
 						
-			PracticalVerticeDivider<V,E> divider = new PracticalVerticeDivider<V,E>(g, projection , edgeNum);
+			PracticalVertexDivider<V,E> divider = new PracticalVertexDivider<V,E>(g, projection , edgeNum);
 			divider.divideActiveVertices(gPrime, A, projection);
 			
 			if (DecompositionConstants.DEBUG) {
@@ -273,7 +273,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 	 * 
 	 * @param divider
 	 */
-	private void debugInformation(PracticalVerticeDivider<V, E> divider) {
+	private void debugInformation(PracticalVertexDivider<V, E> divider) {
 //		KRVPotential<V,E> k = new KRVPotential<V, E>(g,partitionMatrices, projector,A, edgeNum, g.edgeSet().size());
 //		
 //		System.out.println("Potential-Difference: " + (krvpot.getPotential()-k.getPotential()));
