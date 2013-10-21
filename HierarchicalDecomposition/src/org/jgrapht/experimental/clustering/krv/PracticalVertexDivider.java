@@ -23,7 +23,7 @@ import com.google.common.collect.Ordering;
  * @param <V> : The type of vertices
  * @param <E> : The type of edges
  */
-public class PracticalVerticeDivider<V extends Comparable<V> , E> {
+public class PracticalVertexDivider<V extends Comparable<V> , E> {
 
 		/**
 		 * Unique Integer for each edge e in original Graph g
@@ -82,7 +82,7 @@ public class PracticalVerticeDivider<V extends Comparable<V> , E> {
 		
 		//--------------------------------- Inner Class END --------------------------//
 		
-		public PracticalVerticeDivider(Graph<V,E> g, DoubleMatrix1D projection, Map<E , Integer> edgeNum) {
+		public PracticalVertexDivider(Graph<V,E> g, DoubleMatrix1D projection, Map<E , Integer> edgeNum) {
 			this.projection = projection;
 			this.edgeNum = edgeNum;
 			

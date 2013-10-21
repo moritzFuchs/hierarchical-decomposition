@@ -3,7 +3,7 @@ package org.jgrapht.experimental.clustering;
 import org.jgrapht.experimental.clustering.krv.KRVPotential;
 import org.jgrapht.experimental.clustering.krv.MatchingStepNew;
 import org.jgrapht.experimental.clustering.krv.ModifiedEfficientKRVProcedure;
-import org.jgrapht.experimental.clustering.krv.PracticalVerticeDivider;
+import org.jgrapht.experimental.clustering.krv.PracticalVertexDivider;
 import org.jgrapht.experimental.clustering.old.TheoreticalVerticeDivider;
 
 /**
@@ -55,7 +55,7 @@ public class DecompositionConstants {
 	public static final Double KRV_RESTART_BOUND = 7.0/8.0;
 	
 	/**
-	 * Used by {@link PracticalVerticeDivider} and {@link TheoreticalVerticeDivider}. Maximal fraction of the edge set that can become source edges.
+	 * Used by {@link PracticalVertexDivider} and {@link TheoreticalVerticeDivider}. Maximal fraction of the edge set that can become source edges.
 	 */
 	public static final Double MAX_SOURCE_EDGES = 1.0/8.0;
 	

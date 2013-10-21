@@ -15,7 +15,7 @@ import org.jgrapht.experimental.clustering.SplitGraph;
 import org.jgrapht.experimental.clustering.SplitVertex;
 import org.jgrapht.experimental.clustering.UndirectedFlowProblem;
 import org.jgrapht.experimental.clustering.Util;
-import org.jgrapht.experimental.clustering.krv.PracticalVerticeDivider;
+import org.jgrapht.experimental.clustering.krv.PracticalVertexDivider;
 import org.jgrapht.experimental.clustering.old.DummyFlow;
 import org.jgrapht.experimental.clustering.old.FlowDecomposer;
 import org.jgrapht.experimental.clustering.old.VerticeDivider;
@@ -42,7 +42,7 @@ public class FlowRescalerTest {
 			
 			DenseDoubleMatrix1D projection = Util.getRandomDirection(m);
 			
-			PracticalVerticeDivider<Integer , DefaultWeightedEdge> divider = new PracticalVerticeDivider<Integer, DefaultWeightedEdge>(projection , edgeNum);
+			PracticalVertexDivider<Integer , DefaultWeightedEdge> divider = new PracticalVertexDivider<Integer, DefaultWeightedEdge>(projection , edgeNum);
 	
 			Set<DefaultWeightedEdge> A = new HashSet<DefaultWeightedEdge>(g.edgeSet());
 			
