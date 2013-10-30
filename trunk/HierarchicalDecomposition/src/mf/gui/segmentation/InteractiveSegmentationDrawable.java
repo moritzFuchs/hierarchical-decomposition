@@ -16,12 +16,30 @@ import mf.gui.decomposition.Drawable;
 import mf.superpixel.Superpixel;
 import mf.superpixel.SuperpixelDecomposition;
 
+
+/**
+ * Implements the interactive image segmentation. The user puts a set of markers onto the image and the algorithm tries to find maximal regions s.t. all markers
+ * are separate.
+ * 
+ * @author moritzfuchs
+ * @date 30.10.2013
+ *
+ */
 public class InteractiveSegmentationDrawable extends Drawable{
 
+	/**
+	 * The {@link SuperpixelDecomposition}
+	 */
 	private SuperpixelDecomposition dec;
 	
+	/**
+	 * The {@link DecompositionTree} we use to segment the image
+	 */
 	private DecompositionTree<Integer> t;
 	
+	/**
+	 * The current set of markers on the image
+	 */
 	private Set<Superpixel> marker;
 	
 	public InteractiveSegmentationDrawable(String name, Markable m,
@@ -52,11 +70,19 @@ public class InteractiveSegmentationDrawable extends Drawable{
 		buttonRow.addButton(reset);
 	}
 	
+	/**
+	 * Resets the markers (and unmarks all currently marked superpixels)
+	 */
 	public void reset() {
 		marker.clear();
 		m.clear();
 	}
 	
+	/**
+	 * Adds a marker to the image
+	 * 
+	 * @param p
+	 */
 	public void addMarker(Pixel p) {
 		Superpixel sp = dec.getSuperpixelByPixel(p);
 		marker.add(sp);
@@ -64,25 +90,45 @@ public class InteractiveSegmentationDrawable extends Drawable{
 		markSuperpixel(sp);
 	}
 	
+	/**
+	 * Marks a {@link Superpixel} on the image
+	 * 
+	 * @param sp
+	 */
 	private void markSuperpixel(Superpixel sp) {
 		for (Pixel p : sp.getBoundaryPixels()) {
 			m.markPixelComplementary(p.getX(), p.getY());
 		}
 	}
 	
+	/**
+	 * 'unmarks' a {@link Superpixel}
+	 * 
+	 * @param sp
+	 */
 	private void unmarkSuperpixel(Superpixel sp) {
 		for (Pixel p : sp.getBoundaryPixels()) {
 			m.clearPixel(p.getX(),p.getY());
 		}
 	}
 	
+	/**
+	 * Removes a marker from the set of markers and unmarks the superpixel on the image
+	 * 
+	 * @param p
+	 */
 	public void removeMarker(Pixel p) {
 		Superpixel sp = dec.getSuperpixelByPixel(p);
 		marker.remove(sp);
 		unmarkSuperpixel(sp);
 	}
 
-	
+	/**
+	 * Handles the mouse event: left click --> add marker; right click --> remove marker
+	 * 
+	 * @param event: The mouse event
+	 */
+	@Override
 	public void handleMouseEvent(MouseEvent event) {
 		
 		if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
@@ -97,10 +143,4 @@ public class InteractiveSegmentationDrawable extends Drawable{
 			}
 		}
 	}
-	
-	
-	
-	
-	
-	
 }
