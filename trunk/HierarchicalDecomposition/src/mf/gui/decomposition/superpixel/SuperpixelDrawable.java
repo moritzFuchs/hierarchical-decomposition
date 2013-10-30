@@ -157,6 +157,7 @@ public class SuperpixelDrawable extends Drawable implements EventHandler<Event>{
 		buttonRow.getChildren().add(loadingTest);
 	}
 
+
 	/**
 	 * Hide / Show mean image (image where all superpixels are repalced by an area with color equal to the mean color of the superpixel)
 	 */

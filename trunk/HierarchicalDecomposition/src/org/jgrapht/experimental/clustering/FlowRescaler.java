@@ -6,8 +6,6 @@ import java.util.Set;
 
 import org.jgrapht.graph.DefaultWeightedEdge;
 
-import com.google.common.collect.Lists;
-
 /**
  * Bundles algorithms to rescale a given flow in G'_st as follows: For all edges s -- x_e with flow >= 0.5 rescale the corresponding flow paths such that s -- x_e holds 1 unit of flow 
  * 

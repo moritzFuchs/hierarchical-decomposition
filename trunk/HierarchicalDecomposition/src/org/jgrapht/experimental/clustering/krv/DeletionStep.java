@@ -12,7 +12,6 @@ import org.jgrapht.experimental.clustering.FlowPath;
 import org.jgrapht.experimental.clustering.FlowProblem;
 import org.jgrapht.experimental.clustering.SplitGraph;
 import org.jgrapht.experimental.clustering.SplitVertex;
-import org.jgrapht.experimental.clustering.old.DeletionStep;
 import org.jgrapht.experimental.clustering.old.ModifiedKRVProcedure;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
@@ -30,7 +29,7 @@ import com.google.common.collect.BiMap;
  * @param <V> : The type of vertices 
  * @param <E> : The type of edges
  */
-public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> {
+public class DeletionStep<V extends Comparable<V>,E> implements KRVStep<V,E> {
 
 	/**
 	 * The original graph G
@@ -71,7 +70,7 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 	private Set<E> B_old;
 	
 	
-	public DeletionStepNew(Graph<V,E> g,
+	public DeletionStep(Graph<V,E> g,
 			SplitGraph<V,E> gPrime,
 			BiMap<E , Integer> edgeNum
 			) {
@@ -179,9 +178,9 @@ public class DeletionStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 	}
 	
 	/**
-	 * Returns the computed deletion matrix (or null if {@link DeletionStepNew.computeDeletionMatrix} was not called before)
+	 * Returns the computed deletion matrix (or null if {@link DeletionStep.computeDeletionMatrix} was not called before)
 	 * 
-	 * @return : The computed deletion matrix or null if {@link DeletionStepNew.computeDeletionMatrix} was not called before
+	 * @return : The computed deletion matrix or null if {@link DeletionStep.computeDeletionMatrix} was not called before
 	 */
 	public DeletionMatrix getDeletionMatrix() {
 		return matrixContainer;

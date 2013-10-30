@@ -3,10 +3,12 @@ package mf.gui;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import name.antonsmirnov.javafx.dialog.Dialog;
 import mf.gui.decomposition.Drawable;
 import mf.gui.decomposition.NoDecomposition;
+import mf.gui.decomposition.TestDrawable;
 import mf.gui.decomposition.rst.RSTDecomposition;
 import mf.gui.decomposition.superpixel.SuperpixelDrawable;
 import mf.superpixel.SuperpixelDecomposition;
@@ -95,30 +97,14 @@ public class NewTabHandler implements EventHandler<Event> {
 		    for (File file : dir.listFiles()) {
 		    	String name = file.getName();	
 		    	
-		    	//Superpixel decomposition
-		    	if (name.toLowerCase().startsWith("superpixel") && name.toLowerCase().endsWith(".mat")) {
-		    		SuperpixelImport imp = new SuperpixelImport(file.getPath() , drawable.getImage());
-		    		SuperpixelDecomposition dec = new SuperpixelDecomposition(imp.getSuperpixels(),imp.getPixelMap());
-		    		SuperpixelDrawable super_drawable = new SuperpixelDrawable(dec, file.getName(),drawable,buttonRow);
-		    		
-		    		items.add(super_drawable);
+		    	Set<Drawable> d = DrawableGenerator.generate(name, file, buttonRow, drawable);
+		    	if (d != null) {
+		    		items.addAll(d);
 		    	}
-		    	
-		    	//RST Decomposition
-		    	if (name.toLowerCase().startsWith("tree") && name.toLowerCase().endsWith(".rst")) {
-		    		
-		    		String num_str = name.substring(4, name.length()-4);
-		    		
-		    		SuperpixelImport imp = new SuperpixelImport(file.getParent() + "/superpixel"+num_str+".mat" , drawable.getImage());
-		    		SuperpixelDecomposition dec = new SuperpixelDecomposition(imp.getSuperpixels(),imp.getPixelMap());
-		    		
-		    		RSTDecomposition krv_dec = new RSTDecomposition(num_str, file.getPath(), dec, drawable,buttonRow);
-		    		
-		    		items.add(krv_dec);
-		    	}
-		    	
-		    	//TODO: Add more decompositions (Region growing)
 		    }
+		    
+		    TestDrawable t = new TestDrawable("Test",drawable,buttonRow);
+		    items.add(t);
 		    
 		    items.add(new NoDecomposition(drawable, buttonRow));
 		    

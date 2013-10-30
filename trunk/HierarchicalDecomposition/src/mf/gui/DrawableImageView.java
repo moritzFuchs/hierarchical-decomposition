@@ -194,6 +194,11 @@ public class DrawableImageView extends StackPane implements Markable {
 		}
 	}
 	
+	@Override
+	public void clearPixel(Integer x, Integer y) {
+		canvas_writer.setColor(x, y, Color.TRANSPARENT);
+	}
+	
 	/**
 	 * Returns the color of the specified pixel
 	 * 
@@ -307,4 +312,5 @@ public class DrawableImageView extends StackPane implements Markable {
 		current_key_handler = handler;
 		img_view.addEventFilter(KeyEvent.ANY, current_key_handler);
 	}
+
 }

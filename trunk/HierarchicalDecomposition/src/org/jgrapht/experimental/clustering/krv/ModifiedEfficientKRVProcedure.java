@@ -12,7 +12,6 @@ import org.jgrapht.experimental.clustering.DecompositionConstants;
 import org.jgrapht.experimental.clustering.FlowPath;
 import org.jgrapht.experimental.clustering.FlowProblem;
 import org.jgrapht.experimental.clustering.FlowRescaler;
-import org.jgrapht.experimental.clustering.FlowVectorProjector;
 import org.jgrapht.experimental.clustering.SplitGraph;
 import org.jgrapht.experimental.clustering.SplitVertex;
 import org.jgrapht.experimental.clustering.UndirectedFlowProblem;
@@ -220,11 +219,11 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			
 			// -------------------------------- CHECK IF DELETION OR MATCHING STEP PERFORMS BETTER ---------------------------------- //
 			
-			DeletionStepNew<V,E> deletionStep = new DeletionStepNew<V,E>(g,gPrime,edgeNum);
+			DeletionStep<V,E> deletionStep = new DeletionStep<V,E>(g,gPrime,edgeNum);
 			deletionStep.computeDeletionMatrix(A, B, divider.getAs(), divider.getAt(), flow_problem,paths);
 			deletionStep.getDeletionMatrix();
 			
-			MatchingStepNew<V,E> matchingStep = new MatchingStepNew<V,E>(edgeNum , g.edgeSet().size());
+			MatchingStep<V,E> matchingStep = new MatchingStep<V,E>(edgeNum , g.edgeSet().size());
 			Set<MatchedPair<SplitVertex<V, E>>> matching = flow_problem.getFractionalPartialMatching(paths);
 			matchingStep.computeMatchingMatrix(gPrime, A, matching);
 			
@@ -299,8 +298,8 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 	 * @param r : The current random direction
 	 * @return Double : The potential of the applied step
 	 */
-	private Double applyBetterStep(DeletionStepNew<V,E> deletionStep,
-			MatchingStepNew<V,E> matchingStep,
+	private Double applyBetterStep(DeletionStep<V,E> deletionStep,
+			MatchingStep<V,E> matchingStep,
 			DoubleMatrix1D r,
 			Double current_potential) {
 		

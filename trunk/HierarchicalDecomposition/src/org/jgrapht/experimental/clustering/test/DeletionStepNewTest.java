@@ -12,7 +12,7 @@ import org.jgrapht.experimental.clustering.FlowProblem;
 import org.jgrapht.experimental.clustering.SplitGraph;
 import org.jgrapht.experimental.clustering.SplitVertex;
 import org.jgrapht.experimental.clustering.UndirectedFlowProblem;
-import org.jgrapht.experimental.clustering.krv.DeletionStepNew;
+import org.jgrapht.experimental.clustering.krv.DeletionStep;
 import org.jgrapht.experimental.clustering.old.DeletionStep;
 import org.jgrapht.experimental.clustering.old.DummyFlow;
 import org.jgrapht.experimental.clustering.old.FlowDecomposer;
@@ -111,7 +111,7 @@ public class DeletionStepNewTest {
 		
 		Integer m = g.edgeSet().size();
 		
-		DeletionStepNew<Integer, DefaultWeightedEdge> del = new DeletionStepNew<Integer , DefaultWeightedEdge>(g, gPrime, edgeNum);
+		DeletionStep<Integer, DefaultWeightedEdge> del = new DeletionStep<Integer , DefaultWeightedEdge>(g, gPrime, edgeNum);
 		del.computeDeletionMatrix(A, B, A_s, A_t, problem, problem.getPaths());
 				
 		SparseDoubleMatrix2D matrix = del.getDeletionMatrix().getMatrix();
@@ -197,7 +197,7 @@ public class DeletionStepNewTest {
 		Integer m = g.edgeSet().size();
 			
 		
-		DeletionStepNew<Integer, DefaultWeightedEdge> del = new DeletionStepNew<Integer , DefaultWeightedEdge>(g, gPrime, edgeNum); 
+		DeletionStep<Integer, DefaultWeightedEdge> del = new DeletionStep<Integer , DefaultWeightedEdge>(g, gPrime, edgeNum); 
 		del.computeDeletionMatrix(A, B, A_s, A_t, problem, problem.getPaths());
 	}
 	
@@ -244,7 +244,7 @@ public class DeletionStepNewTest {
 			edgeNum.put(e, i++);
 		}
 		
-		DeletionStepNew<Integer, DefaultWeightedEdge> del = new DeletionStepNew<Integer , DefaultWeightedEdge>(g, gPrime, edgeNum); 
+		DeletionStep<Integer, DefaultWeightedEdge> del = new DeletionStep<Integer , DefaultWeightedEdge>(g, gPrime, edgeNum); 
 		del.computeDeletionMatrix(A, B, A_s, A_t, problem, problem.getPaths());
 		
 	}

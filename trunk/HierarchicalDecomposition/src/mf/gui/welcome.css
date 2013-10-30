@@ -1,0 +1,18 @@
+#welcome_pane {
+	-fx-background-color: linear-gradient(to top, rgb(50,50,50), derive(rgb(50,50,50),30%));
+	-fx-min-height:650px;
+	-fx-min-width:1200px;
+	-fx-padding:30px;
+}
+
+#title {
+	-fx-background-color: transparent;
+	-fx-font-size:30px;
+	-fx-text-fill: #F0F0F0;
+	-fx-padding: 0 0 15px 0; 
+}
+
+#welcome_content { 
+	-fx-alignment: CENTER-LEFT;
+	-fx-text-fill: #F0F0F0;
+}

@@ -50,7 +50,7 @@ public class Separator<V extends Comparable<V>,E> {
 		
 		Set<E> C = gPrime.getOriginalEdges(X_Y);
 		
-		//Cleanup; remove source and target again
+		//Cleanup time! remove source and target again
 		gPrime.removeSourceAndTarget();
 		
 		return C;

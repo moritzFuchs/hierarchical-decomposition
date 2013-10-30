@@ -2,11 +2,18 @@ package mf.gui;
 	
 import javafx.application.Application;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.geometry.Side;
 
 /**
@@ -36,6 +43,8 @@ public class Main extends Application {
 	public void init(Stage primaryStage) {
 		primaryStage.setResizable(false);
 		
+		primaryStage.setTitle("Image Segmentation GUI");
+		
 		Group root = new Group();
 		Scene scene= new Scene(root);
 		scene.getStylesheets().add(this.getClass()
@@ -51,11 +60,31 @@ public class Main extends Application {
 	    
 	    final Tab tabPlus = new Tab();
 	    tabPlus.setText("+");
+	    tabPlus.setContent(new ProgressIndicator());
 	    tabPlus.setClosable(false);
 	    tabPlus.setOnSelectionChanged(new NewTabHandler());
 	    
 	    final Tab tabWelcome = new Tab();
 	    tabWelcome.setText("Welcome");
+	   
+	    FlowPane welcome = new FlowPane();
+	    welcome.setPrefWrapLength(100);
+	    
+	    welcome.setId("welcome_pane");
+	    welcome.getStylesheets().add(this.getClass()
+				.getResource("welcome.css").toExternalForm());
+	    
+	    Label title = new Label("WELCOME");
+	    title.setId("title");
+	    title.setMinWidth(1000);
+	    
+	    Label content = new Label("Click '+' and select a folder containing 'image.jpg' as well as the decomposition files (e.g. .rst)");
+	    content.setId("welcome_content");
+	    
+	    welcome.getChildren().add(title);
+	    welcome.getChildren().add(content);
+	    
+        tabWelcome.setContent(welcome);
 	    tabWelcome.setClosable(false);
 	    
 	    tabPane.getTabs().addAll(tabWelcome , tabPlus);

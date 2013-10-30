@@ -1,10 +1,9 @@
-package org.jgrapht.experimental.clustering;
+package org.jgrapht.experimental.clustering.krv;
 
 import java.util.List;
 import java.util.Map;
 
 import org.jgrapht.Graph;
-import org.jgrapht.experimental.clustering.krv.KRVStep;
 
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
 import cern.colt.matrix.tdouble.DoubleMatrix2D;

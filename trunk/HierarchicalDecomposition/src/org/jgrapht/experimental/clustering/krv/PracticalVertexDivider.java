@@ -101,7 +101,6 @@ public class PracticalVertexDivider<V extends Comparable<V> , E> {
 		 * @return A pair of sets with A_s being the first and A_t being the second set
 		 */
 		public void divideActiveVertices(SplitGraph<V, E> gPrime , Set<E> A , DoubleMatrix1D r) {
-
 			if (A.size() < 1.0 / DecompositionConstants.MAX_SOURCE_EDGES) {
 				smallSetSpecialCase(gPrime, A, r);
 			} else {

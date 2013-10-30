@@ -29,4 +29,5 @@ public interface Markable {
 	public int getImageHeight();
 	public void setImage(Image img);
 	public void resetImage();
+	public void clearPixel(Integer x, Integer y);
 }

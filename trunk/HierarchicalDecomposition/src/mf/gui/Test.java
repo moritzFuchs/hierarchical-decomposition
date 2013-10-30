@@ -11,7 +11,10 @@ import java.sql.Statement;
 public class Test {
 
 	public static void main(String[] args) throws ClassNotFoundException {
-	    Class.forName("org.sqlite.JDBC");
+	
+		System.out.println(com.sun.javafx.runtime.VersionInfo.getRuntimeVersion());
+
+		/*Class.forName("org.sqlite.JDBC");
 
 		Connection connection = null;
 	    try
@@ -51,6 +54,6 @@ public class Test {
 	        System.err.println(e);
 	      }
 	    }
-
+*/
 	}
 }

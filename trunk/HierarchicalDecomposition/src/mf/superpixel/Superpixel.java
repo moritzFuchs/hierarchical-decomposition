@@ -48,7 +48,7 @@ public class Superpixel {
 	/**
 	 * The set of {@link Pixel} of the superpixel
 	 */
-	private Set<Pixel> pixel;
+	private Set<Pixel> pixel;	
 	
 	/**
 	 * The set of {@link Pixel} that is on the boundary of the superpixel
