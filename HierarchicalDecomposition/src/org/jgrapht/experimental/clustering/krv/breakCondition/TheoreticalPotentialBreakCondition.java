@@ -17,7 +17,7 @@ public class TheoreticalPotentialBreakCondition implements KRVBreakCondition {
 	private Double bound;
 	
 	public TheoreticalPotentialBreakCondition(Integer nodes) {
-		bound = 1.0/(16 * nodes);
+		bound = 1.0/(16 * nodes^2);
 	}
 	
 	@Override

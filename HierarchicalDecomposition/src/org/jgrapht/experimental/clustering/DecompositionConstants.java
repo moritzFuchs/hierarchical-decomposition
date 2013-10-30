@@ -1,7 +1,7 @@
 package org.jgrapht.experimental.clustering;
 
 import org.jgrapht.experimental.clustering.krv.KRVPotential;
-import org.jgrapht.experimental.clustering.krv.MatchingStepNew;
+import org.jgrapht.experimental.clustering.krv.MatchingStep;
 import org.jgrapht.experimental.clustering.krv.ModifiedEfficientKRVProcedure;
 import org.jgrapht.experimental.clustering.krv.PracticalVertexDivider;
 import org.jgrapht.experimental.clustering.old.TheoreticalVerticeDivider;
@@ -45,7 +45,7 @@ public class DecompositionConstants {
 	public static final Integer POTENTIAL_APPROXIMATION_ITERATIONS = 100;
 	
 	/**
-	 * User by {@link MatchingStepNew}. Fraction of the flow vector that is moved during a matching.
+	 * User by {@link MatchingStep}. Fraction of the flow vector that is moved during a matching.
 	 */
 	public static final Double FLOW_MOVEMENT_FRACTION = 0.5;
 	
@@ -73,4 +73,9 @@ public class DecompositionConstants {
 	 * Statistics are gathered if this constant is set to true
 	 */
 	public static final Boolean STATS = true;
+	
+	/**
+	 * Number of iterations the 'No Progress' heuristic looks at
+	 */
+	public static final Integer NO_PROGRESS_BREAK_CONDITION_ITERATIONS = 50;
 }

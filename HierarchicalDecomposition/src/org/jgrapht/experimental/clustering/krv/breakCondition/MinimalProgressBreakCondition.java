@@ -2,6 +2,8 @@ package org.jgrapht.experimental.clustering.krv.breakCondition;
 
 import java.util.LinkedList;
 
+import org.jgrapht.experimental.clustering.DecompositionConstants;
+
 /**
  * This break condition uses the progress over the last few iterations. If the progress is less than a certain bound, the KRV procedure stops. 
  * 
@@ -15,11 +17,6 @@ public class MinimalProgressBreakCondition implements KRVBreakCondition {
 	 * Potentials of the last few iterations
 	 */
 	private LinkedList<Double> progress;
-	
-	/**
-	 * Iterations we look at (more => more memory needed)
-	 */
-	private Integer iterations = 50;
 	
 	/**
 	 * The bound at which the condition fires
@@ -38,7 +35,7 @@ public class MinimalProgressBreakCondition implements KRVBreakCondition {
 	
 	@Override
 	public Boolean breakIteration(Double current_potential, Integer noDeletionStep) {
-		if (saved < iterations) {
+		if (saved < DecompositionConstants.NO_PROGRESS_BREAK_CONDITION_ITERATIONS) {
 			saved++;
 			progress.add(current_potential);
 			return false;

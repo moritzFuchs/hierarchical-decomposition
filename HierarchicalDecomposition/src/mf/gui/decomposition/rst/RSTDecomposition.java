@@ -100,6 +100,15 @@ public class RSTDecomposition extends Drawable{
 	}
 	
 	/**
+	 * Returns the decomposition tree
+	 * 
+	 * @return The decomposition tree
+	 */
+	public DecompositionTree<Integer> getDecompositionTree() {
+		return rst_decomposition;
+	}
+	
+	/**
 	 * Saves given {@link TreeVertex} (marker) as segmentation point in the tree for all {@link Superpixel} below the given {@link TreeVertex} (marked).
 	 * 
 	 * @param marker : Point in the tree

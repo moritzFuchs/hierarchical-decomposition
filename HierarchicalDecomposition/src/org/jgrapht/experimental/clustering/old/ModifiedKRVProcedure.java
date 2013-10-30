@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
- * Implements Lemma 3.2 of 'Computing Cut-Based Hierarchical Decompositions in Almost linear time' (refered to as 'paper') by RŠcke et al.
+ * Implements Lemma 3.2 of 'Computing Cut-Based Hierarchical Decompositions in Almost linear time' (refered to as 'paper') by Rï¿½cke et al.
  * 
  * @author moritzfuchs
  *

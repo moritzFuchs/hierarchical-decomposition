@@ -7,7 +7,6 @@ import java.util.Set;
 
 import org.jgrapht.Graph;
 import org.jgrapht.experimental.clustering.DecompositionConstants;
-import org.jgrapht.experimental.clustering.FlowVectorProjector;
 import org.jgrapht.experimental.clustering.Util;
 
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
@@ -125,7 +124,7 @@ public class KRVPotential<V,E> {
 				sum += weight * Math.pow(u_e / weight - avg_projection , 2);
 			}
 			
-			//Could also be m instead of A.size()
+			//d from gaussian projection lemma = A.size()
 			total += A.size() * sum;
 		}
 		

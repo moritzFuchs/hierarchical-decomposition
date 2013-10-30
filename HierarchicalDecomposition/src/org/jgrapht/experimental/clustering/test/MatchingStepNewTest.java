@@ -11,7 +11,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.experimental.clustering.SplitGraph;
 import org.jgrapht.experimental.clustering.SplitVertex;
 import org.jgrapht.experimental.clustering.krv.MatchingMatrix;
-import org.jgrapht.experimental.clustering.krv.MatchingStepNew;
+import org.jgrapht.experimental.clustering.krv.MatchingStep;
 import org.jgrapht.experimental.clustering.old.MatchingStep;
 import org.jgrapht.experimental.clustering.util.MatchedPair;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -61,7 +61,7 @@ public class MatchingStepNewTest {
 				new HashSet<MatchedPair<SplitVertex<Integer , DefaultWeightedEdge>>>();
 		S.add(p);
 		
-		MatchingStepNew<Integer , DefaultWeightedEdge> m = new MatchingStepNew<Integer , DefaultWeightedEdge>(edgeNum, g.edgeSet().size());
+		MatchingStep<Integer , DefaultWeightedEdge> m = new MatchingStep<Integer , DefaultWeightedEdge>(edgeNum, g.edgeSet().size());
 		m.computeMatchingMatrix(gPrime, A, S);
 		
 		SparseDoubleMatrix2D matrix = m.getMatrix();

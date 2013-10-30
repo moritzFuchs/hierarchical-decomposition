@@ -21,7 +21,7 @@ import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix2D;
  * @param <V>
  * @param <E>
  */
-public class MatchingStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> {
+public class MatchingStep<V extends Comparable<V>,E> implements KRVStep<V,E> {
 
 	/**
 	 * Container for the computed matching matrix
@@ -43,7 +43,7 @@ public class MatchingStepNew<V extends Comparable<V>,E> implements KRVStep<V,E> 
 	 */
 	private Set<E> A;
 	
-	public MatchingStepNew(BiMap<E , Integer> edgeNum , Integer m) {
+	public MatchingStep(BiMap<E , Integer> edgeNum , Integer m) {
 		this.edgeNum = edgeNum;
 		this.m = m;
 	}

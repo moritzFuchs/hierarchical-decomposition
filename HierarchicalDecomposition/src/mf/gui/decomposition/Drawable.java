@@ -17,8 +17,10 @@ import mf.gui.Markable;
  * @date 10.09.2013
  *
  */
-public abstract class Drawable implements EventHandler<Event>{
+public abstract class Drawable implements Runnable, EventHandler<Event>{
 
+	private Boolean stop = false;
+	
 	/**
 	 * Label that will be displayed in the list.
 	 */
@@ -72,6 +74,16 @@ public abstract class Drawable implements EventHandler<Event>{
 		
 	}
 	
+	public void run() {
+		while(!stop) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	/**
 	 * Registers handlers to the markable object. Currently the following handlers are registered:
 	 *  * MouseEventHandler
@@ -91,6 +103,8 @@ public abstract class Drawable implements EventHandler<Event>{
 		
 		onActivate();
 	}
+	
+	
 	
 	/**
 	 * Handler for a {@link MouseEvent}. Does nothing but consume the event.
