@@ -9,7 +9,7 @@ import name.antonsmirnov.javafx.dialog.Dialog;
 import mf.gui.decomposition.Drawable;
 import mf.gui.decomposition.NoDecomposition;
 import mf.gui.decomposition.TestDrawable;
-import mf.gui.decomposition.rst.RSTDecomposition;
+import mf.gui.decomposition.rst.RSTDecompositionDrawable;
 import mf.gui.decomposition.superpixel.SuperpixelDrawable;
 import mf.superpixel.SuperpixelDecomposition;
 import mf.superpixel.SuperpixelImport;
@@ -94,21 +94,15 @@ public class NewTabHandler implements EventHandler<Event> {
             
 		    inner.setBottom(buttonRow);
 			
-		    for (File file : dir.listFiles()) {
-		    	String name = file.getName();	
-		    	
-		    	Set<Drawable> d = DrawableGenerator.generate(name, file, buttonRow, drawable);
-		    	if (d != null) {
-		    		items.addAll(d);
-		    	}
-		    }
-		    
+		    //Generate all possible Drawables and put them onto the list
+		    DrawableGenerator gen = new DrawableGenerator(dir, items, buttonRow, drawable);
+		    gen.generate();
+
 			list.setItems(items);
 			list.setOnMouseClicked(new DecompositionSelectedHandler());
 			list.setEditable(false);
 			outer.setLeft(list);
-		    
-			FXCollections.sort(items);
+
 			items.add(new NoDecomposition(drawable, buttonRow));
 			
             inner.setCenter(drawable);

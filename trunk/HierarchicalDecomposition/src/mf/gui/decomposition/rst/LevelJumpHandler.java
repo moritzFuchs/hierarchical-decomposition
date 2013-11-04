@@ -5,10 +5,10 @@ import javafx.event.ActionEvent;
 
 public class LevelJumpHandler implements EventHandler<ActionEvent>{
 		
-		private RSTDecomposition dec;
+		private RSTDecompositionDrawable dec;
 		private Integer level;
 		
-		public LevelJumpHandler(RSTDecomposition dec , Integer level) {
+		public LevelJumpHandler(RSTDecompositionDrawable dec , Integer level) {
 			this.dec = dec;
 			this.level = level;
 		}
