@@ -17,7 +17,7 @@ import mf.gui.Markable;
  * @date 10.09.2013
  *
  */
-public abstract class Drawable implements Runnable, EventHandler<Event>{
+public abstract class Drawable implements Comparable<Drawable>, Runnable, EventHandler<Event>{
 
 	private Boolean stop = false;
 	
@@ -134,6 +134,13 @@ public abstract class Drawable implements Runnable, EventHandler<Event>{
 	 */
 	public void handleKeyEvent(KeyEvent event) {
 		event.consume();
+	}
+	
+	/**
+	 * Compares two drawables (lex. using their name)
+	 */
+	public int compareTo(Drawable d) {
+		return this.name.compareTo(d.toString());
 	}
 	
 	/**

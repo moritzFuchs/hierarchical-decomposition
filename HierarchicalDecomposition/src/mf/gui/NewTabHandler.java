@@ -103,16 +103,14 @@ public class NewTabHandler implements EventHandler<Event> {
 		    	}
 		    }
 		    
-		    TestDrawable t = new TestDrawable("Test",drawable,buttonRow);
-		    items.add(t);
-		    
-		    items.add(new NoDecomposition(drawable, buttonRow));
-		    
 			list.setItems(items);
 			list.setOnMouseClicked(new DecompositionSelectedHandler());
 			list.setEditable(false);
 			outer.setLeft(list);
 		    
+			FXCollections.sort(items);
+			items.add(new NoDecomposition(drawable, buttonRow));
+			
             inner.setCenter(drawable);
             
 			new_tab.setContent(outer);

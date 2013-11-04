@@ -19,9 +19,11 @@ public class DrawableGenerator {
 		
 		//Superpixel decomposition
     	if (name.toLowerCase().startsWith("superpixel") && name.toLowerCase().endsWith(".mat")) {
+    		String num_str = name.substring(10, name.length()-4);
+    		
     		SuperpixelImport imp = new SuperpixelImport(file.getPath() , drawable.getImage());
     		SuperpixelDecomposition dec = new SuperpixelDecomposition(imp.getSuperpixels(),imp.getPixelMap());
-    		SuperpixelDrawable super_drawable = new SuperpixelDrawable(dec, file.getName(),drawable,buttonRow);
+    		SuperpixelDrawable super_drawable = new SuperpixelDrawable(dec, "Superpixel " + num_str, drawable, buttonRow);
     		
     		
     		d.add(super_drawable);
