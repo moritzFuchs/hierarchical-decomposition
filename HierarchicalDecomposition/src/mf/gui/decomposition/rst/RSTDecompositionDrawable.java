@@ -40,7 +40,7 @@ import mf.gui.decomposition.Drawable;
 import mf.superpixel.Superpixel;
 import mf.superpixel.SuperpixelDecomposition;
 
-public class RSTDecomposition extends Drawable{
+public class RSTDecompositionDrawable extends Drawable{
 
 	/**
 	 * The underlying {@link SuperpixelDecomposition}
@@ -68,7 +68,7 @@ public class RSTDecomposition extends Drawable{
 	 */
 	private static final Boolean COLLAPSE_INF_EDGES = false;
 	
-	public RSTDecomposition(String num, String path_to_krv_dec , SuperpixelDecomposition superpixel_decomposition , Markable m, ButtonRow buttonRow) {
+	public RSTDecompositionDrawable(String num, String path_to_krv_dec , SuperpixelDecomposition superpixel_decomposition , Markable m, ButtonRow buttonRow) {
 		super("RST Decomposition " + num , m, buttonRow);
 		
 		this.superpixel_decomposition = superpixel_decomposition;
@@ -126,7 +126,7 @@ public class RSTDecomposition extends Drawable{
 	}
 	
 	/**
-	 * Draws the current state of the segmentation given by {@link RSTDecomposition.current_vertex_tree}.
+	 * Draws the current state of the segmentation given by {@link RSTDecompositionDrawable.current_vertex_tree}.
 	 */
 	private void  drawCurrentSegmentation() {
 		m.startLoading();

@@ -2,6 +2,7 @@ package mf.gui.decomposition;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -46,7 +47,7 @@ public abstract class Drawable implements Comparable<Drawable>, Runnable, EventH
 	 * Draws something on the {@link Markable} {@link Drawable.m}
 	 */
 	public abstract void draw();
-
+	
 	/**
 	 * Returns the label of this item
 	 */

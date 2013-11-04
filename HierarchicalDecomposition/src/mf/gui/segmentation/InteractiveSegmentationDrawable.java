@@ -1,5 +1,9 @@
 package mf.gui.segmentation;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -48,10 +52,19 @@ public class InteractiveSegmentationDrawable extends Drawable{
 	private Set<Superpixel> marker;
 	
 	public InteractiveSegmentationDrawable(String name, Markable m,
-			ButtonRow buttonRow, DecompositionTree<Integer> t, SuperpixelDecomposition dec) {
+			ButtonRow buttonRow, String path, SuperpixelDecomposition dec) {
 		super(name, m, buttonRow);
-
-		this.t = t;
+		
+		try {
+			FileInputStream fileIn;
+			fileIn = new FileInputStream(path);
+			ObjectInputStream in = new ObjectInputStream(fileIn);
+			this.t = (DecompositionTree<Integer>)in.readObject();
+			in.close();
+		} catch (IOException | ClassNotFoundException e) {
+			return;
+		}
+		
 		this.dec = dec;
 		
 		this.marker = new HashSet<Superpixel>();

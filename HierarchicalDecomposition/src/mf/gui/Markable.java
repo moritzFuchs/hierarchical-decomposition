@@ -25,6 +25,7 @@ public interface Markable {
 	public void registerScrollHandler(EventHandler<? super ScrollEvent> drawable);
 	public void registerKeyHandler(EventHandler<? super KeyEvent> drawable);
 	public void drawText(String string);
+	public Image getImage();
 	public int getImageWidth();
 	public int getImageHeight();
 	public void setImage(Image img);

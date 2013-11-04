@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutorService;
  * This abstract class also contains:
  *  * The {@link DecompositionTree}
  *  * An {@link ExecutorService} to allow multithreaded applications. (Just throw in an ExecutorService with max. 1 Thread if you do not want multithreading)
- *  * The {@link RSTDecomposition} which handles new tasks created within extensions of this class
+ *  * The {@link RSTDecompositionDrawable} which handles new tasks created within extensions of this class
  *  
  * The purpose of this class is to get a common interface for all hierarchical decompositions.
  * 

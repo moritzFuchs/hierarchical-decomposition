@@ -15,7 +15,7 @@ public class Decomposition<V extends Comparable<V>, E> extends Observable implem
 	 */
 	protected Graph<V,E> originalGraph = null;
 	/**
-	 * The decomposition tree of {@link RSTDecomposition.originalGraph}
+	 * The decomposition tree of {@link RSTDecompositionDrawable.originalGraph}
 	 */
 	protected DecompositionTree<V> decomposition;
 	/**

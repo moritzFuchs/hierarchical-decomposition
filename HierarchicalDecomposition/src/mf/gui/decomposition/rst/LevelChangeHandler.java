@@ -6,9 +6,9 @@ import javafx.event.EventHandler;
 public class LevelChangeHandler implements EventHandler<ActionEvent> {
 
 	private Integer change;
-	private RSTDecomposition dec;
+	private RSTDecompositionDrawable dec;
 	
-	public LevelChangeHandler(Integer change , RSTDecomposition dec) {
+	public LevelChangeHandler(Integer change , RSTDecompositionDrawable dec) {
 		this.change = change;
 		this.dec = dec;
 	}
