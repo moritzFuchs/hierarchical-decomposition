@@ -1,30 +1,23 @@
 package mf.gui;
 
 import java.io.File;
+import java.util.Map;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.sun.javafx.collections.MappingChange.Map;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import mf.gui.decomposition.Drawable;
 import mf.gui.decomposition.DrawableFactory;
-import mf.gui.decomposition.rst.RSTDecompositionDrawable;
-import mf.gui.decomposition.rst.RSTDecompositionDrawableFactory;
 import mf.gui.decomposition.superpixel.SuperpixelDrawable;
-import mf.gui.segmentation.InteractiveSegmentationDrawable;
-import mf.gui.segmentation.InteractiveSegmentationDrawableFactory;
 import mf.superpixel.SuperpixelDecomposition;
 import mf.superpixel.SuperpixelImport;
 
 /**
- * Calls {@link DrawableFactory} s to generate as many {@link Drawable} s as possible
+ * Calls {@link DrawableFactory}s to generate as many {@link Drawable}s as possible.
  * 
  * @author moritzfuchs
  * @date 04.11.2013
@@ -43,9 +36,9 @@ public class DrawableGenerator {
 	private ObservableList<Drawable> items;
 	
 	/**
-	 * {@link HashMap} from Integer (number of superpixels) to {@link SuperpixelDecomposition}
+	 * {@link Map} from Integer (number of superpixels) to {@link SuperpixelDecomposition}
 	 */
-	private HashMap<Integer, SuperpixelDecomposition> superpixel;
+	private Map<Integer, SuperpixelDecomposition> superpixel;
 	
 	/**
 	 * {@link Markable} the {@link Drawable}s can use
@@ -69,11 +62,24 @@ public class DrawableGenerator {
 		this.m = m;
 		this.buttonRow = buttonRow;
 		this.factories = new LinkedList<DrawableFactory>();
-		
-		this.factories.add(new RSTDecompositionDrawableFactory());
-		this.factories.add(new InteractiveSegmentationDrawableFactory());
 	}
 	
+	/**
+	 * Adds a {@link DrawableFactory} to the list of factories.
+	 * NOTE: There is no need to implement a SuperpixelDrawableFactory since the generator knows how to instantiate them.
+	 * 
+	 * @param factory : a {@link DrawableFactory}
+	 */
+	public void addFactory(DrawableFactory factory) {
+		this.factories.add(factory);
+	}
+	
+	/**
+	 * Takes the directory that was given in the constructor and iterates over all files. For each file it checks if a {@link DrawableFactory} can handle it.
+	 * If so, the factory is called to get an instance of the corresponding {@link Drawable}.
+	 * 
+	 * To add new {@link Drawable}s please implement a {@link DrawableFactory} for it and add the factory to factories
+	 */
 	public void generate() {
 		
 		//First generate all superpixel decompositions
@@ -92,6 +98,7 @@ public class DrawableGenerator {
 	    	}
 	    }
 		
+		//Get number in file name
 		Pattern p = Pattern.compile("\\d+");
 		
 		for (File file : dir.listFiles()) {

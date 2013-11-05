@@ -3,29 +3,24 @@ package mf.gui;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import name.antonsmirnov.javafx.dialog.Dialog;
+
 import mf.gui.decomposition.Drawable;
 import mf.gui.decomposition.NoDecomposition;
-import mf.gui.decomposition.TestDrawable;
-import mf.gui.decomposition.rst.RSTDecompositionDrawable;
-import mf.gui.decomposition.superpixel.SuperpixelDrawable;
-import mf.superpixel.SuperpixelDecomposition;
-import mf.superpixel.SuperpixelImport;
+import mf.gui.decomposition.rst.RSTDecompositionDrawableFactory;
+import mf.gui.segmentation.InteractiveSegmentationDrawableFactory;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 
 /**
@@ -96,6 +91,8 @@ public class NewTabHandler implements EventHandler<Event> {
 			
 		    //Generate all possible Drawables and put them onto the list
 		    DrawableGenerator gen = new DrawableGenerator(dir, items, buttonRow, drawable);
+		    gen.addFactory(new RSTDecompositionDrawableFactory());
+		    gen.addFactory(new InteractiveSegmentationDrawableFactory());
 		    gen.generate();
 
 			list.setItems(items);
