@@ -32,7 +32,7 @@ import javafx.scene.paint.Color;
  * @date 10.09.2013
  *
  */
-public class DrawableImageView extends StackPane implements Markable {
+public class MarkableImageView extends StackPane implements Markable {
 	/**
 	 * Image for the image view.
 	 */
@@ -80,7 +80,7 @@ public class DrawableImageView extends StackPane implements Markable {
 	 */
 	private Boolean loading = false;
 	
-	public DrawableImageView(String url) {
+	public MarkableImageView(String url) {
 		super();
 
 		this.url = url;
@@ -157,6 +157,27 @@ public class DrawableImageView extends StackPane implements Markable {
 	 */
 	public void resetImage() {
 		img_view.setImage(img);
+	}
+	
+	/**
+	 * Resets the whole Markable; Image is set back, canvas is cleared and handlers are unregistered.
+	 */
+	public void reset() {
+		resetImage();
+		clear();
+		
+		if (current_mouse_handler != null) {
+			img_view.removeEventFilter(MouseEvent.ANY, current_mouse_handler);
+		}
+		
+		if (current_scroll_handler != null) {
+			img_view.removeEventFilter(ScrollEvent.ANY, current_scroll_handler);
+		}
+		
+		if (current_key_handler != null) {
+			img_view.removeEventFilter(KeyEvent.ANY, current_key_handler);
+		}
+		
 	}
 	
 	/**
