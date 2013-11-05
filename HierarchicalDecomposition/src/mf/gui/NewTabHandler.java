@@ -34,7 +34,7 @@ public class NewTabHandler implements EventHandler<Event> {
 
 	/**
 	 * Create a new Tab:
-	 * A Tab consists of a {@link BorderPane} with a {@link ListView} on the left position and a {@link DrawableImageView} on the center position. 
+	 * A Tab consists of a {@link BorderPane} with a {@link ListView} on the left position and a {@link MarkableImageView} on the center position. 
 	 */
 	@Override
 	public void handle(Event event) {
@@ -76,7 +76,7 @@ public class NewTabHandler implements EventHandler<Event> {
 		    BorderPane inner = new BorderPane();
 		    outer.setCenter(inner);
 		    
-			DrawableImageView drawable = new DrawableImageView(img_path);
+			MarkableImageView drawable = new MarkableImageView(img_path);
 		    
 			//Create Button row
             List<ButtonBase> defaultButtons = new LinkedList<ButtonBase>();
