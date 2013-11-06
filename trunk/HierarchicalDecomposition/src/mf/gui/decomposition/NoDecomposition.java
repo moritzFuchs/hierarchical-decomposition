@@ -1,6 +1,7 @@
 package mf.gui.decomposition;
 
 import mf.gui.ButtonRow;
+import mf.gui.Drawable;
 import mf.gui.Markable;
 
 /**

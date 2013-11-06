@@ -10,8 +10,6 @@ import java.util.regex.Pattern;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import mf.gui.decomposition.Drawable;
-import mf.gui.decomposition.DrawableFactory;
 import mf.gui.decomposition.superpixel.SuperpixelDrawable;
 import mf.superpixel.SuperpixelDecomposition;
 import mf.superpixel.SuperpixelImport;

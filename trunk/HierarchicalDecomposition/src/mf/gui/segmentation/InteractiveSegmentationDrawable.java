@@ -19,9 +19,9 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import com.google.common.collect.Iterables;
 
 import mf.gui.ButtonRow;
+import mf.gui.Drawable;
 import mf.gui.Markable;
 import mf.gui.Pixel;
-import mf.gui.decomposition.Drawable;
 import mf.superpixel.Superpixel;
 import mf.superpixel.SuperpixelDecomposition;
 
@@ -50,9 +50,9 @@ public class InteractiveSegmentationDrawable extends Drawable{
 	 */
 	private Set<Superpixel> marker;
 	
-	public InteractiveSegmentationDrawable(String name, Markable m,
+	public InteractiveSegmentationDrawable(String num_str, Markable m,
 			ButtonRow buttonRow, String path, SuperpixelDecomposition dec) {
-		super(name, m, buttonRow);
+		super("Segmentation " + num_str, m, buttonRow);
 		
 		try {
 			FileInputStream fileIn;
@@ -81,24 +81,25 @@ public class InteractiveSegmentationDrawable extends Drawable{
 		
 		DirectedGraph<TreeVertex<Integer>, DefaultWeightedEdge> g = t.getGraph();
 		
-		//Foreach marker: walk up the tree as long as leaves below do not contain another marker
+		//Foreach marker: walk up the tree as long as leaves below current node do not contain another marker
 		for (Superpixel sp : marker) {
 			Integer id = sp.getId();
 			TreeVertex<Integer> leaf = t.getLeaf(id);
 			TreeVertex<Integer> vertex = leaf;
-			//Walk up
+			//Walk up the tree
 			while (vertex != t.getRoot()) {
 				Set<DefaultWeightedEdge> inEdges = g.incomingEdgesOf(vertex);
 				DefaultWeightedEdge e = Iterables.get(inEdges, 0);
 				TreeVertex<Integer> parent = g.getEdgeSource(e);
 				Set<Integer> leaves = t.getAll(parent);
 				
-				//Check leaves below
+				//Check if leaves below contain other markers apart from sp
 				Integer count = 0;
 				for (Superpixel sp2 : marker) {
 					if (leaves.contains(sp2.getId())) {
 						count++;
 					}
+					//If we found >= 2 markers we know that we can stop
 					if (count >= 2) {
 						break;
 					}
@@ -117,28 +118,30 @@ public class InteractiveSegmentationDrawable extends Drawable{
 				
 				vertex = parent;
 			}
-
 		}
 		
 		//Draw segmentation
+		
+		//For each cluster of superpixels...
 		for (Set<Superpixel> s : segmentation) {
+			// ... take each superpixel ...
 			for (Superpixel sp : s) {
+				// ... and check if any of their neighbours is in a different cluster ...
 				for (Superpixel neighbor : sp.getNeighbors()) {
 					if (!s.contains(neighbor)) {
+						// ... If so, highlight the border to that neighbour.
 						for (Pixel p : sp.getBoundaryPixels(neighbor)) {
 							m.markPixel(p.getX(), p.getY(), new Color(1.0, 0.0, 0.0, 1.0));
 						}
-						
 					}
 				}
 			}
 		}
-		
 	}
 
 	@Override
 	public void onActivate() {
-		Button done = new Button("Done");
+		Button done = new Button("Segment!");
 		Button reset = new Button("Reset");
 		
 		done.setOnAction(new DoneButtonHandler(this));

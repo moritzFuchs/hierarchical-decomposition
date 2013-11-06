@@ -10,9 +10,9 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mf.gui.ButtonRow;
+import mf.gui.Drawable;
 import mf.gui.Markable;
 import mf.gui.Pixel;
-import mf.gui.decomposition.Drawable;
 import mf.superpixel.Superpixel;
 import mf.superpixel.SuperpixelDecomposition;
 

@@ -17,6 +17,7 @@ public interface Markable {
 	public void markPixelComplementary(Integer x , Integer y);
 	public Color getColor(Integer x , Integer y);
 	
+	//TODO: Get rid of these methods OR fix them in implementation
 	//Loading methods
 	public Boolean isLoading();
 	public void startLoading();

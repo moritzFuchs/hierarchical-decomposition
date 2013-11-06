@@ -5,12 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import name.antonsmirnov.javafx.dialog.Dialog;
-
-import mf.gui.decomposition.Drawable;
 import mf.gui.decomposition.NoDecomposition;
 import mf.gui.decomposition.rst.RSTDecompositionDrawableFactory;
 import mf.gui.segmentation.InteractiveSegmentationDrawableFactory;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
