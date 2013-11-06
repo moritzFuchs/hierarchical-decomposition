@@ -1,4 +1,4 @@
-package mf.gui.decomposition;
+package mf.gui;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -6,8 +6,6 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import mf.gui.ButtonRow;
-import mf.gui.Markable;
 
 /**
  * Interface for Objects that want to be able to draw on a {@link Markable} and appear in the list of decompositions.
@@ -104,9 +102,7 @@ public abstract class Drawable implements Comparable<Drawable>, Runnable, EventH
 		
 		onActivate();
 	}
-	
-	
-	
+	 
 	/**
 	 * Handler for a {@link MouseEvent}. Does nothing but consume the event.
 	 * To implement custom behavior for mouse events override this method.

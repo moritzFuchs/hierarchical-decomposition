@@ -1,9 +1,7 @@
-package mf.gui.decomposition;
+package mf.gui;
 
 import java.io.File;
 
-import mf.gui.ButtonRow;
-import mf.gui.Markable;
 import mf.superpixel.SuperpixelDecomposition;
 
 public interface DrawableFactory {

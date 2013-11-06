@@ -24,9 +24,9 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import com.google.common.collect.Iterables;
 
 import mf.gui.ButtonRow;
+import mf.gui.Drawable;
 import mf.gui.Markable;
 import mf.gui.Pixel;
-import mf.gui.decomposition.Drawable;
 import mf.superpixel.Superpixel;
 import mf.superpixel.SuperpixelDecomposition;
 
@@ -299,6 +299,7 @@ public class RSTDecompositionDrawable extends Drawable{
 	
 		this.buttonRow.addButton(mb);
 		
+		/*
 		Button up = new Button("Level up");
 		up.setOnAction(new LevelChangeHandler(-1,this));
 		Button down = new Button("Level down");
@@ -308,6 +309,7 @@ public class RSTDecompositionDrawable extends Drawable{
 		
 		//Level up is current problematic since root might be reached instantly!
 		up.setDisable(true);
+		*/
 		
 		for (Superpixel sp : superpixel_decomposition.getSuperpixelMap().values()) {
 			current_tree_vertex.put(sp, dec_tree.getRoot());

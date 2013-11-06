@@ -3,9 +3,9 @@ package mf.gui.decomposition.superpixel;
 import java.io.File;
 
 import mf.gui.ButtonRow;
+import mf.gui.Drawable;
+import mf.gui.DrawableFactory;
 import mf.gui.Markable;
-import mf.gui.decomposition.Drawable;
-import mf.gui.decomposition.DrawableFactory;
 import mf.superpixel.SuperpixelDecomposition;
 
 public class SuperpixelDrawableFactory implements DrawableFactory{
