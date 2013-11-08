@@ -18,13 +18,14 @@ import com.google.common.collect.Ordering;
 //TODO: Class is kind of long, think of way to split it into 2 or maybe 3 classes (that we might be able to test separately)
 /**
  * Takes a set A and divides it into 2 sets A_s and A_t such that the flow vector projections of edges in A_s are 'far away' from the median and |A_t| >= |A|/2 and |A_s| <= |A|/8 
+ * CAUTION: Not tested well enough for production use! Please use {@link PracticalVertexDivider} instead.
  * 
  * @author moritzfuchs
  *
  * @param <V> : The type of vertices
  * @param <E> : The type of edges
  */
-public class TheoreticalVerticeDivider<V extends Comparable<V> , E> {
+public class TheoreticalVertexDivider<V extends Comparable<V> , E> {
 
 		/**
 		 * Divisions with potential less than DIVISION_POTENTIAL_BOUND times the potential of the whole set A are acceptable
@@ -85,7 +86,7 @@ public class TheoreticalVerticeDivider<V extends Comparable<V> , E> {
 		
 		//--------------------------------- Inner Class END --------------------------//
 		
-		public TheoreticalVerticeDivider(Graph<V,E> g, DoubleMatrix1D projection, Map<E , Integer> edgeNum) {
+		public TheoreticalVertexDivider(Graph<V,E> g, DoubleMatrix1D projection, Map<E , Integer> edgeNum) {
 			this.projection = projection;
 			this.edgeNum = edgeNum;
 			this.g = g;
