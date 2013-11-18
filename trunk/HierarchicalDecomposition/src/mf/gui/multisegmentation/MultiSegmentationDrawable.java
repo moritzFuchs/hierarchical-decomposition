@@ -80,6 +80,11 @@ public class MultiSegmentationDrawable extends Drawable{
 	private Boolean highlight = true;
 
 	/**
+	 * Button for toggeling {@link highlight}
+	 */
+	private Button highlightButton;
+	
+	/**
 	 * Current marker color
 	 */
 	private Color markerColor = new Color(1.0,0.0,0.0,1.0);
@@ -386,16 +391,25 @@ public class MultiSegmentationDrawable extends Drawable{
 		
 		Button done = new Button("Segment!");
 		Button reset = new Button("Reset");
-		Button highlight = new Button("Toggle Hightlight");
+		highlightButton = new Button("Hightlight ON");
 		
 		done.setOnAction(new DoneButtonHandler(this));
 		reset.setOnAction(new ResetButtonHandler(this));
-		highlight.setOnAction(new HighlightButtonHandler(this,highlight));
+		highlightButton.setOnAction(new HighlightButtonHandler(this,highlightButton));
 		
 		buttonRow.addButton(done);
 		buttonRow.addButton(reset);
 		buttonRow.addButton(cb);
-		buttonRow.addButton(highlight);
+		buttonRow.addButton(highlightButton);
+	}
+	
+	public void updateButtons() {
+		
+		if (isHighlighted()) {
+			highlightButton.setText("Hightlight OFF");
+		} else {
+			highlightButton.setText("Hightlight ON");
+		}
 	}
 	
 	/**
