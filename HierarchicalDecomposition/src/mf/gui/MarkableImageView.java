@@ -91,6 +91,7 @@ public class MarkableImageView extends StackPane implements Markable {
 		canvas = new Canvas(img.getWidth() , img.getHeight());
 		canvas.setMouseTransparent(true);
 		canvas.setOpacity(0.8);
+		canvas.setCache(true);
 		
 		loader = new Canvas(img.getWidth() , img.getHeight());
 		loader.setOpacity(0.5);
@@ -181,6 +182,14 @@ public class MarkableImageView extends StackPane implements Markable {
 	}
 	
 	/**
+	 * Returns a {@link PixelWriter}
+	 * @return
+	 */
+	public PixelWriter getPixelWriter() {
+		return canvas_writer;
+	}
+	
+	/**
 	 * Marks a given coordinate using the default color.
 	 * 
 	 * @param x : x-coordinate
@@ -188,6 +197,7 @@ public class MarkableImageView extends StackPane implements Markable {
 	 */
 	public void markPixel(Integer x , Integer y) {
 		canvas_writer.setColor(x, y, Color.rgb(255, 255, 255));
+		
 	}
 	
 	/**

@@ -194,6 +194,7 @@ public class RSTDecompositionSubTreeGenerator<V extends Comparable<V>,E> extends
 				TreeVertex<V> new_vertex = tree.addVertex();
 				tree.addEdge(parent, new_vertex , Double.POSITIVE_INFINITY);
 				
+				//FIXME: Add special case for cluster.size() < 8 => brute force decomposition!
 				if (cluster.size() > 2) {
 					DecompositionTask<V,E> new_task = new DecompositionTask<V,E>(task.getGraph() , SubGraphGenerator.<V,E>generateSubGraph(task.getGraph(), cluster) , new_vertex);
 					decomposition.addTask(new_task);

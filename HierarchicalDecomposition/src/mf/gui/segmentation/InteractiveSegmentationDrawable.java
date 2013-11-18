@@ -69,7 +69,8 @@ public class InteractiveSegmentationDrawable extends Drawable{
 		this.marker = new HashSet<Superpixel>();
 	}
 
-	@Override
+	//FIXME: Every now and then markers that were removed stay in marker set but are no longer displayed. 
+	//This screws up up the whole segmentation. Find out why this happens
 	public void draw() {
 		
 		//If less than two markers have been set, the segmentation is trivial (none)

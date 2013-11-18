@@ -84,11 +84,6 @@ public class RSTDecompositionDrawable extends Drawable{
 		}
 	}
 
-	@Override
-	public void draw() {
-		
-	}
-	
 	/**
 	 * Returns the decomposition tree
 	 * 
@@ -287,7 +282,6 @@ public class RSTDecompositionDrawable extends Drawable{
 	@Override
 	public void onActivate() {
 		m.clear();
-		draw();
 		
 		MenuButton mb = new MenuButton("Show Level");
 		

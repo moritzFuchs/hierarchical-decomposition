@@ -278,11 +278,9 @@ public class DeletionStep<V extends Comparable<V>,E> implements KRVStep<V,E> {
 			
 			Double cap = g.getEdgeWeight(gPrime.getOriginalEdge(path.getPath().get(1)));
 			
-			//FIXME: Is + EPSILON neccessary?
 			if (weight <= cap + DecompositionConstants.EPSILON) {
 				
 				//Move flow vector to first cut edge on path
-
 				DefaultWeightedEdge cutEdge = findCutEdge(cut, path.getPath());
 				
 				E to = gPrime.getOriginalEdge(cutEdge);
@@ -386,6 +384,7 @@ public class DeletionStep<V extends Comparable<V>,E> implements KRVStep<V,E> {
 	 * @return
 	 */
 	public Boolean restartNeeded() {
+		
 		return restart_needed;
 	}
 

@@ -1,64 +1,283 @@
 package mf.gui;
 
+import java.io.File;
+import java.nio.IntBuffer;
+import java.util.Arrays;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.regex.Pattern;
+import javafx.application.Application;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.property.DoubleProperty;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Slider;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
+import javafx.scene.image.WritablePixelFormat;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
-import com.sun.javafx.collections.transformation.Matcher;
+public class Test extends Application {
 
+    private Image src;
+    private WritableImage dest;
+    private int kernelSize = 1;
+    private int width;
+    private int height;
+    
+    private RadioButton blurButton;
+    private RadioButton blur2Button;
+    private RadioButton mosaicButton;
 
-public class Test {
+    @Override
+    public void start(Stage stage) {
 
-	public static void main(String[] args) throws ClassNotFoundException {
-	
-	    
-		
-		
+        AnchorPane root = new AnchorPane();
 
-		/*Class.forName("org.sqlite.JDBC");
+        initImage(root);
 
-		Connection connection = null;
-	    try
-	    {
-	      // create a database connection
-	      connection = DriverManager.getConnection("jdbc:sqlite:db/stats.db");
-	      Statement statement = connection.createStatement();
-	      statement.setQueryTimeout(30);  // set timeout to 30 sec.
+        Scene scene = new Scene(root);
 
-	      statement.executeUpdate("create table person (id integer, name string) if not exists person");
+        stage.setTitle("WritableImage Demo");
+        stage.setResizable(false);
+        stage.setScene(scene);
+        stage.show();
+    }
 
-	      statement.executeUpdate("insert into person values(1, 'leo')");
-	      statement.executeUpdate("insert into person values(2, 'yui')");
-	      ResultSet rs = statement.executeQuery("select * from person");
-	      while(rs.next())
-	      {
-	        // read the result set
-	        System.out.println("name = " + rs.getString("name"));
-	        System.out.println("id = " + rs.getInt("id"));
-	      }
-	    }
-	    catch(SQLException e) {
-	      // if the error message is "out of memory", 
-	      // it probably means no database file is found
-	      System.err.println(e.getMessage());
-	    }
-	    finally
-	    {
-	      try
-	      {
-	        if(connection != null)
-	          connection.close();
-	      }
-	      catch(SQLException e)
-	      {
-	        // connection close failed.
-	        System.err.println(e);
-	      }
-	    }
-*/
-	}
+    private void initImage(AnchorPane root) {
+    	 // Directory path here
+    	  String path = "."; 
+    	 
+    	  String files;
+    	  File folder = new File(path);
+    	  File[] listOfFiles = folder.listFiles(); 
+    	 
+    	  for (int i = 0; i < listOfFiles.length; i++) 
+    	  {
+    	 
+    	   if (listOfFiles[i].isFile()) 
+    	   {
+    	   files = listOfFiles[i].getName();
+    	   System.out.println(files);
+    	      }
+    	  }
+
+    	  //src = new javafx.scene.image.Image(getClass().getResource("image.jpg").toExternalForm());
+
+    	  
+        src = new Image("file:image.jpg");
+        ImageView srcView = new ImageView(src);
+        root.getChildren().add(srcView);
+        AnchorPane.setTopAnchor(srcView, 0.0);
+        AnchorPane.setLeftAnchor(srcView, 0.0);
+
+        width = (int) src.getWidth();
+        height = (int) src.getHeight();
+        root.setPrefSize(width * 2.0, height + 50);
+
+        dest = new WritableImage(width, height);
+        ImageView destView = new ImageView(dest);
+        destView.setTranslateX(width);
+        root.getChildren().add(destView);
+        AnchorPane.setTopAnchor(destView, 0.0);
+        AnchorPane.setRightAnchor(destView, (double) width);
+
+        Slider slider = new Slider(0, 10, kernelSize);
+        slider.setPrefSize(width, 50);
+        slider.setShowTickLabels(true);
+        slider.setShowTickMarks(true);
+        slider.setSnapToTicks(true);
+        slider.setMajorTickUnit(1.0);
+        slider.setMinorTickCount(0);
+
+        slider.valueProperty().addListener(new InvalidationListener() {
+            @Override
+            public void invalidated(Observable o) {
+                DoubleProperty value = (DoubleProperty) o;
+                int intValue = (int) value.get();
+                if (intValue != kernelSize) {
+                    kernelSize = intValue;
+                    if (blurButton.isSelected()) {
+                        blur();
+                    } else if (blur2Button.isSelected()) {
+                        blur2();
+                    } else {
+                        mosaic();
+                    }
+                }
+            }
+        });
+
+        root.getChildren().add(slider);
+        AnchorPane.setBottomAnchor(slider, 0.0);
+        AnchorPane.setRightAnchor(slider, 10.0);
+
+        HBox hbox = new HBox(10);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setPrefWidth(width);
+        hbox.setPrefHeight(50);
+        root.getChildren().add(hbox);
+        AnchorPane.setBottomAnchor(hbox, 0.0);
+        AnchorPane.setLeftAnchor(hbox, 10.0);
+
+        ToggleGroup group = new ToggleGroup();
+        blurButton = new RadioButton("Blur");
+        blurButton.setToggleGroup(group);
+        blurButton.setSelected(true);
+        hbox.getChildren().add(blurButton);
+        blur2Button = new RadioButton("Blur2");
+        blur2Button.setToggleGroup(group);
+        hbox.getChildren().add(blur2Button);
+        mosaicButton = new RadioButton("Mosaic");
+        mosaicButton.setToggleGroup(group);
+        hbox.getChildren().add(mosaicButton);
+
+        blur();
+    }
+
+    private void blur() {
+        PixelReader reader = src.getPixelReader();
+        PixelWriter writer = dest.getPixelWriter();
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                double red = 0;
+                double green = 0;
+                double blue = 0;
+                double alpha = 0;
+                int count = 0;
+                for (int i = -kernelSize; i <= kernelSize; i++) {
+                    for (int j = -kernelSize; j <= kernelSize; j++) {
+                        if (x + i < 0 || x + i >= width 
+                           || y + j < 0 || y + j >= height) {
+                            continue;
+                        }
+                        Color color = reader.getColor(x + i, y + j);
+                        red += color.getRed();
+                        green += color.getGreen();
+                        blue += color.getBlue();
+                        alpha += color.getOpacity();
+                        count++;
+                    }
+                }
+                Color blurColor = Color.color(red / count, 
+                                              green / count, 
+                                              blue / count, 
+                                              alpha / count);
+                writer.setColor(x, y, blurColor);
+            }
+        }
+    }
+
+    private void blur2() {
+        PixelReader reader = src.getPixelReader();
+        PixelWriter writer = dest.getPixelWriter();
+        WritablePixelFormat<IntBuffer> format 
+            = WritablePixelFormat.getIntArgbInstance();
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                int centerX = x - kernelSize;
+                int centerY = y - kernelSize;
+                int kernelWidth = kernelSize * 2 + 1;
+                int kernelHeight = kernelSize * 2 + 1;
+
+                if (centerX < 0) {
+                    centerX = 0;
+                    kernelWidth = x + kernelSize;
+                } else if (x + kernelSize >= width) {
+                    kernelWidth = width - centerX;
+                }
+
+                if (centerY < 0) {
+                    centerY = 0;
+                    kernelHeight = y + kernelSize;
+                } else if (y + kernelSize >= height) {
+                    kernelHeight = height - centerY;
+                }
+
+                int[] buffer = new int[kernelWidth * kernelHeight];
+                reader.getPixels(centerX, centerY, 
+                                 kernelWidth, kernelHeight, 
+                                 format, buffer, 0, kernelWidth);
+
+                int alpha = 0;
+                int red = 0;
+                int green = 0;
+                int blue = 0;
+
+                for (int color : buffer) {
+                    alpha += (color >>> 24);
+                    red += (color >>> 16 & 0xFF);
+                    green += (color >>> 8 & 0xFF);
+                    blue += (color & 0xFF);
+                }
+                alpha = alpha / kernelWidth / kernelHeight;
+                red = red / kernelWidth / kernelHeight;
+                green = green / kernelWidth / kernelHeight;
+                blue = blue / kernelWidth / kernelHeight;
+
+                int blurColor = (alpha << 24) 
+                              + (red << 16) 
+                              + (green << 8) 
+                              + blue;
+                writer.setArgb(x, y, blurColor);
+            }
+        }
+    }
+
+    private void mosaic() {
+        PixelReader reader = src.getPixelReader();
+        PixelWriter writer = dest.getPixelWriter();
+        WritablePixelFormat<IntBuffer> format 
+            = WritablePixelFormat.getIntArgbInstance();
+
+        for (int x = kernelSize; x < width - kernelSize * 2; x += kernelSize * 2 + 1) {
+            for (int y = kernelSize; y < height - kernelSize * 2; y += kernelSize * 2 + 1) {
+                int kernelWidth = kernelSize * 2 + 1;
+                int kernelHeight = kernelSize * 2 + 1;
+
+                int[] buffer = new int[kernelWidth * kernelHeight];
+                reader.getPixels(x, y, 
+                                 kernelWidth, kernelHeight, 
+                                 format, buffer, 0, kernelWidth);
+
+                int alpha = 0;
+                int red = 0;
+                int green = 0;
+                int blue = 0;
+
+                for (int color : buffer) {
+                    alpha += (color >>> 24);
+                    red += (color >>> 16 & 0xFF);
+                    green += (color >>> 8 & 0xFF);
+                    blue += (color & 0xFF);
+                }
+                alpha = alpha / kernelWidth / kernelHeight;
+                red = red / kernelWidth / kernelHeight;
+                green = green / kernelWidth / kernelHeight;
+                blue = blue / kernelWidth / kernelHeight;
+
+                int blurColor = (alpha << 24) 
+                              + (red << 16) 
+                              + (green << 8) 
+                              + blue;
+                Arrays.fill(buffer, blurColor);
+                writer.setPixels(x, y, 
+                                 kernelWidth, kernelHeight, 
+                                 format, buffer, 0, kernelWidth);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
 }

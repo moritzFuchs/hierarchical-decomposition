@@ -15,7 +15,7 @@ public class NoDeletionBreakCondition implements KRVBreakCondition {
 	private Double bound;
 	
 	public NoDeletionBreakCondition(Integer n) {
-		bound = 15* Math.log(n) / Math.log(2);
+		bound = 5* Math.log(n) / Math.log(2);
 	}
 	
 	@Override

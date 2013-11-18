@@ -12,7 +12,6 @@ public class TestDrawable extends Drawable implements Runnable{
 		super(name, m, buttonRow);
 	}
 
-	@Override
 	public synchronized void draw() {
 		Integer x = 0;
 		Integer y = 0;

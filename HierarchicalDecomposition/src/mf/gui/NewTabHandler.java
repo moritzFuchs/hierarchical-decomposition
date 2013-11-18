@@ -7,6 +7,7 @@ import java.util.List;
 import name.antonsmirnov.javafx.dialog.Dialog;
 import mf.gui.decomposition.NoDecomposition;
 import mf.gui.decomposition.rst.RSTDecompositionDrawableFactory;
+import mf.gui.multisegmentation.MultiSegmentationDrawableFactory;
 import mf.gui.segmentation.InteractiveSegmentationDrawableFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -90,6 +91,7 @@ public class NewTabHandler implements EventHandler<Event> {
 		    DrawableGenerator gen = new DrawableGenerator(dir, items, buttonRow, drawable);
 		    gen.addFactory(new RSTDecompositionDrawableFactory());
 		    gen.addFactory(new InteractiveSegmentationDrawableFactory());
+		    gen.addFactory(new MultiSegmentationDrawableFactory());
 		    gen.generate();
 
 			list.setItems(items);

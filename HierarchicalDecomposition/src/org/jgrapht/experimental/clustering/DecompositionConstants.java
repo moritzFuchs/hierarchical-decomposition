@@ -4,7 +4,7 @@ import org.jgrapht.experimental.clustering.krv.KRVPotential;
 import org.jgrapht.experimental.clustering.krv.MatchingStep;
 import org.jgrapht.experimental.clustering.krv.ModifiedEfficientKRVProcedure;
 import org.jgrapht.experimental.clustering.krv.PracticalVertexDivider;
-import org.jgrapht.experimental.clustering.old.TheoreticalVerticeDivider;
+import org.jgrapht.experimental.clustering.old.TheoreticalVertexDivider;
 
 /**
  * Parameters for the decomposition algorithm.
@@ -55,7 +55,7 @@ public class DecompositionConstants {
 	public static final Double KRV_RESTART_BOUND = 7.0/8.0;
 	
 	/**
-	 * Used by {@link PracticalVertexDivider} and {@link TheoreticalVerticeDivider}. Maximal fraction of the edge set that can become source edges.
+	 * Used by {@link PracticalVertexDivider} and {@link TheoreticalVertexDivider}. Maximal fraction of the edge set that can become source edges.
 	 */
 	public static final Double MAX_SOURCE_EDGES = 1.0/8.0;
 	
@@ -67,7 +67,7 @@ public class DecompositionConstants {
 	/**
 	 * Number of applications of a matching step.
 	 */
-	public static final Integer MATCHING_APPLICATIONS = 15;
+	public static final Integer MATCHING_APPLICATIONS = 8;
 	
 	/**
 	 * Statistics are gathered if this constant is set to true

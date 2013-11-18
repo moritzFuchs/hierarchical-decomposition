@@ -20,7 +20,6 @@ public class NoDecomposition extends Drawable {
 	/**
 	 * Clears the canvas.
 	 */
-	@Override
 	public void draw() {
 		m.clear();
 	}

@@ -6,6 +6,7 @@ import java.util.Set;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
+import javafx.scene.control.Control;
 import javafx.scene.layout.HBox;
 
 public class ButtonRow extends HBox{
@@ -18,10 +19,10 @@ public class ButtonRow extends HBox{
 	/**
 	 * Buttons that have been added manually.
 	 */
-	private Set<ButtonBase> addedButtons;
+	private Set<Control> addedButtons;
 	
 	public ButtonRow(Iterable<ButtonBase> defaultButtons){
-        addedButtons = new HashSet<ButtonBase>();
+        addedButtons = new HashSet<Control>();
         this.defaultButtons = defaultButtons;
         
 		setPadding(new Insets(15, 12, 15, 12));
@@ -38,7 +39,7 @@ public class ButtonRow extends HBox{
 	 * 
 	 * @param button : The added button
 	 */
-	public void addButton(ButtonBase button) {
+	public void addButton(Control button) {
 		addedButtons.add(button);
 		getChildren().add(button);
 	}
