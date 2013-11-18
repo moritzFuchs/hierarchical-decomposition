@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import javafx.event.EventHandler;
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelWriter;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -16,6 +17,7 @@ public interface Markable {
 	public void markPixel(Integer x , Integer y, Color c);
 	public void markPixelComplementary(Integer x , Integer y);
 	public Color getColor(Integer x , Integer y);
+	public PixelWriter getPixelWriter();
 	
 	//TODO: Get rid of these methods OR fix them in implementation
 	//Loading methods

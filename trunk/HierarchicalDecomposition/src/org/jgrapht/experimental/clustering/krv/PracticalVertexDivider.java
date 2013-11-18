@@ -45,6 +45,9 @@ public class PracticalVertexDivider<V extends Comparable<V> , E> {
 		 */
 		private DoubleMatrix1D projection;
 
+		/**
+		 * Vector potential computation object
+		 */
 		private VectorPotential<V, E> pot;
 		
 		/**

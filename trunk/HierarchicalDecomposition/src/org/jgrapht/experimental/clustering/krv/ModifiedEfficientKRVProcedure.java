@@ -19,9 +19,11 @@ import org.jgrapht.experimental.clustering.Util;
 import org.jgrapht.experimental.clustering.krv.breakCondition.KRVBreakCondition;
 import org.jgrapht.experimental.clustering.krv.breakCondition.KRVBreakConditionAND;
 import org.jgrapht.experimental.clustering.krv.breakCondition.KRVBreakConditionComposition;
+import org.jgrapht.experimental.clustering.krv.breakCondition.KRVBreakConditionOR;
 import org.jgrapht.experimental.clustering.krv.breakCondition.MinimalProgressBreakCondition;
 import org.jgrapht.experimental.clustering.krv.breakCondition.NoDeletionBreakCondition;
 import org.jgrapht.experimental.clustering.krv.breakCondition.PracticalPotentialBreakCondition;
+import org.jgrapht.experimental.clustering.krv.breakCondition.TheoreticalPotentialBreakCondition;
 import org.jgrapht.experimental.clustering.stats.KRVStats;
 import org.jgrapht.experimental.clustering.util.MatchedPair;
 import org.jgrapht.experimental.util.LoggerFactory;
@@ -201,12 +203,12 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			
 			//Compute maxFlow
 			Map <DefaultWeightedEdge , Double> maxFlow = flow_problem.getMaxFlow();
-			
-			timeInMaxFlow = System.currentTimeMillis() - startTimeMaxFlow;
-			
+
 			//Rescale flow
 			FlowRescaler<V,E> rescaler = new FlowRescaler<V, E>();
 			Set<FlowPath<SplitVertex<V, E>>> paths = rescaler.rescaleFlow(gPrime, maxFlow, flow_problem);
+			
+			timeInMaxFlow = System.currentTimeMillis() - startTimeMaxFlow;
 			
 			if (DecompositionConstants.DEBUG) {
 				for (FlowPath<SplitVertex<V, E>> path : flow_problem.getPaths()) {
@@ -260,10 +262,14 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 	 * @return KRVBreakCondition : A new {@link KRVBreakCondition}
 	 */
 	private KRVBreakCondition getBreakCondition() {
-		KRVBreakConditionComposition cond = new KRVBreakConditionAND();
+		
+		//Production code:
+		KRVBreakConditionComposition cond = new KRVBreakConditionOR();
 		cond.addBreakCondition(new PracticalPotentialBreakCondition(g.vertexSet().size()));
-		cond.addBreakCondition(new NoDeletionBreakCondition(g.vertexSet().size()));
-//		cond.addBreakCondition(new MinimalProgressBreakCondition(g.vertexSet().size()));
+		
+		//Do not remove this condition until the bug in the overall decomposition is resolved
+		cond.addBreakCondition(new MinimalProgressBreakCondition(g.vertexSet().size()));
+		
 		return cond;
 	}
 	
@@ -318,7 +324,7 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		LOGGER.info("Potential for matching: " + matchingPotential);
 		LOGGER.info("Potential for deletion: " + deletionPotential + " No Progress?: " + deletionStep.noProgress() + " Restart:" + deletionStep.restartNeeded());
 		LOGGER.info("Bound : " + bound);
-		
+
 		System.out.println("Current summed up edge weight: " + sum);
 		System.out.println("Mean of edge weights: " + sum / A.size());
 		System.out.println("Current potential: " + current_potential);

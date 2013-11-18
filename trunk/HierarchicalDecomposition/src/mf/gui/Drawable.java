@@ -41,10 +41,7 @@ public abstract class Drawable implements Comparable<Drawable>, Runnable, EventH
 		this.buttonRow = buttonRow;
 	}
 	
-	/**
-	 * Draws something on the {@link Markable} {@link Drawable.m}
-	 */
-	public abstract void draw();
+	
 	
 	/**
 	 * Returns the label of this item
