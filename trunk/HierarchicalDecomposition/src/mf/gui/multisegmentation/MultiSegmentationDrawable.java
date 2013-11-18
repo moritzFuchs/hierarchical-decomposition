@@ -40,7 +40,7 @@ import mf.superpixel.SuperpixelDecomposition;
  * are separate.
  * 
  * @author moritzfuchs
- * @date 30.10.2013
+ * @date 18.11.2013
  */
 public class MultiSegmentationDrawable extends Drawable{
 
@@ -59,18 +59,31 @@ public class MultiSegmentationDrawable extends Drawable{
 	 */
 	private Map<Color, Set<Superpixel>> marker;
 	
+	/**
+	 * Marker color of superpixels
+	 */
 	private Map<Superpixel , Color> superpixelColors;
 	
+	/**
+	 * 'Done counter': counts number of children that have finished their DP computation 
+	 */
 	private Map<TreeVertex<Integer> , Integer> done;
 	
+	/**
+	 * Segmentation of the image; Image is segmented by color.
+	 */
 	private Map<Color , Set<Superpixel>> coloring;
 	
-	private Boolean showAreas = true;
+	/**
+	 * Flag that indicates whether segmentation should be highlighted or not
+	 */
+	private Boolean highlight = true;
 
 	/**
 	 * Current marker color
 	 */
 	private Color markerColor = new Color(1.0,0.0,0.0,1.0);
+	
 	
 	public MultiSegmentationDrawable(String num_str, Markable m,
 			ButtonRow buttonRow, String path, SuperpixelDecomposition dec) {
@@ -168,7 +181,7 @@ public class MultiSegmentationDrawable extends Drawable{
 		
 		for (Color c : marker.keySet()) {
 			Set<Superpixel> superpixels = coloring.get(c);
-			if (coloring == null) {
+			if (superpixels == null) {
 				continue;
 			}
 			for (Superpixel sp : superpixels) {
@@ -373,7 +386,7 @@ public class MultiSegmentationDrawable extends Drawable{
 		
 		Button done = new Button("Segment!");
 		Button reset = new Button("Reset");
-		Button highlight = new Button("Hightlight ON");
+		Button highlight = new Button("Toggle Hightlight");
 		
 		done.setOnAction(new DoneButtonHandler(this));
 		reset.setOnAction(new ResetButtonHandler(this));
@@ -386,10 +399,19 @@ public class MultiSegmentationDrawable extends Drawable{
 	}
 	
 	/**
-	 * Turns hightlight of segmentation on/off
+	 * Turns hightlight of segmentation on
 	 */
-	public void toggleHighlight() {
-		showAreas = !showAreas;
+	public void setHighlight(Boolean b) {
+		highlight = b;
+	}
+	
+	/**
+	 * True if hightlight is turned on, false otherwise
+	 * 
+	 * @return True if highlight is turned on; false otherwise
+	 */
+	public Boolean isHighlighted() {
+		return highlight;
 	}
 	
 	/**
@@ -495,6 +517,9 @@ public class MultiSegmentationDrawable extends Drawable{
 			Double x =  mouse_event.getX();
 			Double y = mouse_event.getY();
 			if (mouse_event.getButton().equals(MouseButton.PRIMARY)) {
+				setHighlight(false);
+				if (coloring != null)
+					displaySegmentation();
 				addMarker(new Pixel(x.intValue(),y.intValue()));		
 			}
 			if (mouse_event.getButton().equals(MouseButton.SECONDARY)) {
@@ -507,7 +532,7 @@ public class MultiSegmentationDrawable extends Drawable{
 				}
 			}
 			
-			if (showAreas && coloring != null ) {
+			if (highlight && coloring != null ) {
 				MouseEvent mouse_event = (MouseEvent) event;
 				Double x =  mouse_event.getX();
 				Double y = mouse_event.getY();
@@ -544,13 +569,12 @@ public class MultiSegmentationDrawable extends Drawable{
                 + ((int)(color.getGreen()*255) << 8) 
                 + ((int)(color.getBlue()*255));
 		
-		int noColor = (255 << 24) 
+		int noColor = (0 << 24) 
                 + (0 << 16) 
                 + (0 << 8) 
                 + 0;
 		
 		Arrays.fill(buffer , noColor);
-		
 		
 		for(Superpixel sp : superpixelColors.keySet()) {
 			markSuperpixel(sp, superpixelColors.get(sp));
@@ -562,22 +586,11 @@ public class MultiSegmentationDrawable extends Drawable{
 				continue;
 			for (Superpixel sp : superpixels) {
 				if (superpixels == area) {
-					
 					for (Pixel p : sp.getPixel()) {
 						buffer[p.getY() * m.getImageWidth() + p.getX()] = fillColor;
 						//markPixel(p,c);
 					}
-					
-				} else {
-					/*for (Superpixel neighbor : sp.getNeighbors()) {
-						if (!superpixels.contains(neighbor)) {
-							for (Pixel p : sp.getBoundaryPixels(neighbor)) {
-								buffer[p.getY() * m.getImageWidth() + p.getX()] = fillColor;
-								//markPixel(p, c);
-							}
-						}
-					}*/
-				}
+				} 
 			}
 		}
 		

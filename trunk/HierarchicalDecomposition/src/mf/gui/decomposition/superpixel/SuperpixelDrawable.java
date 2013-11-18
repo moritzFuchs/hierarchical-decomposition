@@ -1,11 +1,16 @@
 package mf.gui.decomposition.superpixel;
 
+import java.nio.IntBuffer;
+import java.util.Arrays;
+import java.util.Set;
+
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.image.WritablePixelFormat;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -49,12 +54,40 @@ public class SuperpixelDrawable extends Drawable implements EventHandler<Event>{
 	 */
 	public void draw() {
 		
-		m.startLoading();
 		m.clear();
+		
+		PixelWriter writer = m.getPixelWriter();
+		WritablePixelFormat<IntBuffer> format 
+        = WritablePixelFormat.getIntArgbInstance();
+		
+		int buffer[] = new int[m.getImageWidth() * m.getImageHeight()];
+		
+		Double r = 1.0;
+		Double g = 0.0;
+		Double b = 0.0;
+		
+		int fillColor = (190 << 24) 
+                + ((int)(r*255) << 16) 
+                + ((int)(g*255) << 8) 
+                + ((int)(b*255));
+		
+		int noColor = (0 << 24) 
+                + (0 << 16) 
+                + (0 << 8) 
+                + 0;
+		
+		Arrays.fill(buffer , noColor);
 		for (Superpixel sp : dec.getSuperpixelMap().values()) {
-			drawSuperpixel(sp);
+			for (Pixel p : sp.getBoundaryPixels()) {
+				buffer[p.getY() * m.getImageWidth() + p.getX()] = fillColor;
+			}
 		}
-		m.stopLoading();
+
+		writer.setPixels(0, 0, 
+                m.getImageWidth(), m.getImageHeight(), 
+                format, buffer, 0, m.getImageWidth());
+		
+		
 		
 	}
 

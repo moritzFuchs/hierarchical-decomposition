@@ -16,14 +16,11 @@ public class HighlightButtonHandler implements EventHandler<ActionEvent> {
 	
 	@Override
 	public void handle(ActionEvent arg0) {
-		seg.toggleHighlight();
-		
-		if (b.getText().equals("Hightlight ON")) {
-			b.setText("Hightlight OFF");
-		} else {
-			b.setText("Hightlight ON");
-		}
-
+		seg.setHighlight(!seg.isHighlighted());
+//		if (seg.isHighlighted()) {
+//			b.setText("Hightlight OFF");
+//		} else {
+//			b.setText("Hightlight ON");
+//		}
 	}
-
 }
