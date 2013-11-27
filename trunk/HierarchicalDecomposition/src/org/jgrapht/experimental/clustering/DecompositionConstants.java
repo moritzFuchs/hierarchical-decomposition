@@ -24,6 +24,11 @@ public class DecompositionConstants {
 	public static final Boolean DEBUG = false;
 	
 	/**
+	 * Turns 'light debugging mode' on/off. In contrast to DEBUG is does not affect the runtime too much.
+	 */
+	public static final Boolean LIGHT_DEBUG = true;
+	
+	/**
 	 * Mainly for debugging: error that we are allowed to make (due to Double precision)
 	 */
 	public static final Double EPSILON = 0.000001;
