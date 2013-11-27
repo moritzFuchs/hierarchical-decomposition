@@ -19,12 +19,6 @@ public interface Markable {
 	public Color getColor(Integer x , Integer y);
 	public PixelWriter getPixelWriter();
 	
-	//TODO: Get rid of these methods OR fix them in implementation
-	//Loading methods
-	public Boolean isLoading();
-	public void startLoading();
-	public void stopLoading();
-	
 	//Image methods
 	public Image getImage();
 	public int getImageWidth();

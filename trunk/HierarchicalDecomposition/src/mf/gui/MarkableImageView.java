@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStreamImpl;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
@@ -53,11 +52,7 @@ public class MarkableImageView extends StackPane implements Markable {
 	 */
 	private Canvas loader;
 	
-	/**
-	 * URL of the image
-	 */
-	private String url;
-	
+
 	/**
 	 * The current {@link MouseEvent}-Handler
 	 */
@@ -83,8 +78,6 @@ public class MarkableImageView extends StackPane implements Markable {
 	public MarkableImageView(String url) {
 		super();
 
-		this.url = url;
-		
 		img = new Image("file:" + url);
 		img_view = new ImageView(img);
 		
@@ -182,8 +175,9 @@ public class MarkableImageView extends StackPane implements Markable {
 	}
 	
 	/**
-	 * Returns a {@link PixelWriter}
-	 * @return
+	 * Returns a {@link PixelWriter}. Use the {@link PixelWriter} and a buffer for high performance. 
+	 * 
+	 * @return {@link PixelWriter}
 	 */
 	public PixelWriter getPixelWriter() {
 		return canvas_writer;
