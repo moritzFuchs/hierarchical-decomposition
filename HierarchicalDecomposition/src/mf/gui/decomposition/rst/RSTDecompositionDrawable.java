@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
@@ -114,7 +113,6 @@ public class RSTDecompositionDrawable extends Drawable{
 	 * Draws the current state of the segmentation given by {@link RSTDecompositionDrawable.current_vertex_tree}.
 	 */
 	private void  drawCurrentSegmentation() {
-		m.startLoading();
 		m.clear();
 		for (Superpixel sp : current_tree_vertex.keySet()) {
 			for (Superpixel neighbor : sp.getNeighbors()) {
@@ -125,7 +123,6 @@ public class RSTDecompositionDrawable extends Drawable{
 				}
 			}
 		}
-		m.stopLoading();
 	}
 	
 	/**

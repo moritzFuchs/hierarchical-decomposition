@@ -13,7 +13,6 @@ import org.jgrapht.experimental.clustering.SplitGraph;
 import org.jgrapht.experimental.clustering.SplitVertex;
 import org.jgrapht.experimental.clustering.UndirectedFlowProblem;
 import org.jgrapht.experimental.clustering.krv.DeletionStep;
-import org.jgrapht.experimental.clustering.old.DeletionStep;
 import org.jgrapht.experimental.clustering.old.DummyFlow;
 import org.jgrapht.experimental.clustering.old.FlowDecomposer;
 import org.jgrapht.graph.DefaultWeightedEdge;

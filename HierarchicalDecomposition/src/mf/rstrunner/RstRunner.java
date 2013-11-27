@@ -41,7 +41,7 @@ public class RstRunner {
 		
 		System.out.println(tree.getGraph().vertexSet().size());
 		System.out.println(tree.getGraph().edgeSet().size());
-				
+		/*		
 		try {
 			FileOutputStream fileOut =
 			new FileOutputStream(base_path + "/tree2000.rst");
@@ -55,6 +55,6 @@ public class RstRunner {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+*/
 	}	
 }
