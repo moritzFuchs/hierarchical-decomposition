@@ -325,12 +325,14 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		LOGGER.info("Potential for deletion: " + deletionPotential + " No Progress?: " + deletionStep.noProgress() + " Restart:" + deletionStep.restartNeeded());
 		LOGGER.info("Bound : " + bound);
 
-		System.out.println("Current summed up edge weight: " + sum);
-		System.out.println("Mean of edge weights: " + sum / A.size());
-		System.out.println("Current potential: " + current_potential);
-		System.out.println("Potential for matching: " + matchingPotential);
-		System.out.println("Potential for deletion: " + deletionPotential + " No Progress?: " + deletionStep.noProgress() + " Restart:" + deletionStep.restartNeeded());
-		System.out.println("Bound : " + bound);
+		if (DecompositionConstants.LIGHT_DEBUG) {
+			System.out.println("Current summed up edge weight: " + sum);
+			System.out.println("Mean of edge weights: " + sum / A.size());
+			System.out.println("Current potential: " + current_potential);
+			System.out.println("Potential for matching: " + matchingPotential);
+			System.out.println("Potential for deletion: " + deletionPotential + " No Progress?: " + deletionStep.noProgress() + " Restart:" + deletionStep.restartNeeded());
+			System.out.println("Bound : " + bound);
+		}
 		/************************************/
 		
 		Double potential;

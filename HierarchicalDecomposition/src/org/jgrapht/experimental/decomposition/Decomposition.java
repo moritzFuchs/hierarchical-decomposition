@@ -52,16 +52,20 @@ public class Decomposition<V extends Comparable<V>, E> extends Observable implem
 		addTask(task);
 		 
 		while (inProcess > 0) {
-			System.out.println(" In process " + inProcess);
+			if (DecompositionConstants.LIGHT_DEBUG) {
+				System.out.println(" In process " + inProcess);
+			}
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
+		if (DecompositionConstants.LIGHT_DEBUG) {
+			System.out.println("Done.");
+		}
 		
-		System.out.println("Done");
-	
+		
 		executor.shutdown();
 		//wait for the executor to shut down
 		while (!executor.isShutdown()) {
