@@ -1,5 +1,6 @@
 package org.jgrapht.experimental.clustering;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.jgrapht.Graph;
@@ -27,19 +28,24 @@ public class BruteForceBisection<V,E> {
 	/**
 	 * Computes the optimal bisection and returns one side of the bisection (S or S_bar)
 	 * 
-	 * @return Set<V> cluster
+	 * @return Set<Set<V>> clusters (S and S_bar)
 	 */
-	public Set<V> computeBisection() {
+	public Set<Set<V>> computeBisection(Set<V> subgraph) {
 		Double min = Double.POSITIVE_INFINITY;
 		Set<V> min_cluster = null;
-		for (Set<V> cluster : Sets.powerSet(g.vertexSet())) {
-			if (cutSize(cluster) < min && cluster.size() > 0 && cluster.size() < g.vertexSet().size()) {
-				min = cutSize(cluster);
+		for (Set<V> cluster : Sets.powerSet(subgraph)) {
+			if (cutSize(cluster, subgraph) < min && cluster.size() > 0 && cluster.size() < subgraph.size()) {
+				min = cutSize(cluster, subgraph);
 				min_cluster = cluster;
 			} 
 		}
-		
-		return min_cluster;
+		Set<Set<V>> clusters = new HashSet<Set<V>>();
+		Set<V> cluster_bar = new HashSet<V>(subgraph);
+		cluster_bar.removeAll(min_cluster);
+		clusters.add(min_cluster);
+		clusters.add(cluster_bar);
+
+		return clusters;
 	}
 	
 	/**
@@ -48,7 +54,7 @@ public class BruteForceBisection<V,E> {
 	 * @param cluster : A cluster in the graph {@link g}
 	 * @return : The cut size of the given cluster in {@link g}
 	 */
-	private Double cutSize(Set<V> cluster) {
+	private Double cutSize(Set<V> cluster, Set<V> subgraph) {
 		
 		Double size = 0.0;
 		
@@ -60,7 +66,7 @@ public class BruteForceBisection<V,E> {
 				} else {
 					target = g.getEdgeSource(e);
 				}
-				if (!cluster.contains(target)) {
+				if (!cluster.contains(target) && subgraph.contains(target)) {
 					size += g.getEdgeWeight(e);
 				}
 			}
