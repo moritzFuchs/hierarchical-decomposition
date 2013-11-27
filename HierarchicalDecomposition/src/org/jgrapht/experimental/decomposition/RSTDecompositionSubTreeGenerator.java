@@ -198,7 +198,7 @@ public class RSTDecompositionSubTreeGenerator<V extends Comparable<V>,E> extends
 				tree.addEdge(parent, new_vertex , Double.POSITIVE_INFINITY);
 				
 				//Compute a brute force decomposition if the clusters get too small
-				if (cluster.size() > 2 && cluster.size() <= 8 && DecompositionConstants.BRUTE_FORCE_BISECTION) {
+				if (cluster.size() > 2 && cluster.size() <= 10 && DecompositionConstants.BRUTE_FORCE_BISECTION) {
 					handleBruteForceCase(task.getGraph(), cluster, new_vertex);
 				}
 				

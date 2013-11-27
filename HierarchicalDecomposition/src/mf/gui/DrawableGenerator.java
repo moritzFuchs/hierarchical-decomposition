@@ -89,7 +89,7 @@ public class DrawableGenerator {
 	    		
 	    		SuperpixelImport imp = new SuperpixelImport(file.getPath() , m.getImage());
 	    		SuperpixelDecomposition dec = new SuperpixelDecomposition(imp.getSuperpixels(),imp.getPixelMap());
-	    		SuperpixelDrawable super_drawable = new SuperpixelDrawable(dec, "Superpixel " + num_str, m, buttonRow);
+	    		SuperpixelDrawable super_drawable = new SuperpixelDrawable(dec, "Superpixel (" + num_str + ")", m, buttonRow);
 	    		
 	    		items.add(super_drawable);
 	    		superpixel.put(Integer.valueOf(num_str), dec);

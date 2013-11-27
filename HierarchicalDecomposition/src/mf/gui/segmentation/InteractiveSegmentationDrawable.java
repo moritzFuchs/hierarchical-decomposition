@@ -52,7 +52,7 @@ public class InteractiveSegmentationDrawable extends Drawable{
 	
 	public InteractiveSegmentationDrawable(String num_str, Markable m,
 			ButtonRow buttonRow, String path, SuperpixelDecomposition dec) {
-		super("Segmentation " + num_str, m, buttonRow);
+		super("Single Color Segmentation (" + num_str + ")", m, buttonRow);
 		
 		try {
 			FileInputStream fileIn;
