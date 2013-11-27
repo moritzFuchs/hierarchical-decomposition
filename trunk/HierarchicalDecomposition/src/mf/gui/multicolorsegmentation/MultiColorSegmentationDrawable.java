@@ -92,7 +92,7 @@ public class MultiColorSegmentationDrawable extends Drawable{
 	
 	public MultiColorSegmentationDrawable(String num_str, Markable m,
 			ButtonRow buttonRow, String path, SuperpixelDecomposition dec) {
-		super("Multi-Segmentation " + num_str, m, buttonRow);
+		super("Multi Color Segmentation (" + num_str + ")", m, buttonRow);
 		
 		try {
 			FileInputStream fileIn;

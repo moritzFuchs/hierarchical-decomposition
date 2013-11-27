@@ -313,21 +313,12 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 		Double deletionPotential = krvpot.getPotentialAfterStep(deletionStep.getA() , deletionStep);
 		
 		/****************** INFO ***********/
-		Double sum = 0.0;
-		for (E e : A) {
-			sum += g.getEdgeWeight(e);
-		}
-		
-		LOGGER.fine("Current summed up edge weight: " + sum);
-		LOGGER.fine("Mean of edge weights: " + sum / A.size());
 		LOGGER.info("Current potential: " + current_potential);
 		LOGGER.info("Potential for matching: " + matchingPotential);
 		LOGGER.info("Potential for deletion: " + deletionPotential + " No Progress?: " + deletionStep.noProgress() + " Restart:" + deletionStep.restartNeeded());
 		LOGGER.info("Bound : " + bound);
 
 		if (DecompositionConstants.LIGHT_DEBUG) {
-			System.out.println("Current summed up edge weight: " + sum);
-			System.out.println("Mean of edge weights: " + sum / A.size());
 			System.out.println("Current potential: " + current_potential);
 			System.out.println("Potential for matching: " + matchingPotential);
 			System.out.println("Potential for deletion: " + deletionPotential + " No Progress?: " + deletionStep.noProgress() + " Restart:" + deletionStep.restartNeeded());
@@ -341,7 +332,6 @@ public class ModifiedEfficientKRVProcedure<V extends Comparable<V>,E> {
 			potential = matchingPotential;
 			
 			krvpot.permanentlyAddKRVStep(matchingStep);
-			
 			partitionMatrices.add(matchingStep);
 			
 			noDeletionStep++;
