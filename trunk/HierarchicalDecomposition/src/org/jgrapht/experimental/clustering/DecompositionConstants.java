@@ -78,4 +78,10 @@ public class DecompositionConstants {
 	 * Number of iterations the 'No Progress' heuristic looks at
 	 */
 	public static final Integer NO_PROGRESS_BREAK_CONDITION_ITERATIONS = 50;
+	
+	/**
+	 * Indicates how small clusters (<= size 8) are handled. If true a brute force bisection is computed, if false the usual procedure is applied 
+	 * (there might be some problems if the break condition is not chosen right - you will need the 'NoProgress' break condition in order to make this work)
+	 */
+	public static final Boolean BRUTE_FORCE_BISECTION = true;
 }

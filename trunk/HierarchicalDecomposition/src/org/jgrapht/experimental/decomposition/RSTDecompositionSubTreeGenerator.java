@@ -11,11 +11,14 @@ import org.jgrapht.Graph;
 import org.jgrapht.experimental.clustering.Connectivity;
 import org.jgrapht.experimental.clustering.krv.PartitionA;
 import org.jgrapht.experimental.clustering.krv.PartitionATask;
+import org.jgrapht.experimental.clustering.BruteForceBisection;
+import org.jgrapht.experimental.clustering.DecompositionConstants;
 import org.jgrapht.experimental.clustering.PartitionB;
 import org.jgrapht.experimental.clustering.PartitionBTask;
 import org.jgrapht.experimental.clustering.SubGraphGenerator;
 import org.jgrapht.experimental.clustering.TreeVertex;
 import org.jgrapht.experimental.util.LoggerFactory;
+import org.jgrapht.graph.DefaultWeightedEdge;
 
 /**
  * Takes a {@link DecompositionTask} and runs the decomposition algorithm in {@link PartitionA} and {@link PartitionB}. 
@@ -194,7 +197,11 @@ public class RSTDecompositionSubTreeGenerator<V extends Comparable<V>,E> extends
 				TreeVertex<V> new_vertex = tree.addVertex();
 				tree.addEdge(parent, new_vertex , Double.POSITIVE_INFINITY);
 				
-				//FIXME: Add special case for cluster.size() < 8 => brute force decomposition!
+				//Compute a brute force decomposition if the clusters get too small
+				if (cluster.size() > 2 && cluster.size() <= 8 && DecompositionConstants.BRUTE_FORCE_BISECTION) {
+					handleBruteForceCase(task.getGraph(), cluster, new_vertex);
+				}
+				
 				if (cluster.size() > 2) {
 					DecompositionTask<V,E> new_task = new DecompositionTask<V,E>(task.getGraph() , SubGraphGenerator.<V,E>generateSubGraph(task.getGraph(), cluster) , new_vertex);
 					decomposition.addTask(new_task);
@@ -205,6 +212,28 @@ public class RSTDecompositionSubTreeGenerator<V extends Comparable<V>,E> extends
 		}
 	}
 
+	/**
+	 * Computes a brute force decomposition for small clusters.
+	 * 
+	 * @param g : The current graph from the task
+	 * @param subgraph : The current subgraph we bisect
+	 * @param parent : The current parent in the {@link DecompositionTree}
+	 */
+	private void handleBruteForceCase(Graph<V,E> g, Set<V> subgraph, TreeVertex<V> parent) {
+		BruteForceBisection<V,E> bisec = new BruteForceBisection<V, E>(task.getGraph());
+		Set<Set<V>> new_clusters = bisec.computeBisection(subgraph);
+		for (Set<V> cluster : new_clusters) {
+			
+			if (cluster.size() > 2) {
+				TreeVertex<V> new_vertex = tree.addVertex();
+				tree.addEdge(parent, new_vertex, Double.POSITIVE_INFINITY);
+				handleBruteForceCase(g,cluster,new_vertex);
+			} else {
+				specialCases(cluster , parent);
+			}
+		}
+	}
+	
 	/**
 	 * Deals with special cases where the graph is small enough to partition it manually:
 	 *  * If |G| = 1, then there is nothing to partition and we just append the single vertex as leaf to the tree (edge weight = out degree of the vertex)

@@ -2,6 +2,7 @@ package org.jgrapht.experimental.clustering.test;
 
 import static org.junit.Assert.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.jgrapht.experimental.clustering.BruteForceBisection;
@@ -46,12 +47,23 @@ public class BruteForceBisectionTest {
 		
 		
 		BruteForceBisection<Integer, DefaultWeightedEdge> bisec = new BruteForceBisection<Integer , DefaultWeightedEdge>(g);
-		Set<Integer> cluster = bisec.computeBisection();
+		Set<Integer> subgraph = new HashSet<Integer>();
+		subgraph.add(1);
+		subgraph.add(2);
+		subgraph.add(3);
+		subgraph.add(4);
+		subgraph.add(5);
+		subgraph.add(6);
+		subgraph.add(7);
+		subgraph.add(8);
 		
-		System.out.println(cluster);
-		System.out.println(cluster.size());
+		Set<Set<Integer>> cluster = bisec.computeBisection(subgraph);
 		
-		assertTrue(cluster.size() == 4);
+		for (Set<Integer> c : cluster) {
+			assertTrue(c.size() == 4);
+		}
+		
+		
 	}
 	
 	@Test
@@ -67,6 +79,8 @@ public class BruteForceBisectionTest {
 		g.addVertex(6);
 		g.addVertex(7);
 		g.addVertex(8);
+		g.addVertex(9);
+		g.addVertex(10);
 		
 		DefaultWeightedEdge e;
 		
@@ -91,13 +105,25 @@ public class BruteForceBisectionTest {
 		e = g.addEdge(7, 8);
 		g.setEdgeWeight(e, 9.0);
 		
+		e = g.addEdge(8, 9);
+		e = g.addEdge(8, 10);
+		e = g.addEdge(1, 9);
 		
 		BruteForceBisection<Integer, DefaultWeightedEdge> bisec = new BruteForceBisection<Integer, DefaultWeightedEdge>(g);
-		Set<Integer> cluster = bisec.computeBisection();
+		Set<Integer> subgraph = new HashSet<Integer>();
+		subgraph.add(1);
+		subgraph.add(2);
+		subgraph.add(3);
+		subgraph.add(4);
+		subgraph.add(5);
+		subgraph.add(6);
+		subgraph.add(7);
+		subgraph.add(8);
 		
-		System.out.println(cluster);
-		System.out.println(cluster.size());
+		Set<Set<Integer>> cluster = bisec.computeBisection(subgraph);
 		
-		assertTrue(cluster.size() == 4);
+		for (Set<Integer> c : cluster) {
+			assertTrue(c.size() == 4);
+		}
 	}
 }
