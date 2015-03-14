@@ -1,0 +1,1 @@
+Experimental implementation of a hierarchical decomposition of a undirected graph. Might later be used for some image segmentation.
